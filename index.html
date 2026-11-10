@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lernwerkstatt</title>
+<meta name="theme-color" content="#1C7548">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: Trainingsplatz. Eine ruhige Spalte fürs Tablet, große Tippflächen, Text links und Aufgabe rechts beim Lesen. */
+:root{
+  --bg:#F2F7F3; --surface:#FFFFFF; --ink:#14291F; --muted:#54675C; --line:#D3DFD7;
+  --pitch:#1C7548; --pitch-ink:#FFFFFF; --ball:#DDF04A; --ball-ink:#1D2A00;
+  --sky:#2563C9; --tip-bg:#E8F0FD; --warn:#B4470F; --warn-bg:#FCEDE2; --good-bg:#E1F2E7; --mark:#FFF2A8;
+  --display:"Fredoka","Nunito",system-ui,sans-serif; --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E1914; --surface:#17251E; --ink:#E7F0EA; --muted:#9CAFA4; --line:#2A3D33;
+  --pitch:#49B983; --pitch-ink:#08170F; --ball:#DDF04A; --ball-ink:#1D2A00;
+  --sky:#86B4FF; --tip-bg:#16263F; --warn:#F2996A; --warn-bg:#3A2215; --good-bg:#143224; --mark:#5A4E0E; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0E1914; --surface:#17251E; --ink:#E7F0EA; --muted:#9CAFA4; --line:#2A3D33;
+  --pitch:#49B983; --pitch-ink:#08170F; --ball:#DDF04A; --ball-ink:#1D2A00;
+  --sky:#86B4FF; --tip-bg:#16263F; --warn:#F2996A; --warn-bg:#3A2215; --good-bg:#143224; --mark:#5A4E0E; color-scheme:dark }
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--bg);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance;line-height:1.2}
+h1{font-size:1.7rem} h2{font-size:1.35rem} h3{font-size:1.1rem}
+p{margin:0}
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:10px;align-items:center;font-family:var(--display);font-weight:600;font-size:1.15rem}
+.dot{width:22px;height:22px;border-radius:50%;background:var(--ball);border:2px solid var(--ball-ink)}
+.stars{font-weight:800;font-variant-numeric:tabular-nums;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px}
+nav{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.tab{background:transparent;border:2px solid var(--line);border-radius:999px;padding:8px 18px;font-weight:700;min-height:48px}
+.tab[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.tab[aria-current="page"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn{background:var(--pitch);color:var(--pitch-ink);border:0;border-radius:14px;padding:12px 22px;font-weight:800;min-height:52px}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn.tipb{background:var(--tip-bg);color:var(--sky);border:2px solid var(--sky)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.stack{display:flex;flex-direction:column;gap:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.muted{color:var(--muted)} .small{font-size:.9rem}
+.label{font-size:.8rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.banner{background:var(--ball);color:var(--ball-ink);border-radius:16px;padding:14px 18px;font-weight:700;display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between;align-items:center}
+.plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card.done{background:var(--good-bg);border-color:var(--pitch)}
+.card .btn{margin-top:auto;align-self:flex-start}
+.map{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:520px}
+.tile{position:relative;border:2px solid var(--line);border-radius:12px;min-height:64px;overflow:hidden;background:var(--surface);display:flex;align-items:center;justify-content:center;text-align:center;padding:6px;font-weight:700;font-size:.85rem}
+.tile i{position:absolute;left:0;right:0;bottom:0;background:var(--pitch);opacity:.28}
+.tile.full{border-color:var(--pitch)} .tile.now{border-color:var(--ink)}
+.tile span{position:relative}
+.blank{visibility:hidden}
+.work{display:grid;gap:18px;grid-template-columns:1fr}
+.work.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+@media (max-width:760px){.work.two{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0}
+.read{font-size:1.1rem;line-height:1.75}
+.read mark{background:var(--mark);color:inherit;border-radius:4px;padding:1px 2px}
+.q{font-size:1.25rem;font-weight:800;line-height:1.35}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:12px 16px;font-weight:700;min-height:52px}
+.opt[aria-pressed="true"]{border-color:var(--ink);background:var(--surface);box-shadow:inset 0 0 0 2px var(--ink)}
+.opt.no{opacity:.5;text-decoration:line-through}
+.opt.yes{border-color:var(--pitch);background:var(--good-bg)}
+.words{display:flex;flex-wrap:wrap;gap:8px}
+.words .opt{padding:8px 14px}
+.num{font:inherit;font-weight:800;font-size:1.3rem;width:9ch;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font-variant-numeric:tabular-nums}
+.tip{background:var(--tip-bg);border-left:0;border-radius:12px;padding:10px 14px}
+.tip b{color:var(--sky)}
+.msg{border-radius:12px;padding:12px 14px;font-weight:700}
+.msg.bad{background:var(--warn-bg);color:var(--warn)} .msg.ok{background:var(--good-bg)}
+.dots{display:flex;gap:6px}
+.dots b{width:26px;height:8px;border-radius:4px;background:var(--line)} .dots b.on{background:var(--pitch)} .dots b.cur{background:var(--ink)}
+.days{display:grid;gap:8px}
+.day{display:grid;grid-template-columns:5.5rem minmax(0,1fr);gap:12px;padding:12px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.day.today{border:2px solid var(--ink)} .day.exam{background:var(--ball);color:var(--ball-ink);border-color:var(--ball-ink)}
+.day time{font-weight:800;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:.8rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.note{border:2px dashed var(--line);border-radius:12px;padding:10px 14px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="dot" aria-hidden="true"></span>Lernwerkstatt</div>
+    <div class="stars" id="stars" aria-live="polite"></div>
+  </header>
+  <nav aria-label="Bereiche">
+    <button class="tab" data-act="nav" data-v="heute">Heute</button>
+    <button class="tab" data-act="nav" data-v="heft">Fehlerheft</button>
+    <button class="tab" data-act="nav" data-v="probe">Probe</button>
+    <button class="tab" data-act="nav" data-v="eltern">Eltern</button>
+  </nav>
+  <main id="main" class="stack"></main>
+  <p class="muted small">Der Lernstand bleibt nur auf diesem Gerät.</p>
+</div>
+
+<script>
+const LESEN=[
+ {id:'warm',title:'Aufwärmen: Genau lesen',fach:'Deutsch und Mathe',min:4,info:'Hier steckt in jeder Aufgabe eine kleine Falle. Lies die Angabe langsam.',tasks:[
+  {id:'w1',thema:'Angabe lesen: Nomen in der Mehrzahl',type:'words',q:'Tippe alle Nomen an, die in der Mehrzahl stehen.',
+   words:['Die','Kinder','packen','zwei','Schläger','und','einen','Ball','in','die','Taschen.'],a:[1,4,10],
+   tips:['Lies die Aufgabe noch einmal. Zwei Dinge müssen stimmen. Welche?','Mehrzahl heißt: Es sind mehrere. Frag bei jedem Nomen: einer oder viele?','Beispiel: „ein Hund“ ist Einzahl. „Drei Hunde“ ist Mehrzahl.'],
+   lob:'Du hast auf beides geachtet: Nomen und Mehrzahl.',explain:'Kinder, Schläger und Taschen sind mehrere. „Ball“ ist auch ein Nomen, aber nur einer.'},
+  {id:'w2',thema:'Angabe lesen: Runden',type:'choice',q:'Runde 47 380 auf Tausender.',opts:['47 000','47 400','48 000','50 000'],a:0,
+   tips:['Auf welche Stelle sollst du runden? Lies das letzte Wort der Aufgabe.','Schau auf die Hunderter: 3. Bei 0 bis 4 rundest du ab.','Beispiel: 62 710 auf Tausender. Hunderter ist 7, also aufrunden: 63 000.'],
+   lob:'Du hast erst die Stelle gesucht und dann gerundet.',explain:'Die Hunderterstelle ist 3. Also wird abgerundet: 47 000.'},
+  {id:'w3',thema:'Sachaufgabe: Unwichtiges erkennen',type:'choice',q:'Beim Skikurs fahren 24 Kinder mit. Jede Gondel hat 8 Plätze. Eine Fahrt dauert 12 Minuten. Wie viele Gondeln brauchen die Kinder?',opts:['2 Gondeln','3 Gondeln','36 Gondeln','96 Gondeln'],a:1,
+   tips:['Was will die Frage wissen? Eine Zahl brauchst du gar nicht.','Die 12 Minuten sind eine Falle. Du brauchst nur Kinder und Plätze.','Beispiel: 30 Kinder, 10 Plätze je Gondel. 30 : 10 = 3 Gondeln.'],
+   lob:'Du hast die Falle entdeckt und nur die wichtigen Zahlen benutzt.',explain:'24 : 8 = 3. Die Fahrzeit braucht man für diese Frage nicht.'}]},
+ {id:'lesen',title:'Leseprobe-Training',fach:'Deutsch',min:9,info:'Lies erst den ganzen Text. Suche dann zu jeder Frage die Stelle im Text.',
+  text:{title:'Der Elfmeter',s:['Am Samstag spielte Jonas mit seiner Mannschaft beim Hallenturnier in Rosenheim.','Schon um sieben Uhr fuhr der Bus los, denn die Fahrt dauerte eine Stunde.','Im ersten Spiel gewann die Mannschaft 3:1.','Jonas schoss dabei kein Tor, aber er bereitete zwei Treffer vor.','Im Finale stand es kurz vor Schluss 2:2.','Dann pfiff der Schiedsrichter: Elfmeter!','Der Trainer zeigte auf Jonas.','Sein Herz klopfte laut, und seine Knie fühlten sich weich an.','Er legte den Ball hin, atmete tief durch und schoss flach in die linke Ecke.','Der Torwart sprang nach rechts.','Tor!','Auf der Heimfahrt hielt Jonas den Pokal die ganze Zeit auf dem Schoß.']},
+  tasks:[
+  {id:'l1',thema:'Lesen: Angaben verbinden',type:'choice',q:'Wann kam der Bus in Rosenheim an?',opts:['Um 7 Uhr','Um 8 Uhr','Um 9 Uhr','Das kann man nicht wissen'],a:1,ev:[1],
+   tips:['Suche die Stelle mit dem Bus. Dort stehen zwei Angaben.','Abfahrt um sieben Uhr. Die Fahrt dauerte eine Stunde.','Beispiel: Abfahrt um 9 Uhr, Fahrt 2 Stunden. Ankunft um 11 Uhr.'],
+   lob:'Du hast zwei Angaben verbunden: Abfahrt und Fahrzeit.',explain:'7 Uhr und eine Stunde Fahrt ergeben 8 Uhr. Die Antwort steht nicht direkt da, man muss rechnen.'},
+  {id:'l2',thema:'Lesen: Frage genau nehmen',type:'choice',q:'Wie viele Tore schoss Jonas im ersten Spiel?',opts:['Kein Tor','1 Tor','2 Tore','3 Tore'],a:0,ev:[3],
+   tips:['Lies die Frage genau: Wer? Was? In welchem Spiel?','Suche den Satz, in dem „Jonas“ und „Tor“ vorkommen.','Vorbereiten heißt: den Ball zuspielen. Schießen ist etwas anderes.'],
+   lob:'Du hast den Unterschied gemerkt: vorbereiten ist nicht schießen.',explain:'Im Text steht: Jonas schoss kein Tor. Er bereitete zwei Treffer vor.'},
+  {id:'l3',thema:'Lesen: Zwischen den Zeilen',type:'choice',q:'Wie fühlte sich Jonas vor dem Elfmeter?',opts:['Gelangweilt','Wütend','Aufgeregt','Müde'],a:2,ev:[7],
+   tips:['Das Gefühl steht nicht als Wort im Text. Was macht sein Körper?','Sein Herz klopft laut. Seine Knie sind weich. Wann geht es dir so?','Beispiel: „Ihre Hände zitterten vor dem Vortrag.“ Sie ist nervös.'],
+   lob:'Du hast aus den Körperzeichen auf das Gefühl geschlossen.',explain:'Herzklopfen und weiche Knie zeigen: Jonas ist aufgeregt.'},
+  {id:'l4',thema:'Lesen: Wer macht was?',type:'choice',q:'In welche Ecke schoss Jonas den Ball?',opts:['In die rechte Ecke','In die linke Ecke','In die Mitte','Über das Tor'],a:1,ev:[8],
+   tips:['Im Text kommen zwei Richtungen vor. Welche gehört zu Jonas?','Suche den Satz mit „schoss“.','Achte darauf, wer etwas tut: Jonas schießt, der Torwart springt.'],
+   lob:'Du hast geprüft, wer was macht.',explain:'Jonas schoss in die linke Ecke. Nach rechts sprang der Torwart.'}]},
+ {id:'sach',title:'Sachaufgaben im Heft',fach:'Mathe',min:7,info:'Rechne im Heft. Tippe dann nur dein Ergebnis ein.',tasks:[
+  {id:'s1',thema:'Sachaufgabe: Unwichtiges erkennen',type:'number',unit:'€',q:'Eine Dose hat 4 Tennisbälle. Der Verein kauft 36 Dosen. Eine Dose kostet 7 €. Wie viel bezahlt der Verein?',a:252,
+   tips:['Was ist gefragt: Bälle oder Geld?','Du brauchst die Dosen und den Preis. Die 4 Bälle sind eine Falle.','Beispiel: 12 Dosen zu je 5 €. 12 · 5 = 60 €.'],
+   lob:'Du hast zuerst geklärt, was gefragt ist.',explain:'36 · 7 = 252. Der Verein bezahlt 252 €.'},
+  {id:'s2',thema:'Sachaufgabe: Mehrere Schritte',type:'number',unit:'Karten',q:'Lena sammelt Pokémon-Karten. Sie hat 245 Karten. Zum Geburtstag bekommt sie 3 Päckchen mit je 11 Karten. 18 doppelte Karten verschenkt sie. Wie viele Karten hat sie jetzt?',a:260,
+   tips:['Lies Satz für Satz. Wie viele Rechenschritte brauchst du?','Erst 3 · 11 rechnen. Das kommt dazu. Dann gehen 18 weg.','Beispiel: 100 Karten, 2 Päckchen mit je 10, 5 verschenkt. 100 + 20 − 5 = 115.'],
+   lob:'Du hast die Aufgabe in Schritte zerlegt.',explain:'3 · 11 = 33. 245 + 33 = 278. 278 − 18 = 260 Karten.'}]}
+];
+const HSU=[
+ {id:'k1',title:'Wahlgrundsätze, Teil 1',src:'Nr. 2',fach:'HSU',min:4,info:'Lies jede Frage zweimal. Achte auf Wörter wie „alle“, „beide“ oder eine Zahl in der Frage.',tasks:[
+  {id:'g1',thema:'Wahl: die fünf Wahlgrundsätze',type:'words',q:'Wie muss eine Wahl sein? Tippe die fünf Wahlgrundsätze an.',
+   words:['allgemein','schnell','unmittelbar','frei','öffentlich','gleich','geheim','teuer'],a:[0,2,3,5,6],
+   tips:['Es sind genau fünf. Drei Wörter passen nicht.','Prüfe jedes Wort einzeln: Wäre eine Wahl so gerecht?','Bei einer Wahl darf niemand zusehen, wen du ankreuzt. Also nicht öffentlich, sondern …'],
+   lob:'Du hast jedes Wort einzeln geprüft und genau fünf gefunden.',explain:'Eine Wahl ist allgemein, unmittelbar, frei, gleich und geheim.'},
+  {id:'g2',thema:'Wahl: Was heißt geheim?',type:'choice',q:'Was bedeutet „geheim“ bei einer Wahl?',opts:['Niemand darf wissen, wann die Wahl ist.','Nur der Bürgermeister sieht meinen Stimmzettel.','Niemand darf wissen, wen ich gewählt habe.','Die Wahl findet ohne Zuschauer in der Nacht statt.'],a:2,
+   tips:['Was genau bleibt geheim: der Tag, der Ort oder deine Stimme?','Denk an die Wahlkabine. Wozu ist sie da?','Auch der Bürgermeister darf deinen Stimmzettel nicht sehen.'],
+   lob:'Du hast erkannt, was genau geheim bleibt: die eigene Stimme.',explain:'Geheim heißt: Niemand darf wissen, wen ich gewählt habe.'},
+  {id:'g13',thema:'Wahlgrundsatz: gleich',type:'choice',q:'Welcher Wahlgrundsatz passt zu diesem Satz? „Jeder hat die gleiche Anzahl an Stimmen.“',opts:['allgemein','unmittelbar','frei','gleich','geheim'],a:3,
+   tips:['Ein Wort aus dem Satz steckt auch in der Lösung.','Niemand hat mehr Stimmen als ein anderer. Alle haben …','Das Wort beginnt mit g, ist aber nicht „geheim“.'],
+   lob:'Du hast das Signalwort im Satz entdeckt.',explain:'Gleich heißt: Jeder hat die gleiche Anzahl an Stimmen.'}]},
+ {id:'k2',title:'Wahlgrundsätze, Teil 2',src:'Nr. 2',fach:'HSU',min:4,info:'Lies jede Frage zweimal. Achte auf Wörter wie „alle“, „beide“ oder eine Zahl in der Frage.',tasks:[
+  {id:'g14',thema:'Wahlgrundsatz: frei',type:'choice',q:'Welcher Wahlgrundsatz passt zu diesem Satz? „Jeder darf selbst entscheiden, wen er wählt.“',opts:['allgemein','unmittelbar','frei','gleich','geheim'],a:2,
+   tips:['Niemand darf dich zwingen. Wie nennt man das?','Wer selbst entscheiden darf, ist …','Das Wort hat vier Buchstaben und beginnt mit f.'],
+   lob:'Du hast „selbst entscheiden“ richtig übersetzt.',explain:'Frei heißt: Jeder darf selbst entscheiden, wen er wählt.'},
+  {id:'g15',thema:'Wahlgrundsatz: unmittelbar',type:'choice',q:'Welcher Wahlgrundsatz passt zu diesem Satz? „Wir wählen direkt.“',opts:['allgemein','unmittelbar','frei','gleich','geheim'],a:1,
+   tips:['Gesucht ist ein anderes Wort für „direkt“.','Zwischen dir und dem Gewählten steht niemand in der Mitte.','Ohne Mittel-Person, also un…'],
+   lob:'Du hast das schwierige Wort mit „direkt“ verbunden.',explain:'Unmittelbar heißt: Wir wählen direkt, ohne jemanden dazwischen.'},
+  {id:'g16',thema:'Wahlgrundsatz: allgemein',type:'choice',q:'Welcher Wahlgrundsatz passt zu diesem Satz? „Jeder darf sich aufstellen lassen.“',opts:['allgemein','unmittelbar','frei','gleich','geheim'],a:0,
+   tips:['Achte auf das Wort „jeder“.','Etwas, das für alle gilt, nennt man …','In dem Wort steckt „all“ wie in „alle“.'],
+   lob:'Du hast von „jeder“ auf „alle“ geschlossen.',explain:'Allgemein heißt im Heft: Jeder darf sich aufstellen lassen.'}]},
+ {id:'k3',title:'Was ist eine Gemeinde?',src:'Nr. 3',fach:'HSU',min:7,info:'Lies jede Frage zweimal. Achte auf Wörter wie „alle“, „beide“ oder eine Zahl in der Frage.',tasks:[
+  {id:'g20',thema:'Gemeinde: anderes Wort',type:'choice',q:'Wie nennt man eine Gemeinde auch?',opts:['Rathaus','Bundesland','Kommune','Landkreis'],a:2,
+   tips:['Das Wort war im Heft grün markiert.','Es beginnt mit K.','Es hat sieben Buchstaben: K, o, m, m und noch drei.'],
+   lob:'Du hast dich an das markierte Wort erinnert.',explain:'Eine Gemeinde nennt man auch Kommune.'},
+  {id:'g21',thema:'Gemeinde: Dorf oder Stadt',type:'words',q:'Was kann eine Gemeinde sein? Tippe beides an.',
+   words:['ein Dorf','ein Bundesland','eine Stadt','ein Verein'],a:[0,2],
+   tips:['Es sind zwei Antworten.','Eine Gemeinde kann klein oder groß sein.','Klein mit wenigen Häusern oder groß mit vielen Straßen.'],
+   lob:'Du hast beide Antworten gefunden.',explain:'Eine Gemeinde kann ein Dorf oder eine Stadt sein.'},
+  {id:'g22',thema:'Gemeinde: Bürger und Einwohner',type:'words',q:'Wie nennt man die Mitglieder einer Gemeinde? Tippe beide Wörter an.',
+   words:['Bürger','Kunden','Einwohner','Zuschauer'],a:[0,2],
+   tips:['Es sind zwei Wörter.','Ein Wort steckt in „Bürgermeister“.','Das andere Wort kommt von „wohnen“.'],
+   lob:'Du hast die Wörter aus bekannten Wörtern abgeleitet.',explain:'Die Mitglieder einer Gemeinde heißen Bürger oder Einwohner.'},
+  {id:'g23',thema:'Gemeinde: Gemeinderat und Stadtrat',type:'choice',q:'Wie heißt der Gemeinderat in einer Stadt?',opts:['Bundestag','Landtag','Stadtwerke','Stadtrat'],a:3,
+   tips:['Tausche im Wort „Gemeinderat“ den ersten Teil aus.','Eine Gemeinde hat einen Gemeinderat. Eine Stadt hat einen …','Stadt und Rat ergeben zusammen das Wort.'],
+   lob:'Du hast das Wort selbst zusammengebaut.',explain:'In einer Stadt heißt der Gemeinderat Stadtrat.'},
+  {id:'g24',thema:'Gemeinderat: unbeliebte Entscheidungen',type:'choice',q:'Der Gemeinderat erhöht die Abgaben für die Müllabfuhr. Viele Einwohner ärgern sich. Warum macht er das trotzdem?',opts:['Weil er die Entscheidung für notwendig hält.','Weil die Feuerwehr es verlangt.','Weil er die Einwohner ärgern möchte.'],a:0,
+   tips:['Der Gemeinderat will niemanden ärgern. Was ist der wahre Grund?','Müllabfuhr und Straßenreinigung kosten Geld.','Manche Entscheidungen müssen sein, auch wenn sie keinem gefallen.'],
+   lob:'Du hast nach dem Grund gefragt.',explain:'Manchmal trifft der Gemeinderat Entscheidungen, die die Einwohner ärgern, die er aber für notwendig hält.'}]},
+ {id:'k4',title:'Aufgaben der Gemeinde',src:'Nr. 4',fach:'HSU',min:4,info:'Lies jede Frage zweimal. Achte auf Wörter wie „alle“, „beide“ oder eine Zahl in der Frage.',tasks:[
+  {id:'g5',thema:'Aufgaben der Gemeinde: die sieben Bilder',type:'words',q:'Unsere Gemeinde sorgt für uns. Tippe alle sieben Aufgaben der Gemeinde an.',
+   words:['Müllabfuhr','Zeitung austragen','Strom, Gas, Wasser','Feuerwehr','Fernsehprogramm','Schulen','Kindergärten','Pakete liefern','Sportplätze','Straßenbau'],a:[0,2,3,5,6,8,9],
+   tips:['Es sind sieben, wie die sieben Bilder im Heft.','Drei Dinge erledigen Firmen, nicht die Gemeinde.','Zeitung, Fernsehen und Pakete kommen von Firmen.'],
+   lob:'Du hast Gemeinde und Firmen auseinandergehalten.',explain:'Müllabfuhr, Strom, Gas und Wasser, Feuerwehr, Schulen, Kindergärten, Sportplätze und Straßenbau.'},
+  {id:'g25',thema:'Aufgaben der Gemeinde: weitere Aufgaben',type:'words',q:'Die Gemeinde hat noch weitere Aufgaben. Tippe alle vier an.',
+   words:['Bücherei','Kino','Landschaftsgärtner','Kinderkrippe','Supermarkt','Bürgerhäuser und Bürgersäle'],a:[0,2,3,5],
+   tips:['Es sind vier.','Kino und Supermarkt gehören Firmen.','Denk an Bücher, Parks, ganz kleine Kinder und einen Saal für alle.'],
+   lob:'Du hast dich an die Liste unter den Bildern erinnert.',explain:'Bücherei, Landschaftsgärtner, Kinderkrippe sowie Bürgerhäuser und Bürgersäle.'},
+  {id:'g26',thema:'Aufgaben der Gemeinde: Bürgerhaus',type:'choice',q:'Wofür gibt es Bürgerhäuser und Bürgersäle?',opts:['für die Müllabfuhr','für Konzerte oder Theater','für den Sportunterricht','als Wohnung für den Bürgermeister'],a:1,
+   tips:['Im Heft zeigt ein Pfeil vom Wort Bürgersäle auf zwei Dinge.','Dort treffen sich viele Menschen und schauen oder hören zu.','Musik und Bühne.'],
+   lob:'Du hast an den Pfeil im Heft gedacht.',explain:'In Bürgerhäusern und Bürgersälen gibt es Konzerte oder Theater.'}]},
+ {id:'k5',title:'Unterföhring in Zahlen',src:'Nr. 5',fach:'HSU',min:7,info:'Lies jede Frage zweimal. Achte auf Wörter wie „alle“, „beide“ oder eine Zahl in der Frage.',tasks:[
+  {id:'g28',thema:'Unterföhring: Einwohner',type:'choice',q:'Wie viele Menschen wohnen ungefähr in Unterföhring?',opts:['etwa 120 000','etwa 12 000','etwa 1,2 Millionen','etwa 1 200'],a:1,
+   tips:['Die Zahl im Heft ist fünfstellig.','Sie liegt zwischen 10 000 und 20 000.','Runde die Zahl aus dem Heft auf Tausender.'],
+   lob:'Du hast die Größe der Zahl richtig eingeschätzt.',explain:'In Unterföhring wohnen etwa 12 000 Menschen. Die genaue Zahl steht in deinem Heft.'},
+  {id:'g29',thema:'Unterföhring: Fläche',type:'choice',q:'Wie groß ist Unterföhring?',opts:['12,79 km²','1 279 km²','127,9 km²','1,279 km²'],a:0,
+   tips:['Achte auf das Komma.','Vor dem Komma steht eine zweistellige Zahl.','Es sind knapp 13 Quadratkilometer.'],
+   lob:'Du hast genau auf das Komma geachtet.',explain:'Unterföhring ist 12,79 km² groß.'},
+  {id:'g30',thema:'Unterföhring: Alter',type:'choice',q:'Seit wann gibt es Unterföhring?',opts:['seit 1973','seit 1580','seit 1808','seit 1180'],a:3,
+   tips:['Unterföhring ist über 800 Jahre alt.','Die Jahreszahl beginnt mit 11.','1973 gehört zu etwas anderem, nämlich zur S-Bahn.'],
+   lob:'Du hast die beiden Jahreszahlen nicht verwechselt.',explain:'Unterföhring gibt es schon seit 1180.'},
+  {id:'g31',thema:'Unterföhring: S-Bahn',type:'choice',q:'Seit wann fährt die S-Bahn in Unterföhring?',opts:['seit dem 1. Januar 1873','seit 1180','seit dem 30. September 1993','seit dem 30. September 1973'],a:3,
+   tips:['Gesucht ist ein genaues Datum mit Tag, Monat und Jahr.','Der Monat ist der September.','Das Jahr beginnt mit 19 und endet mit 73.'],
+   lob:'Du hast dir das ganze Datum gemerkt.',explain:'Die S-Bahn fährt in Unterföhring seit dem 30. September 1973.'},
+  {id:'g32',thema:'Unterföhring: Geld',type:'choice',q:'Wie viel Geld hat Unterföhring?',opts:['über 5 Millionen Euro','über 539 Euro','über 539 Millionen Euro','über 539 Milliarden Euro'],a:2,
+   tips:['Achte auf das Wort hinter der Zahl.','Es ist sehr viel Geld, aber es sind keine Milliarden.','539 und dann sechs Nullen.'],
+   lob:'Du hast auf das Zahlwort geachtet.',explain:'Unterföhring hat über 539 Millionen Euro.'}]},
+ {id:'k6',title:'Wappen und Logo',src:'Nr. 6',fach:'HSU',min:7,info:'Lies jede Frage zweimal. Achte auf Wörter wie „alle“, „beide“ oder eine Zahl in der Frage.',tasks:[
+  {id:'g9',thema:'Unterföhring: Wappen',type:'choice',q:'Wofür stehen die Ziegel im Wappen von Unterföhring?',opts:['Alle Häuser in Unterföhring sind rot.','Die Ziegel erinnern an eine Burg.','Ziegeleien brachten Unterföhring viel Geld ein.','Sie stehen für die Isar.'],a:2,
+   tips:['Im Heft steht neben den Ziegeln ein Satz mit „Geld“.','Wo werden Ziegel hergestellt?','In Ziegeleien. Was brachten sie dem Ort?'],
+   lob:'Du hast dich an die Beschriftung im Heft erinnert.',explain:'Ziegeleien brachten Unterföhring viel Geld ein. Daran erinnern die Ziegel im Wappen.'},
+  {id:'g10',thema:'Unterföhring: Fluss',type:'choice',q:'Welcher Fluss fließt durch Unterföhring?',opts:['Donau','Inn','Lech','Isar'],a:3,
+   tips:['Er ist im Wappen als blaues Band zu sehen.','Derselbe Fluss fließt auch durch München.','Sein Name hat vier Buchstaben und beginnt mit I.'],
+   lob:'Du hast das blaue Band im Wappen richtig gedeutet.',explain:'Durch Unterföhring fließt die Isar.'},
+  {id:'g33',thema:'Wappen: gekrönter Kopf',type:'choice',q:'Woran erinnert der gekrönte Kopf im Wappen?',opts:['an die Isar','an die Feuerwehr','an den heutigen Bürgermeister','an die Geschichte Unterföhrings'],a:3,
+   tips:['Eine Krone gehört zu früher.','Der Kopf erinnert an etwas, das lange her ist.','Gesucht ist ein Wort für alles, was früher war.'],
+   lob:'Du hast von der Krone auf früher geschlossen.',explain:'Der gekrönte Kopf erinnert an die Geschichte Unterföhrings.'},
+  {id:'g34',thema:'Wappen: goldener Hintergrund',type:'choice',q:'Wofür steht der goldene Hintergrund im Wappen?',opts:['für den Sand an der Isar','für die vielen Gelder in Unterföhring','für die Getreidefelder','für die Sonne'],a:1,
+   tips:['Gold ist wertvoll.','Wofür benutzt man Gold und Münzen?','Unterföhring ist eine reiche Gemeinde.'],
+   lob:'Du hast die Farbe gedeutet.',explain:'Der goldene Hintergrund steht für die vielen Gelder in Unterföhring.'},
+  {id:'g35',thema:'Unterföhring: Logo',type:'choice',q:'Was vereint das Logo von Unterföhring?',opts:['Sommer und Winter','Schule und Kindergarten','die Isar und die Donau','das „alte“ und das „neue“ Unterföhring'],a:3,
+   tips:['Im Logo sieht man einen alten Kirchturm und moderne Häuser.','Es geht um früher und heute.','Zwei Gegensätze: alt und …'],
+   lob:'Du hast die Bildteile des Logos gedeutet.',explain:'Das Logo vereint das „alte“ und das „neue“ Unterföhring.'}]},
+ {id:'k7',title:'Ämter im Rathaus',src:'Nr. 7',fach:'HSU',min:7,info:'Lies jede Frage zweimal. Achte auf Wörter wie „alle“, „beide“ oder eine Zahl in der Frage.',tasks:[
+  {id:'g6',thema:'Ämter: Einwohnermeldeamt',type:'choice',q:'„Wir sind gerade neu hergezogen.“ In welches Amt im Rathaus gehst du?',opts:['Fundamt','Einwohnermeldeamt','Bauamt','Standesamt'],a:1,
+   tips:['Wer neu im Ort wohnt, ist ein neuer …?','Im Namen des Amtes steckt das Wort für die Menschen, die im Ort wohnen.','Dort meldet man sich an, wenn man umgezogen ist.'],
+   lob:'Du hast im Namen des Amtes den Hinweis gefunden.',explain:'Neue Einwohner melden sich im Einwohnermeldeamt an.'},
+  {id:'g7',thema:'Ämter: Standesamt',type:'choice',q:'„Wir haben ein Baby bekommen.“ In welches Amt im Rathaus gehst du?',opts:['Einwohnermeldeamt','Ordnungsamt','Standesamt','Kasse'],a:2,
+   tips:['Vorsicht: Hier passt nicht das gleiche Amt wie beim Umzug.','In diesem Amt wird auch geheiratet.','Geburten und Hochzeiten werden dort eingetragen.'],
+   lob:'Du hast die beiden ähnlichen Ämter unterschieden.',explain:'Eine Geburt wird im Standesamt eingetragen.'},
+  {id:'g36',thema:'Ämter: Personalausweis',type:'choice',q:'„Mein Personalausweis ist abgelaufen!“ In welches Amt gehst du?',opts:['Einwohnermeldeamt','Bauamt','Standesamt','Fundamt'],a:0,
+   tips:['Es ist dasselbe Amt wie beim Umzug.','Das Amt hat im Rathaus Zimmer 1.','Dort sind alle Einwohner gemeldet.'],
+   lob:'Du hast gemerkt, dass ein Amt mehrere Aufgaben hat.',explain:'Einen neuen Personalausweis gibt es im Einwohnermeldeamt.'},
+  {id:'g37',thema:'Ämter: Fundamt',type:'choice',q:'„Meine Frau hat ihre Kette verloren!“ In welches Amt gehst du?',opts:['Kasse','Ordnungsamt','Fundamt','Einwohnermeldeamt'],a:2,
+   tips:['Vielleicht hat jemand die Kette gefunden.','Im Namen des Amtes steckt das Wort „finden“.','Fund und Amt ergeben zusammen das Wort.'],
+   lob:'Du hast das passende Wort im Amtsnamen gefunden.',explain:'Verlorene und gefundene Sachen sind im Fundamt.'},
+  {id:'g38',thema:'Ämter: Bauamt',type:'choice',q:'„Wir möchten eine Doppelgarage neben unser Haus bauen.“ In welches Amt gehst du?',opts:['Standesamt','Kämmerei','Fundamt','Bauamt'],a:3,
+   tips:['Welches Verb steht im Satz?','Im Namen des Amtes steckt das Wort „bauen“.','Bau und Amt ergeben zusammen das Wort.'],
+   lob:'Du hast das Verb im Satz genutzt.',explain:'Wer bauen will, geht zum Bauamt.'}]},
+ {id:'k8',title:'Zuständig oder nicht?',src:'Nr. 7',fach:'HSU',min:6,info:'Lies jede Frage zweimal. Achte auf Wörter wie „alle“, „beide“ oder eine Zahl in der Frage.',tasks:[
+  {id:'g39',thema:'Ämter: Ordnungsamt',type:'words',q:'Bei welchen drei Problemen gehst du laut Heft zum Ordnungsamt?',
+   words:['Hundehaufen auf dem Spielplatz','Schlüssel verloren','Unkraut auf dem Friedhof','Hundesteuer für den neuen Hund','Baby bekommen'],a:[0,2,3],
+   tips:['Es sind drei.','Zweimal geht es um Hunde.','Das dritte Problem ist auf dem Friedhof.'],
+   lob:'Du hast die drei Fälle aus dem Bild wiedergefunden.',explain:'Im Heft gehören Hundesteuer, Hundehaufen auf dem Spielplatz und Unkraut auf dem Friedhof zum Ordnungsamt.'},
+  {id:'g60',thema:'Ämter: Türschild im Rathaus',type:'words',q:'Was findest du im Rathaus? Tippe alle vier an.',
+   words:['Kasse','Kämmerei','Bäckerei','Ordnungsamt','Tierarzt','Standesamt'],a:[0,1,3,5],
+   tips:['Es sind vier.','Zwei Wörter haben mit Geld zu tun.','Bäcker und Tierarzt arbeiten nicht im Rathaus.'],
+   lob:'Du kennst das Türschild vom Rathaus.',explain:'Im Rathaus gibt es Einwohnermeldeamt, Ordnungsamt, Kasse, Bürgermeister, Kämmerei, Fundamt, Standesamt und Bauamt.'},
+  {id:'g8',thema:'Zuständigkeit: Gemeinde oder nicht?',type:'choice',q:'Die Zeitung kommt jeden Morgen zu spät. Wer ist dafür zuständig?',opts:['Die Gemeinde','Der Zeitungsverlag','Das Ordnungsamt','Die Feuerwehr'],a:1,
+   tips:['Nicht für alles ist die Gemeinde zuständig.','Wer stellt die Zeitung her und lässt sie austragen?','Es ist die Firma, die die Zeitung macht.'],
+   lob:'Du hast gemerkt: Hier ist die Gemeinde nicht zuständig.',explain:'Für die Zeitung ist der Zeitungsverlag zuständig, nicht die Gemeinde.'},
+  {id:'g40',thema:'Zuständigkeit: Schulbuch',type:'choice',q:'„Das Mathebuch aus der Schule ist schon ganz schmutzig. Ich möchte Ersatz!“ Wer hilft hier weiter?',opts:['die Schule','der Bürgermeister','das Fundamt','das Bauamt'],a:0,
+   tips:['Die Gemeinde ist hier nicht zuständig.','Wem gehört das Buch?','Das Buch wurde von der Schule ausgeliehen.'],
+   lob:'Du hast gefragt, wem das Buch gehört.',explain:'Für das geliehene Mathebuch ist die Schule zuständig, nicht das Rathaus.'}]},
+ {id:'k9',title:'Der Bürgermeister',src:'Nr. 3, 5 und 8',fach:'HSU',min:7,info:'Lies jede Frage zweimal. Achte auf Wörter wie „alle“, „beide“ oder eine Zahl in der Frage.',tasks:[
+  {id:'g59',thema:'Gemeinde: Wer arbeitet für die Gemeinde?',type:'words',q:'Was besitzt jede Gemeinde? Tippe alle drei an.',
+   words:['einen Bürgermeister','einen König','einen Gemeinderat oder Stadtrat','hauptamtliche Mitarbeiter','einen Zoo'],a:[0,2,3],
+   tips:['Es sind drei.','Einer leitet, eine Gruppe entscheidet mit, und viele arbeiten im Rathaus.','Einen König gibt es in der Gemeinde nicht.'],
+   lob:'Du hast alle drei gefunden.',explain:'Jede Gemeinde hat einen Bürgermeister, einen Gemeinderat oder Stadtrat und hauptamtliche Mitarbeiter.'},
+  {id:'g27',thema:'Unterföhring: Erster Bürgermeister',type:'choice',q:'Wie heißt der Erste Bürgermeister von Unterföhring?',opts:['Stefan Bauer','Florian Klietsch','Thomas Huber','Markus Maier'],a:1,
+   tips:['Der Name steht ganz oben in deinem Hefteintrag Nr. 5.','Der Vorname beginnt mit F.','Der Nachname beginnt mit K.'],
+   lob:'Du hast dir den Namen gemerkt.',explain:'Der Erste Bürgermeister von Unterföhring heißt Florian Klietsch.'},
+  {id:'g3',thema:'Bürgermeister: Wahl alle sechs Jahre',type:'choice',q:'Wie oft wird der Bürgermeister gewählt?',opts:['Jedes Jahr','Alle 4 Jahre','Alle 6 Jahre','Alle 10 Jahre'],a:2,
+   tips:['Die Zahl steht in deinem Hefteintrag über den Bürgermeister.','Auch der Gemeinderat wird nach dieser Zeit neu gewählt.','Es ist ein halbes Dutzend Jahre.'],
+   lob:'Du hast dich an die Zahl aus dem Hefteintrag erinnert.',explain:'Der Bürgermeister wird alle sechs Jahre direkt von den Bürgern gewählt.'},
+  {id:'g41',thema:'Bürgermeister: Wer wählt?',type:'choice',q:'Wer wählt den Bürgermeister?',opts:['die Mitarbeiter im Rathaus','die Bürger, und zwar direkt','der alte Bürgermeister','der Gemeinderat'],a:1,
+   tips:['Denk an den Wahlgrundsatz „unmittelbar“.','Niemand wählt für dich. Die Leute wählen selbst.','Es sind die Menschen, die in der Gemeinde wohnen.'],
+   lob:'Du hast dein Wissen über die Wahl benutzt.',explain:'Der Bürgermeister wird direkt von den Bürgern gewählt.'},
+  {id:'g42',thema:'Bürgermeister: Voraussetzungen',type:'words',q:'Was braucht man, um Bürgermeister zu werden? Tippe beides an.',
+   words:['mindestens 18 Jahre alt sein','mindestens 40 Jahre alt sein','die deutsche Staatsangehörigkeit','ein eigenes Haus'],a:[0,2],
+   tips:['Es sind zwei Dinge.','Man muss erwachsen sein.','Das zweite hat mit dem Land zu tun, zu dem man gehört.'],
+   lob:'Du hast beide Voraussetzungen gefunden.',explain:'Man muss mindestens 18 Jahre alt sein und die deutsche Staatsangehörigkeit besitzen.'}]},
+ {id:'k10',title:'Aufgaben des Bürgermeisters',src:'Nr. 8',fach:'HSU',min:6,info:'Lies jede Frage zweimal. Achte auf Wörter wie „alle“, „beide“ oder eine Zahl in der Frage.',tasks:[
+  {id:'g43',thema:'Bürgermeister: wichtige Aufgaben',type:'words',q:'Was sind Aufgaben des Bürgermeisters? Tippe alle vier an.',
+   words:['den Gemeinderat leiten','den Müll abholen','die Sitzung eröffnen','dafür sorgen, dass Beschlüsse erfüllt werden','Unterricht halten','die Gemeinde nach außen vertreten'],a:[0,2,3,5],
+   tips:['Es sind vier.','Müll abholen und unterrichten machen andere.','Leiten, eröffnen, für die Beschlüsse sorgen, vertreten.'],
+   lob:'Du hast die markierten Stellen aus dem Text behalten.',explain:'Er leitet den Gemeinderat, eröffnet die Sitzung, sorgt dafür, dass Beschlüsse erfüllt werden, und vertritt die Gemeinde nach außen.'},
+  {id:'g44',thema:'Bürgermeister: weitere Aufgaben',type:'words',q:'Der Bürgermeister hat weitere Aufgaben. Tippe alle vier an.',
+   words:['Verträge und Glückwunschkarten unterschreiben','Bauvorhaben planen','Feuer löschen','Vereine unterstützen','Feste und Veranstaltungen eröffnen','Zeitung austragen'],a:[0,1,3,4],
+   tips:['Es sind vier.','Feuer löscht die Feuerwehr.','Unterschreiben, planen, unterstützen, eröffnen.'],
+   lob:'Du hast dich an die Liste im Heft erinnert.',explain:'Vieles unterschreiben, Bauvorhaben planen, Vereine unterstützen, Feste und Veranstaltungen eröffnen.'},
+  {id:'g46',thema:'Bürgermeister: Fachmann einladen',type:'choice',q:'Wen kann der Bürgermeister zusätzlich zu den Gemeinderäten zur Sitzung einladen?',opts:['die Feuerwehr','niemanden','einen Fachmann','alle Schulkinder'],a:2,
+   tips:['Manchmal braucht der Gemeinderat jemanden, der sich besonders gut auskennt.','Wie nennt man so einen Menschen?','Fach und Mann ergeben zusammen das Wort.'],
+   lob:'Du hast überlegt, wen der Gemeinderat braucht.',explain:'Der Bürgermeister kann zusätzlich einen Fachmann zur Sitzung einladen.'},
+  {id:'g61',thema:'Bürgermeister: Goldenes Buch',type:'choice',q:'Besuchergruppen tragen sich im Rathaus in ein besonderes Buch ein. Wie heißt es?',opts:['das Wahlbuch','das Rote Buch','das Goldene Buch','das Fundbuch'],a:2,
+   tips:['Das Buch hat eine Farbe im Namen.','Es ist die Farbe eines Edelmetalls.','Dieselbe Farbe hat der Hintergrund im Wappen.'],
+   lob:'Du hast eine Verbindung zum Wappen gefunden.',explain:'Besucher tragen sich in das Goldene Buch ein. Der Bürgermeister vertritt dabei die Gemeinde nach außen.'}]},
+ {id:'k11',title:'Die Gemeinderatssitzung',src:'Nr. 10',fach:'HSU',min:4,info:'Lies jede Frage zweimal. Achte auf Wörter wie „alle“, „beide“ oder eine Zahl in der Frage.',tasks:[
+  {id:'g49',thema:'Gemeinderat: Sitzung',type:'choice',q:'Wie oft findet eine Gemeinderatssitzung statt?',opts:['einmal im Jahr','alle sechs Jahre','einmal im Monat','jeden Tag'],a:2,
+   tips:['Nicht verwechseln: Alle sechs Jahre ist die Wahl.','Die Sitzung ist viel öfter als die Wahl.','Zwölfmal im Jahr.'],
+   lob:'Du hast Sitzung und Wahl auseinandergehalten.',explain:'Eine Gemeinderatssitzung findet einmal im Monat statt.'},
+  {id:'g50',thema:'Gemeinderat: Tagesordnung',type:'choice',q:'Der Bürgermeister gibt die Themen der Sitzung bekannt. Wie heißt diese Liste?',opts:['Antrag','Tagesordnung','Wahlzettel','Stundenplan'],a:1,
+   tips:['Die Liste bringt Ordnung in den Tag.','Das Wort besteht aus „Tag“ und einem zweiten Wort.','Tag und Ordnung ergeben zusammen das Wort.'],
+   lob:'Du hast das Wort zusammengesetzt.',explain:'Die Liste mit den Themen heißt Tagesordnung.'},
+  {id:'g62',thema:'Gemeinderat: Themen besprechen',type:'choice',q:'Was passiert in der Sitzung vor der Abstimmung?',opts:['Alle Themen werden ausführlich besprochen.','Die Bürger sammeln Unterschriften.','Es wird sofort gebaut.','Der Bürgermeister entscheidet allein.'],a:0,
+   tips:['Erst reden, dann entscheiden.','Beim Schwimmbad hieß dieser Schritt Diskussion.','Besprechen heißt: gemeinsam darüber reden.'],
+   lob:'Du hast die Reihenfolge der Sitzung im Kopf.',explain:'Vor der Abstimmung werden alle Themen ausführlich besprochen.'}]},
+ {id:'k12',title:'Abstimmen im Gemeinderat',src:'Nr. 10',fach:'HSU',min:6,info:'Lies jede Frage zweimal. Achte auf Wörter wie „alle“, „beide“ oder eine Zahl in der Frage.',tasks:[
+  {id:'g4',thema:'Gemeinderat: Die Mehrheit entscheidet',type:'choice',q:'Im Gemeinderat entscheidet immer der Bürgermeister allein. Stimmt das?',opts:['Ja, denn er leitet die Sitzung.','Nein, der Gemeinderat stimmt ab und die Mehrheit entscheidet.','Nein, die Einwohner rufen im Rathaus an und entscheiden.'],a:1,
+   tips:['Achte auf die Wörter „immer“ und „allein“.','Der Bürgermeister eröffnet und leitet die Sitzung. Wer entscheidet am Ende?','Am Ende gibt es eine Abstimmung. Mehr als die Hälfte gewinnt.'],
+   lob:'Du hast auf „immer“ und „allein“ geachtet.',explain:'Der Bürgermeister leitet die Sitzung. Entschieden wird durch eine Abstimmung, bei der die Mehrheit gewinnt.'},
+  {id:'g51',thema:'Gemeinderat: Mehrheit',type:'choice',q:'Was bedeutet Mehrheit bei einer Abstimmung?',opts:['mehr als die Hälfte','mindestens 20 %','genau die Hälfte','alle'],a:0,
+   tips:['Im Wort steckt „mehr“.','Mehr als was?','Bei 10 Leuten braucht man mindestens 6.'],
+   lob:'Du hast das Wort zerlegt.',explain:'Mehrheit heißt: mehr als die Hälfte.'},
+  {id:'g52',thema:'Gemeinderat: Wen vertritt er?',type:'choice',q:'Wessen Wünsche und Interessen vertritt der Gemeinderat?',opts:['die der Baufirmen','die der Bürger','die der Nachbargemeinde','die des Bürgermeisters'],a:1,
+   tips:['Wer hat den Gemeinderat gewählt?','Der Gemeinderat entscheidet stellvertretend für sie.','Es sind die Menschen, die in der Gemeinde wohnen.'],
+   lob:'Du hast überlegt, wer den Gemeinderat gewählt hat.',explain:'Die Gemeindevertretung vertritt die Wünsche und Interessen der Bürger.'},
+  {id:'g63',thema:'Gemeinderat: Wahl alle sechs Jahre',type:'choice',q:'Wie oft wird der Gemeinderat gewählt?',opts:['jeden Monat','nur ein einziges Mal','alle zwei Jahre','alle sechs Jahre'],a:3,
+   tips:['Genauso oft wie der Bürgermeister.','Nicht verwechseln: Einmal im Monat ist die Sitzung.','Es ist ein halbes Dutzend Jahre.'],
+   lob:'Du hast Wahl und Sitzung auseinandergehalten.',explain:'Alle sechs Jahre finden Wahlen statt.'}]},
+ {id:'k13',title:'Mitbestimmen und Antrag',src:'Nr. 9 und 11',fach:'HSU',min:7,info:'Lies jede Frage zweimal. Achte auf Wörter wie „alle“, „beide“ oder eine Zahl in der Frage. Bei einer Aufgabe tippst du die Schritte in der richtigen Reihenfolge an. Noch einmal tippen nimmt einen Schritt zurück.',tasks:[
+  {id:'g47',thema:'Mitbestimmen: vier Möglichkeiten',type:'words',q:'Wie können Bürger in der Gemeinde mitbestimmen? Tippe alle vier Möglichkeiten an.',
+   words:['einen Antrag stellen','die Zeitung abbestellen','sich als Kandidat für den Gemeinderat aufstellen lassen','zur Bürgersprechstunde beim Gemeinderat gehen','im Rathaus übernachten','beim Bürgerentscheid abstimmen'],a:[0,2,3,5],
+   tips:['Es sind vier.','Zwei Antworten sind Unsinn.','Antrag, Kandidat, Sprechstunde, Abstimmung.'],
+   lob:'Du hast die vier Bilder aus dem Heft wiedererkannt.',explain:'Einen Antrag stellen, sich als Kandidat aufstellen lassen, zur Bürgersprechstunde gehen und beim Bürgerentscheid abstimmen.'},
+  {id:'g48',thema:'Mitbestimmen: Partizipation',type:'choice',q:'Welches Fremdwort bedeutet Mitwirkung?',opts:['Initiative','Partizipation','Kommune','Tagesordnung'],a:1,
+   tips:['Das Wort stand im Kreis in der Mitte.','Es beginnt mit P.','Es klingt wie das englische Wort für mitmachen: participate.'],
+   lob:'Du hast dir das Fremdwort gemerkt.',explain:'Mitwirkung heißt auch Partizipation.'},
+  {id:'g53',thema:'Antrag: Brief oder E-Mail',type:'choice',q:'Wie stellt man einen Antrag bei der Gemeinde?',opts:['mit einem Anruf bei der Feuerwehr','gar nicht, das dürfen nur Gemeinderäte','mit einem Brief oder einer E-Mail','mit einem Plakat am Schwimmbad'],a:2,
+   tips:['Ein Antrag muss schriftlich sein.','Es gibt zwei Wege: auf Papier oder am Computer.','Post oder Internet.'],
+   lob:'Du hast an „schriftlich“ gedacht.',explain:'Einen Antrag stellt man mit einem Brief oder einer E-Mail.'},
+  {id:'g11',thema:'Vom Antrag zum Bau: Reihenfolge',type:'order',q:'Wir wollen ein Schwimmbad! Tippe die sechs Schritte in der richtigen Reihenfolge an.',
+   words:['Planung','Antrag stellen','Bauen','Abstimmung im Gemeinderat','Verhandlung und Verträge','Diskussion im Gemeinderat'],a:[1,5,3,4,0,2],
+   tips:['Womit fängt alles an? Jemand muss den Wunsch aufschreiben.','Im Gemeinderat wird erst geredet und dann abgestimmt.','Nach dem Ja kommen Verträge, dann der Plan, ganz am Schluss der Bagger.'],
+   lob:'Du hast dir den Weg Schritt für Schritt vorgestellt.',explain:'Antrag stellen, Diskussion, Abstimmung, Verhandlung und Verträge, Planung, Bauen.'},
+  {id:'g54',thema:'Antrag: Verträge',type:'choice',q:'Nach dem Ja im Gemeinderat wird verhandelt. Wer schließt die Verträge für den Bau?',opts:['Kinder und Lehrer','Feuerwehr und Polizei','Bürgermeister und Unternehmer','Bürgerinitiative und Zeitung'],a:2,
+   tips:['Im Heft geben sich zwei Figuren die Hand.','Einer vertritt die Gemeinde, der andere die Baufirma.','Wer unterschreibt für die Gemeinde die Verträge?'],
+   lob:'Du hast das Bild mit dem Handschlag vor Augen.',explain:'Der Bürgermeister und der Unternehmer verhandeln und schließen die Verträge.'}]},
+ {id:'k14',title:'Der Weg zum Bürgerentscheid',src:'Nr. 12',fach:'HSU',min:7,info:'Lies jede Frage zweimal. Achte auf Wörter wie „alle“, „beide“ oder eine Zahl in der Frage. Bei einer Aufgabe tippst du die Schritte in der richtigen Reihenfolge an. Noch einmal tippen nimmt einen Schritt zurück.',tasks:[
+  {id:'g55',thema:'Bürgerinitiative: Was ist das?',type:'choice',q:'Was ist eine Bürgerinitiative?',opts:['Eine Abstimmung aller Bürger.','Viele Menschen schließen sich zusammen, um ein gemeinsames Ziel zu erreichen.','Eine Sitzung des Gemeinderats.','Ein Amt im Rathaus.'],a:1,
+   tips:['Initiative heißt: selbst etwas anfangen.','Einer allein schafft es nicht.','Viele Bürger, ein Ziel.'],
+   lob:'Du hast die Bürger-Wörter auseinandergehalten.',explain:'In einer Bürgerinitiative schließen sich viele Menschen zusammen, um ein gemeinsames Ziel zu erreichen.'},
+  {id:'g12',thema:'Bürgerentscheid: Reihenfolge',type:'order',q:'Der Gemeinderat hat den Antrag abgelehnt. Was können die Bürger jetzt der Reihe nach tun?',
+   words:['Bürgerentscheid: Alle Bürger stimmen ab','Bürgerinitiative gründen','Unterschriften sammeln','Bürgerbegehren starten'],a:[1,3,2,0],
+   tips:['Zuerst müssen sich Menschen mit dem gleichen Ziel zusammentun.','Begehren heißt: etwas wollen. Entscheid heißt: Es wird entschieden. Was kommt zuletzt?','Für das Bürgerbegehren braucht man viele Unterschriften. Erst danach stimmen alle ab.'],
+   lob:'Du hast die ähnlichen Wörter mit „Bürger“ auseinandergehalten.',explain:'Bürgerinitiative gründen, Bürgerbegehren starten, Unterschriften sammeln, dann der Bürgerentscheid.'},
+  {id:'g56',thema:'Bürgerbegehren: Unterschriften',type:'choice',q:'Wie viele Unterschriften braucht man für ein Bürgerbegehren mindestens?',opts:['von 20 % der Wahlberechtigten','von mehr als 50 % der Wahlberechtigten','von 5 % der Wahlberechtigten','von allen Wahlberechtigten'],a:0,
+   tips:['Die Zahl hast du im Heft in die Lücke geschrieben.','Es ist weniger als die Hälfte.','Jeder Fünfte muss unterschreiben.'],
+   lob:'Du hast die zwei Prozentzahlen nicht verwechselt.',explain:'Laut Heft braucht man Unterschriften von mindestens 20 % der Wahlberechtigten.'},
+  {id:'g57',thema:'Bürgerentscheid: Wann gewonnen?',type:'choice',q:'Wann ist ein Bürgerentscheid gewonnen?',opts:['bei mehr als 50 % Ja-Stimmen','bei 20 % Ja-Stimmen','wenn der Bürgermeister zustimmt','wenn der Gemeinderat zustimmt'],a:0,
+   tips:['Es entscheidet wieder die Mehrheit.','Mehrheit heißt: mehr als die Hälfte.','Die Hälfte sind 50 %.'],
+   lob:'Du hast dein Wissen über die Mehrheit benutzt.',explain:'Bei mehr als 50 % Ja-Stimmen ist der Bürgerentscheid gewonnen.'},
+  {id:'g58',thema:'Bürgerentscheid: Umsetzung',type:'choice',q:'Die Bürger haben im Bürgerentscheid mit Ja gestimmt. Was muss der Gemeinderat jetzt tun?',opts:['Er muss neu gewählt werden.','Er darf den Antrag noch einmal ablehnen.','Er darf den Entscheid ignorieren.','Er muss den Entscheid umsetzen.'],a:3,
+   tips:['Achte auf das Wort „muss“.','Die Bürger haben entschieden. Der Gemeinderat kann es nicht mehr ändern.','Umsetzen heißt: Es wird wirklich gemacht.'],
+   lob:'Du hast auf „muss“ geachtet.',explain:'Der Gemeinderat muss den Entscheid der Bürger umsetzen.'}]}
+];
+const SETS={hsu:{name:'HSU: Unsere Gemeinde',blocks:HSU},lesen:{name:'Leseprobe-Training',blocks:LESEN}};
+const T={};Object.keys(SETS).forEach(k=>SETS[k].blocks.forEach((b,bi)=>b.tasks.forEach((t,ti)=>T[t.id]={t,bi,ti,set:k})));
+let BLOCKS,TOTAL;
+function useSet(k){S.set=SETS[k]?k:'hsu';BLOCKS=SETS[S.set].blocks;TOTAL=BLOCKS.reduce((a,b)=>a+b.tasks.length,0)}
+const ids=()=>BLOCKS.flatMap(b=>b.tasks.map(t=>t.id));
+const feel=()=>(S.feels||{})[S.set];
+const CONF={s:'sicher',h:'halb sicher',g:'geraten'};
+const KEY='lernwerkstatt-proto-1';
+function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.done)return r}catch(e){}return{done:{},blocks:[],heft:[],feel:null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+let S=load(),view='heute',cur=null,pinOk=false,pinMsg='';useSet(S.set);
+const fresh=()=>({sel:null,wrong:[],tips:0,tries:0,status:'open',msg:'',conf:null});
+const main=document.getElementById('main');
+
+function daysToExam(){const n=new Date(),a=new Date(n.getFullYear(),n.getMonth(),n.getDate()),e=new Date(2026,10,18);return Math.round((e-a)/864e5)}
+function examLine(){const d=daysToExam();return d>1?'Leseprobe in '+d+' Tagen':d===1?'Leseprobe morgen':d===0?'Leseprobe heute':'Die Leseprobe war am 18.11.'}
+function selfCount(){return ids().filter(id=>S.done[id]&&S.done[id].solved==='self').length}
+
+function vHeute(){
+  const nb=BLOCKS.filter(b=>S.blocks.includes(b.id)).length,all=nb===BLOCKS.length;
+  let h='<div class="stack"><h1>Hallo!</h1><p class="muted">'+(BLOCKS.length>3?'Dieses Paket fragt den ganzen Stoff ab: '+BLOCKS.length+' Blöcke, zusammen etwa '+BLOCKS.reduce((a,b)=>a+b.min,0)+' Minuten. Drei Blöcke am Tag reichen. Du wählst, womit du anfängst.':'Dein Plan für heute: '+BLOCKS.length+' Blöcke, etwa '+BLOCKS.reduce((a,b)=>a+b.min,0)+' Minuten. Du wählst die Reihenfolge.')+'</p><div class="row"><span class="label">Paket</span>'+Object.keys(SETS).map(k=>'<button class="tab" data-act="set" data-s="'+k+'" aria-pressed="'+(k===S.set)+'">'+SETS[k].name+'</button>').join('')+'</div></div>';
+  h+='<div class="banner"><span>'+examLine()+' (Mittwoch, 18.11.)</span><button class="btn ghost" style="border-color:var(--ball-ink);color:var(--ball-ink)" data-act="nav" data-v="probe">Lernplan ansehen</button></div>';
+  h+='<div class="plan">'+BLOCKS.map((b,i)=>{const d=S.blocks.includes(b.id);const n=b.tasks.filter(t=>S.done[t.id]).length;
+    return '<section class="card'+(d?' done':'')+'"><span class="label">'+b.fach+' · ca. '+b.min+' Min.</span><h3>'+b.title+'</h3><p class="muted small">'+b.tasks.length+' Aufgaben'+(n&&!d?' · '+n+' geschafft':'')+'</p>'+
+    (d?'<p><b>Fertig.</b></p>':'<button class="btn" data-act="start" data-b="'+i+'">'+(n?'Weitermachen':'Los geht’s')+'</button>')+'</section>'}).join('')+'</div>';
+  if(all){h+='<section class="panel stack">'+(feel()?'<h2>Geschafft für heute.</h2><p>Du hast '+selfCount()+' von '+TOTAL+' Aufgaben selbst gelöst. Morgen geht es weiter. Jetzt ist Pause.</p>':
+    '<h2>Alle Blöcke fertig. Wie war es heute?</h2><div class="row"><button class="btn ghost" data-act="feel" data-f="leicht">Leicht</button><button class="btn ghost" data-act="feel" data-f="genau richtig">Genau richtig</button><button class="btn ghost" data-act="feel" data-f="schwer">Schwer</button></div>')+'</section>'}
+  const part=Math.round(nb/BLOCKS.length*100);
+  const tiles=[['Unterfranken',100],['Oberfranken',100],null,['Mittelfranken',part,1],['Oberpfalz',0],null,['Schwaben',0],['Oberbayern',0],['Niederbayern',0]];
+  h+='<section class="stack"><h2>Deine Bayern-Karte</h2><p class="muted small">Jeder fertige Block füllt Mittelfranken ein Stück. Die zwei vollen Bezirke sind ein Beispielstand.</p><div class="map">'+
+    tiles.map(t=>t?'<div class="tile'+(t[1]===100?' full':'')+(t[2]?' now':'')+'"><i style="height:'+t[1]+'%"></i><span>'+t[0]+'</span></div>':'<div class="tile blank"></div>').join('')+'</div></section>';
+  return h;
+}
+
+function vUeben(){
+  const b=BLOCKS[cur.b];
+  if(cur.status==='blockdone'){
+    const rs=b.tasks.map(t=>S.done[t.id]).filter(Boolean),self=rs.filter(r=>r.solved==='self').length,tips=rs.reduce((a,r)=>a+r.tips,0);
+    return '<section class="panel stack"><span class="label">Block fertig</span><h1>'+b.title+'</h1><p>Du hast '+self+' von '+b.tasks.length+' Aufgaben selbst gelöst.'+(tips?' Du hast '+tips+(tips===1?' Tipp':' Tipps')+' geholt. Das ist klug: Tipps helfen beim Denken.':'')+'</p>'+
+      (rs.some(r=>r.solved!=='self'||r.tries>1)?'<p class="muted">Was noch nicht geklappt hat, wartet im Fehlerheft auf dich.</p>':'')+
+      '<div class="row"><button class="btn" data-act="nav" data-v="heute">Zurück zum Plan</button></div></section>';
+  }
+  const t=b.tasks[cur.i],open=cur.status==='open',has=t.type==='order'?(cur.sel||[]).length===t.words.length:cur.sel!==null&&cur.sel!==''&&!(Array.isArray(cur.sel)&&!cur.sel.length);
+  let h='<div class="row" style="justify-content:space-between"><div class="stack" style="gap:4px"><span class="label">'+(cur.retry?'Fehlerheft · nochmal üben':b.title)+'</span>'+
+    (cur.retry?'':'<div class="dots" aria-label="Aufgabe '+(cur.i+1)+' von '+b.tasks.length+'">'+b.tasks.map((x,k)=>'<b class="'+(k<cur.i?'on':k===cur.i?'cur':'')+'"></b>').join('')+'</div>')+'</div>'+
+    '<button class="btn ghost" data-act="nav" data-v="'+(cur.retry?'heft':'heute')+'">Pause</button></div>';
+  h+='<div class="work'+(b.text?' two':'')+'">';
+  if(b.text){const ev=!open&&t.ev?t.ev:[];h+='<article class="panel stack"><h2>'+b.text.title+'</h2><p class="read">'+b.text.s.map((s,k)=>ev.includes(k)?'<mark>'+s+'</mark>':s).join(' ')+'</p>'+(ev.length?'<p class="muted small">Gelb markiert: die Stelle, an der die Antwort steht.</p>':'')+'</article>'}
+  h+='<section class="panel stack">'+(cur.i===0&&!cur.retry&&open&&!cur.tries?'<p class="note small">'+b.info+'</p>':'')+'<p class="q">'+t.q+'</p>';
+  if(t.type==='choice')h+='<div class="opts">'+t.opts.map((o,k)=>{const yes=!open&&k===t.a,no=cur.wrong.includes(k);return '<button class="opt'+(yes?' yes':'')+(no?' no':'')+'" data-act="pick" data-k="'+k+'" aria-pressed="'+(cur.sel===k)+'"'+(!open||no?' disabled':'')+'>'+o+'</button>'}).join('')+'</div>';
+  if(t.type==='words')h+='<div class="words">'+t.words.map((w,k)=>{const on=(cur.sel||[]).includes(k),yes=!open&&t.a.includes(k);return '<button class="opt'+(yes?' yes':'')+'" data-act="word" data-k="'+k+'" aria-pressed="'+on+'"'+(open?'':' disabled')+'>'+w+'</button>'}).join('')+'</div>';
+  if(t.type==='order')h+='<div class="opts">'+t.words.map((w,k)=>{const pos=open?(cur.sel||[]).indexOf(k):t.a.indexOf(k);return '<button class="opt'+(open?'':' yes')+'" data-act="word" data-k="'+k+'" aria-pressed="'+(open&&pos>=0)+'"'+(open?'':' disabled')+'>'+(pos>=0?'<b>'+(pos+1)+'.</b> ':'')+w+'</button>'}).join('')+'</div>';
+  if(t.type==='number')h+='<div class="row"><label for="num-'+t.id+'" class="label">Dein Ergebnis</label><input class="num" id="num-'+t.id+'" inputmode="numeric" autocomplete="off" value="'+(cur.sel||'')+'"'+(open?'':' disabled')+'><b>'+t.unit+'</b></div>';
+  for(let k=0;k<cur.tips;k++)h+='<p class="tip"><b>Tipp '+(k+1)+':</b> '+t.tips[k]+'</p>';
+  if(cur.msg)h+='<p class="msg '+(cur.status==='right'?'ok':'bad')+'" role="status">'+cur.msg+'</p>';
+  if(open){
+    h+='<div class="stack" style="gap:8px"><span class="label">Antwort abgeben: Wie sicher bist du?</span><div class="row" id="confrow">'+Object.keys(CONF).map(c=>'<button class="btn" data-act="conf" data-c="'+c+'"'+(has?'':' disabled')+'>'+CONF[c][0].toUpperCase()+CONF[c].slice(1)+'</button>').join('')+'</div></div>';
+    h+='<div class="row">'+(cur.tips<3?'<button class="btn tipb" data-act="tip">Tipp holen ('+(cur.tips+1)+' von 3)</button>':'')+((cur.tries>=2||cur.tips>=3)?'<button class="btn ghost" data-act="show">Lösung zeigen</button>':'')+'</div>';
+  }else{
+    h+='<p><b>'+(cur.status==='right'?'So ist es: ':'Die Lösung: ')+'</b>'+t.explain+'</p>'+(cur.status==='shown'?'<p class="muted small">Diese Aufgabe kommt ins Fehlerheft. Dort übst du sie noch einmal.</p>':'')+
+      '<div class="row"><button class="btn" data-act="next">'+(cur.retry?'Zurück zum Fehlerheft':'Weiter')+'</button></div>';
+  }
+  return h+'</section></div>';
+}
+
+function vHeft(){
+  let h='<div class="stack"><h1>Fehlerheft</h1><p class="muted">Hier landet, was noch nicht sofort geklappt hat. Fehler sind Trainingsstoff. Was du hier löst, verschwindet.</p></div>';
+  if(!S.heft.length)return h+'<section class="panel"><p>Dein Fehlerheft ist leer. Aufgaben erscheinen hier, sobald eine beim ersten Versuch nicht klappt.</p></section>';
+  return h+'<div class="stack">'+S.heft.map(id=>{const x=T[id];return '<section class="card"><span class="label">'+x.t.thema+'</span><p>'+x.t.q+'</p><button class="btn" data-act="retry" data-id="'+id+'">Nochmal üben</button></section>'}).join('')+'</div>';
+}
+
+function vProbe(){
+  const plan=[['Di 10.11.','Genau lesen und Angaben verbinden','10'],['Mi 11.11.','Zwischen den Zeilen lesen: Gefühle und Gründe','11'],['Do 12.11.','Fragen genau nehmen: Wer? Was? Wann?','12'],['Fr 13.11.','Frei (Joker-Tag)','13'],['Sa 14.11.','Sachtext lesen und Stellen markieren','14'],['So 15.11.','Frei (Joker-Tag)','15'],['Mo 16.11.','Übungsprobe auf Papier, danach gemeinsam durchsehen','16'],['Di 17.11.','Nur Fehlerheft, dann Schluss','17'],['Mi 18.11.','Leseprobe in der Schule','18']];
+  const n=new Date(),td=(n.getFullYear()===2026&&n.getMonth()===10)?String(n.getDate()):'';
+  return '<div class="stack"><h1>Proben-Trainer</h1><p class="muted">'+examLine()+'. So ist der Stoff auf die Tage verteilt.</p></div><div class="days">'+
+    plan.map(p=>'<div class="day'+(p[2]===td?' today':'')+(p[2]==='18'?' exam':'')+'"><time>'+p[0]+'</time><span>'+p[1]+(p[2]===td?' <b>(heute)</b>':'')+'</span></div>').join('')+'</div>'+
+    '<section class="panel stack"><h3>Drei Schritte für jede Lesefrage</h3><ol style="margin:0;padding-left:1.2em" class="stack"><li>Frage zweimal lesen und das Fragewort unterstreichen.</li><li>Die Stelle im Text suchen und markieren.</li><li>Antwort mit der Stelle vergleichen: Passt jedes Wort?</li></ol></section>';
+}
+
+function report(){
+  const rs=ids().filter(id=>S.done[id]).map(id=>[id,S.done[id]]),n=rs.length,hf=S.heft.filter(id=>ids().includes(id));if(!n)return 'Heute wurde noch keine Aufgabe bearbeitet.';
+  const self=rs.filter(([,r])=>r.solved==='self').length,first=rs.filter(([,r])=>r.solved==='self'&&r.tries===1).length,tips=rs.reduce((a,[,r])=>a+r.tips,0);
+  const over=rs.filter(([,r])=>r.conf==='s'&&(r.tries>1||r.solved!=='self')).length;
+  let s='Heute wurden '+n+' von '+TOTAL+' Aufgaben bearbeitet und '+self+' davon selbst gelöst, '+first+' im ersten Versuch. Dabei wurden '+tips+(tips===1?' Tipp':' Tipps')+' genutzt.';
+  if(over)s+=' Bei '+over+(over===1?' Aufgabe':' Aufgaben')+' war er sich sicher und lag zunächst daneben. Das spricht für zu schnelles Lesen der Angabe.';
+  s+=hf.length?' Noch üben: '+[...new Set(hf.map(id=>T[id].t.thema))].join('; ')+'.':' Im Fehlerheft ist nichts offen.';
+  if(feel())s+=' Seine eigene Einschätzung der Einheit: '+feel()+'.';
+  return s;
+}
+function vEltern(){
+  if(!pinOk)return '<div class="stack"><h1>Elternbereich</h1><p class="muted">Bitte PIN eingeben. Im Prototyp lautet sie 1234.</p></div><section class="panel stack"><div class="row"><label for="pin" class="label">PIN</label><input class="num" id="pin" inputmode="numeric" maxlength="4" autocomplete="off"><button class="btn" data-act="pin">Öffnen</button></div>'+(pinMsg?'<p class="msg bad" role="status">'+pinMsg+'</p>':'')+'</section>';
+  let h='<div class="stack"><h1>Elternbereich</h1></div><section class="panel stack"><span class="label">Kurzbericht von heute · '+SETS[S.set].name+'</span><p>'+report()+'</p></section>';
+  h+='<section class="panel stack"><span class="label">Abdeckung des Stoffs</span><div class="scroll"><table><thead><tr><th>Block</th><th>Hefteintrag</th><th>Aufgaben</th><th>Bearbeitet</th><th>Selbst gelöst</th></tr></thead><tbody>'+BLOCKS.map(b=>{const d=b.tasks.filter(t=>S.done[t.id]);return '<tr><td>'+b.title+'</td><td>'+(b.src||'–')+'</td><td>'+b.tasks.length+'</td><td>'+d.length+'</td><td>'+d.filter(t=>S.done[t.id].solved==='self').length+'</td></tr>'}).join('')+'</tbody></table></div></section>';
+  h+='<section class="panel stack"><span class="label">Aufgaben im Detail</span><div class="scroll"><table><thead><tr><th>Thema</th><th>Versuche</th><th>Tipps</th><th>Einschätzung</th><th>Ergebnis</th></tr></thead><tbody>'+
+    ids().map(id=>{const r=S.done[id];return '<tr><td>'+T[id].t.thema+'</td>'+(r?'<td>'+r.tries+'</td><td>'+r.tips+'</td><td>'+(r.conf?CONF[r.conf]:'–')+'</td><td>'+(r.solved==='self'?'selbst gelöst':'Lösung gezeigt')+'</td>':'<td colspan="4" class="muted">noch offen</td>')+'</tr>'}).join('')+'</tbody></table></div></section>';
+  h+='<section class="panel stack"><span class="label">Einstellungen (im Prototyp nur Anzeige)</span><p>Zeitlimit je Einheit: 20 Minuten · Nächste Probe: Leseprobe am 18.11. · Themen aus dem Alltag: Fußball, Pokémon, Reisen, Skifahren, Tennis</p><div class="row"><button class="btn ghost" data-act="reset">Lernstand zurücksetzen</button></div></section>';
+  return h;
+}
+
+function render(){
+  document.querySelectorAll('.tab').forEach(t=>t.dataset.v===view?t.setAttribute('aria-current','page'):t.removeAttribute('aria-current'));
+  document.getElementById('stars').textContent='★ '+selfCount()+' von '+TOTAL;
+  main.innerHTML=({heute:vHeute,ueben:vUeben,heft:vHeft,probe:vProbe,eltern:vEltern})[view]();
+}
+function addHeft(id){if(!S.heft.includes(id))S.heft.push(id)}
+function check(c){
+  const b=BLOCKS[cur.b],t=b.tasks[cur.i];let ok;
+  if(t.type==='choice')ok=cur.sel===t.a;
+  else if(t.type==='words')ok=[...cur.sel].sort((x,y)=>x-y).join()===t.a.join();
+  else if(t.type==='order')ok=cur.sel.join()===t.a.join();
+  else ok=Number(String(cur.sel).replace(/[^0-9]/g,''))===t.a;
+  if(!cur.conf)cur.conf=c;
+  cur.tries++;
+  if(ok){
+    cur.status='right';cur.msg=(cur.tries===1?'Richtig, gleich beim ersten Mal. ':'Jetzt stimmt es. Dranbleiben lohnt sich. ')+t.lob;
+    if(cur.retry){S.heft=S.heft.filter(x=>x!==t.id)}else{S.done[t.id]={tries:cur.tries,tips:cur.tips,conf:cur.conf,solved:'self'}}
+  }else{
+    if(t.type==='choice'){cur.wrong.push(cur.sel);cur.sel=null}
+    cur.msg=['Noch nicht. Lies die Aufgabe noch einmal ganz langsam.','Fast. Schau genau hin: Was ist wirklich gefragt?','Das passt noch nicht. Ein Tipp kann dir jetzt helfen.'][Math.min(cur.tries-1,2)];
+    addHeft(t.id);
+  }
+  save();
+}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]');if(!el)return;const a=el.dataset.act;
+  if(a==='nav'){view=el.dataset.v;cur=null;if(view!=='eltern'){pinOk=false;pinMsg=''}}
+  else if(a==='start'){const b=+el.dataset.b;let i=BLOCKS[b].tasks.findIndex(t=>!S.done[t.id]);if(i<0)i=0;cur=Object.assign({b,i},fresh());view='ueben'}
+  else if(a==='set'){useSet(el.dataset.s);save()}
+  else if(a==='retry'){const x=T[el.dataset.id];useSet(x.set);cur=Object.assign({b:x.bi,i:x.ti,retry:true},fresh());view='ueben'}
+  else if(a==='pick'){cur.sel=+el.dataset.k}
+  else if(a==='word'){const k=+el.dataset.k;cur.sel=cur.sel||[];cur.sel=cur.sel.includes(k)?cur.sel.filter(x=>x!==k):cur.sel.concat(k)}
+  else if(a==='tip'){cur.tips++}
+  else if(a==='conf'){check(el.dataset.c)}
+  else if(a==='show'){const t=BLOCKS[cur.b].tasks[cur.i];cur.status='shown';cur.msg='';addHeft(t.id);if(!cur.retry)S.done[t.id]={tries:cur.tries,tips:cur.tips,conf:cur.conf,solved:'shown'};save()}
+  else if(a==='next'){
+    if(cur.retry){view='heft';cur=null}
+    else{const b=BLOCKS[cur.b];if(cur.i+1<b.tasks.length){cur=Object.assign({b:cur.b,i:cur.i+1},fresh())}else{if(!S.blocks.includes(b.id))S.blocks.push(b.id);save();cur.status='blockdone'}}
+  }
+  else if(a==='feel'){S.feels=S.feels||{};S.feels[S.set]=el.dataset.f;save()}
+  else if(a==='pin'){const v=document.getElementById('pin').value;if(v==='1234'){pinOk=true;pinMsg=''}else{pinMsg='Die PIN stimmt nicht. Im Prototyp lautet sie 1234.'}}
+  else if(a==='reset'){S={done:{},blocks:[],heft:[],feels:{},set:S.set};save()}
+  render();
+  if(a==='next'||a==='start'||a==='retry'||a==='nav')window.scrollTo(0,0);
+});
+document.addEventListener('input',e=>{
+  if(cur&&e.target.id&&e.target.id.indexOf('num-')===0){cur.sel=e.target.value.trim();document.querySelectorAll('#confrow button').forEach(b=>b.disabled=!cur.sel)}
+});
+render();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>
