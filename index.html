@@ -468,7 +468,7 @@ function vUeben(){
   if(b.text){const ev=!open&&t.ev?t.ev:[];h+='<article class="panel stack"><h2>'+b.text.title+'</h2><p class="read">'+b.text.s.map((s,k)=>ev.includes(k)?'<mark>'+s+'</mark>':s).join(' ')+'</p>'+(ev.length?'<p class="muted small">Gelb markiert: die Stelle, an der die Antwort steht.</p>':'')+'</article>'}
   h+='<section class="panel stack">'+(cur.i===0&&!cur.retry&&!cur.twin&&open&&!cur.tries?'<p class="note small">'+b.info+'</p>':'')+'<p class="q">'+t.q+'</p>';
   const ak=askOf(t);
-  if(ak&&open&&!cur.asked&&!cur.retry&&!cur.twin){if(!cur.askPerm)cur.askPerm=shuffled(ak.opts.length);
+  if(ak&&open&&!cur.asked&&!cur.retry&&!cur.twin){if(!cur.askPerm)cur.askPerm=ak.fixed?ak.opts.map((_,k)=>k):shuffled(ak.opts.length);
     return h+'<div class="stack" style="gap:8px"><span class="label">Erst genau lesen</span><p><b>'+ak.q+'</b></p><div class="opts">'+cur.askPerm.map(k=>'<button class="opt" data-act="ask" data-k="'+k+'">'+ak.opts[k]+'</button>').join('')+'</div></div>'+(cur.askMiss?'<p class="msg bad" role="status">Noch nicht. Lies die Aufgabe noch einmal langsam, Wort für Wort.</p>':'')+'</section></div>'}
   if(t.type==='choice')h+='<div class="opts">'+cur.perm.map(k=>{const o=t.opts[k],yes=!open&&k===t.a,no=cur.wrong.includes(k);return '<button class="opt'+(yes?' yes':'')+(no?' no':'')+'" data-act="pick" data-k="'+k+'" aria-pressed="'+(cur.sel===k)+'"'+(!open||no?' disabled':'')+'>'+o+'</button>'}).join('')+'</div>';
   if(t.type==='words')h+='<div class="words">'+t.words.map((w,k)=>{const on=(cur.sel||[]).includes(k),yes=!open&&t.a.includes(k);return '<button class="opt'+(yes?' yes':'')+'" data-act="word" data-k="'+k+'" aria-pressed="'+on+'"'+(open?'':' disabled')+'>'+w+'</button>'}).join('')+'</div>';
@@ -562,7 +562,7 @@ function askOf(t){
   if(t.ask!==undefined)return t.ask;
   t.ask=null;
   if(t.type==='words'){const n=t.a.length,w=(t.q.toLowerCase().match(/[a-zäöüß]+/g)||[]).find(x=>NUMW[x]===n);
-    if(w){const o=[n-1,n,n+1,n+2].filter(x=>x>0).map(String);t.ask={q:'Lies genau: Wie viele Antworten sind gesucht?',opts:o,a:o.indexOf(String(n))}}}
+    if(w){const o=[n-1,n,n+1,n+2].filter(x=>x>0).map(String);t.ask={q:'Lies genau: Wie viele Antworten sind gesucht?',opts:o,a:o.indexOf(String(n)),fixed:true}}}
   return t.ask}
 function shuffled(n){const p=[...Array(n).keys()];for(let x=n-1;x>0;x--){const y=Math.floor(Math.random()*(x+1));[p[x],p[y]]=[p[y],p[x]]}return p}
 function selfcheck(){
