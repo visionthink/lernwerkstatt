@@ -557,13 +557,7 @@ function twinOf(t){
   if(t.type==='order'){const it=t.a.map((k,i)=>(i+1)+'. '+t.words[k]);return Object.assign(base,{q:fix(t.q),items:it,need:it.length})}
   return null}
 function nextTwin(){if(!cur||cur.twin||!SETS[S.set].twin)return null;const t=curT();if(t.type==='recall')return null;return (cur.status==='shown'||cur.late)?twinOf(t):null}
-const NUMW={beide:2,beides:2,zwei:2,drei:3,vier:4,fünf:5,sechs:6,sieben:7};
-function askOf(t){
-  if(t.ask!==undefined)return t.ask;
-  t.ask=null;
-  if(t.type==='words'){const n=t.a.length,w=(t.q.toLowerCase().match(/[a-zäöüß]+/g)||[]).find(x=>NUMW[x]===n);
-    if(w){const o=[n-1,n,n+1,n+2].filter(x=>x>0).map(String);t.ask={q:'Lies genau: Wie viele Antworten sind gesucht?',opts:o,a:o.indexOf(String(n)),fixed:true}}}
-  return t.ask}
+function askOf(t){return t.ask||null}
 function shuffled(n){const p=[...Array(n).keys()];for(let x=n-1;x>0;x--){const y=Math.floor(Math.random()*(x+1));[p[x],p[y]]=[p[y],p[x]]}return p}
 function selfcheck(){
   const t=curT(),got=(cur.sel||[]).length,ok=got>=t.need;
