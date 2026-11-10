@@ -353,7 +353,62 @@ const HSU=[
    lob:'Du hast dein Wissen über die Mehrheit benutzt.',explain:'Bei mehr als 50 % Ja-Stimmen ist der Bürgerentscheid gewonnen.'},
   {id:'g58',thema:'Bürgerentscheid: Umsetzung',type:'choice',q:'Die Bürger haben im Bürgerentscheid mit Ja gestimmt. Was muss der Gemeinderat jetzt tun?',opts:['Er muss neu gewählt werden.','Er darf den Antrag noch einmal ablehnen.','Er darf den Entscheid ignorieren.','Er muss den Entscheid umsetzen.'],a:3,
    tips:['Achte auf das Wort „muss“.','Die Bürger haben entschieden. Der Gemeinderat kann es nicht mehr ändern.','Umsetzen heißt: Es wird wirklich gemacht.'],
-   lob:'Du hast auf „muss“ geachtet.',explain:'Der Gemeinderat muss den Entscheid der Bürger umsetzen.'}]}
+   lob:'Du hast auf „muss“ geachtet.',explain:'Der Gemeinderat muss den Entscheid der Bürger umsetzen.'}]},
+ {id:'k15',title:'Aufschreiben wie in der Probe, Teil 1',src:'alle Einträge',fach:'HSU',min:8,info:'Hier schreibst du ins Heft, genau wie in der Probe. Danach vergleichst du selbst mit der Lösung.',tasks:[
+  {id:'r1',thema:'Aufschreiben: die fünf Wahlgrundsätze',type:'recall',q:'Schreibe die fünf Wahlgrundsätze auf.',
+   items:['allgemein','unmittelbar','frei','gleich','geheim'],need:5,
+   tips:['Es sind fünf Wörter.','Zwei beginnen mit g, eines mit a, eines mit u und eines mit f.','Denk an die Erklärungen: jeder darf, direkt, selbst entscheiden, gleiche Anzahl, niemand darf wissen.'],
+   lob:'Du hast die Wörter ganz ohne Auswahl aus dem Kopf geholt.'},
+  {id:'r2',thema:'Aufschreiben: Was heißt geheim?',type:'recall',q:'Was bedeutet „geheim“ bei einer Wahl? Schreibe einen Satz.',
+   items:['Niemand darf wissen, wen ich gewählt habe.'],need:1,
+   tips:['Was genau bleibt geheim?','Denk an die Wahlkabine.','Der Satz beginnt mit „Niemand darf wissen …“.'],
+   lob:'Du hast einen ganzen Satz geschrieben.'},
+  {id:'r3',thema:'Aufschreiben: Was ist eine Gemeinde?',type:'recall',q:'Schreibe auf: Wie nennt man eine Gemeinde auch? Wie heißen die Menschen, die dort wohnen? Wer leitet die Gemeinde? Wer entscheidet mit?',
+   items:['Kommune','Bürger oder Einwohner','der Bürgermeister','der Gemeinderat'],need:4,
+   tips:['Es sind vier Antworten, eine zu jeder Frage.','Das andere Wort für Gemeinde beginnt mit K.','Einer leitet, eine Gruppe entscheidet mit.'],
+   lob:'Du hast jede der vier Fragen einzeln beantwortet.'},
+  {id:'r4',thema:'Aufschreiben: Aufgaben der Gemeinde',type:'recall',q:'Nenne sechs Aufgaben der Gemeinde.',
+   items:['Müllabfuhr','Strom, Gas, Wasser','Feuerwehr','Schulen','Kindergärten','Sportplätze','Straßenbau','Bücherei','Landschaftsgärtner','Kinderkrippe','Bürgerhäuser und Bürgersäle'],need:6,
+   tips:['Denk an die sieben Bilder im Heft.','Was holt den Müll, was löscht Feuer, wo lernst du?','Unter den Bildern standen noch vier weitere Aufgaben.'],
+   lob:'Du hast sechs Aufgaben aus dem Kopf aufgezählt.'}]},
+ {id:'k16',title:'Aufschreiben wie in der Probe, Teil 2',src:'alle Einträge',fach:'HSU',min:8,info:'Hier schreibst du ins Heft, genau wie in der Probe. Danach vergleichst du selbst mit der Lösung.',tasks:[
+  {id:'r5',thema:'Aufschreiben: Unterföhring',type:'recall',q:'Schreibe auf: Wie heißt der Erste Bürgermeister? Welcher Fluss fließt durch Unterföhring? Seit wann gibt es Unterföhring? Seit wann fährt die S-Bahn?',
+   items:['Florian Klietsch','die Isar','seit 1180','seit dem 30. September 1973'],need:4,
+   tips:['Es sind vier Antworten: ein Name, ein Fluss, ein Jahr und ein Datum.','Der Fluss ist das blaue Band im Wappen.','Das Jahr beginnt mit 11, das Datum liegt im September.'],
+   lob:'Du hast Namen und Zahlen ohne Hilfe gewusst.'},
+  {id:'r6',thema:'Aufschreiben: das Wappen',type:'recall',q:'Wofür stehen die Teile im Wappen? Schreibe zu jedem Teil einen Satz: Ziegel, blaues Band, gekrönter Kopf, goldener Hintergrund.',
+   items:['Ziegel: Ziegeleien brachten Unterföhring viel Geld ein.','Blaues Band: Die Isar fließt durch Unterföhring.','Gekrönter Kopf: Er erinnert an die Geschichte Unterföhrings.','Goldener Hintergrund: Er steht für die vielen Gelder in Unterföhring.'],need:4,
+   tips:['Geh das Wappen Teil für Teil durch.','Zwei Teile haben mit Geld zu tun.','Ein Teil ist ein Fluss, ein Teil erinnert an früher.'],
+   lob:'Du hast zu jedem Teil einen eigenen Satz geschrieben.'},
+  {id:'r7',thema:'Aufschreiben: Ämter im Rathaus',type:'recall',q:'Schreibe zu jedem Problem das passende Amt auf: neu hergezogen, Schlüssel verloren, Haus bauen, Baby bekommen.',
+   items:['Neu hergezogen: Einwohnermeldeamt','Schlüssel verloren: Fundamt','Haus bauen: Bauamt','Baby bekommen: Standesamt'],need:4,
+   tips:['Es sind vier verschiedene Ämter.','In drei Namen steckt ein Hinweis: Einwohner, Fund, Bau.','Beim Baby ist es das Amt, in dem man auch heiratet.'],
+   lob:'Du hast die Ämter ohne Liste gewusst.'},
+  {id:'r8',thema:'Aufschreiben: Aufgaben des Bürgermeisters',type:'recall',q:'Nenne vier Aufgaben des Bürgermeisters.',
+   items:['den Gemeinderat leiten','die Sitzung eröffnen','dafür sorgen, dass Beschlüsse erfüllt werden','die Gemeinde nach außen vertreten','vieles unterschreiben, zum Beispiel Verträge','Bauvorhaben planen','Vereine unterstützen','Feste und Veranstaltungen eröffnen'],need:4,
+   tips:['Was macht er in der Gemeinderatssitzung?','Was macht er, wenn Besucher kommen oder ein Fest beginnt?','Im Heft standen vier Punkte unter „Weitere Aufgaben“.'],
+   lob:'Du hast vier Aufgaben aus dem Kopf aufgezählt.'}]},
+ {id:'k17',title:'Aufschreiben wie in der Probe, Teil 3',src:'alle Einträge',fach:'HSU',min:10,info:'Hier schreibst du ins Heft, genau wie in der Probe. Danach vergleichst du selbst mit der Lösung.',tasks:[
+  {id:'r9',thema:'Aufschreiben: Wahl des Bürgermeisters',type:'recall',q:'Schreibe auf: Wie oft wird der Bürgermeister gewählt? Wer wählt ihn? Wie alt muss man mindestens sein? Was braucht man noch?',
+   items:['alle sechs Jahre','direkt von den Bürgern','mindestens 18 Jahre','die deutsche Staatsangehörigkeit'],need:4,
+   tips:['Es sind vier Antworten, eine zu jeder Frage.','Die Zahl der Jahre ist ein halbes Dutzend.','Man muss erwachsen sein und zu Deutschland gehören.'],
+   lob:'Du hast alle vier Fragen beantwortet.'},
+  {id:'r10',thema:'Aufschreiben: die Gemeinderatssitzung',type:'recall',q:'Wie läuft eine Gemeinderatssitzung ab? Schreibe mindestens vier Dinge auf.',
+   items:['Sie findet einmal im Monat statt.','Der Bürgermeister eröffnet und leitet die Sitzung.','Er gibt die Tagesordnung bekannt.','Alle Themen werden ausführlich besprochen.','Am Ende gibt es eine Abstimmung.','Die Mehrheit entscheidet, also mehr als die Hälfte.'],need:4,
+   tips:['Wie oft? Wer leitet?','Wie heißt die Liste mit den Themen?','Was passiert ganz am Ende, und wer gewinnt?'],
+   lob:'Du hast den Ablauf in eigenen Worten aufgeschrieben.'},
+  {id:'r11',thema:'Aufschreiben: vier Wege mitzubestimmen',type:'recall',q:'Wie können Bürger in der Gemeinde mitbestimmen? Schreibe die vier Möglichkeiten auf.',
+   items:['einen Antrag stellen','sich als Kandidat für den Gemeinderat aufstellen lassen','zur Bürgersprechstunde beim Gemeinderat gehen','beim Bürgerentscheid abstimmen'],need:4,
+   tips:['Im Heft waren es vier Bilder um einen Kreis.','Etwas schreiben, selbst kandidieren, hingehen und reden, abstimmen.','Im Kreis in der Mitte stand Mitwirkung.'],
+   lob:'Du hast alle vier Wege gewusst.'},
+  {id:'r12',thema:'Aufschreiben: vom Antrag zum Bau',type:'recall',q:'Wir wollen ein Schwimmbad! Schreibe die sechs Schritte vom Antrag bis zum Bau in der richtigen Reihenfolge auf.',
+   items:['1. Antrag stellen','2. Diskussion im Gemeinderat','3. Abstimmung im Gemeinderat','4. Verhandlung und Verträge','5. Planung','6. Bauen'],need:6,
+   tips:['Womit fängt alles an?','Im Gemeinderat wird erst geredet und dann abgestimmt.','Nach dem Ja kommen Verträge, dann der Plan, zuletzt der Bagger.'],
+   lob:'Du hast alle sechs Schritte in der richtigen Reihenfolge.'},
+  {id:'r13',thema:'Aufschreiben: der Weg zum Bürgerentscheid',type:'recall',q:'Der Gemeinderat hat den Antrag abgelehnt. Was können die Bürger jetzt tun? Schreibe den Weg auf.',
+   items:['Bürgerinitiative gründen','Bürgerbegehren starten','Unterschriften sammeln, mindestens 20 %','Bürgerentscheid: Alle Bürger stimmen ab','Bei mehr als 50 % Ja muss der Gemeinderat den Entscheid umsetzen'],need:4,
+   tips:['Zuerst tun sich Menschen zusammen.','Dann sammeln sie Unterschriften für ein Begehren.','Am Ende stimmen alle ab. Was muss der Gemeinderat danach tun?'],
+   lob:'Du hast die Bürger-Wörter auseinandergehalten.'}]}
 ];
 const SETS={hsu:{name:'HSU: Unsere Gemeinde',blocks:HSU},lesen:{name:'Leseprobe-Training',blocks:LESEN}};
 const T={};Object.keys(SETS).forEach(k=>SETS[k].blocks.forEach((b,bi)=>b.tasks.forEach((t,ti)=>T[t.id]={t,bi,ti,set:k})));
@@ -377,6 +432,7 @@ function vHeute(){
   const nb=BLOCKS.filter(b=>S.blocks.includes(b.id)).length,all=nb===BLOCKS.length;
   let h='<div class="stack"><h1>Hallo!</h1><p class="muted">'+(BLOCKS.length>3?'Dieses Paket fragt den ganzen Stoff ab: '+BLOCKS.length+' Blöcke, zusammen etwa '+BLOCKS.reduce((a,b)=>a+b.min,0)+' Minuten. Drei Blöcke am Tag reichen. Du wählst, womit du anfängst.':'Dein Plan für heute: '+BLOCKS.length+' Blöcke, etwa '+BLOCKS.reduce((a,b)=>a+b.min,0)+' Minuten. Du wählst die Reihenfolge.')+'</p><div class="row"><span class="label">Paket</span>'+Object.keys(SETS).map(k=>'<button class="tab" data-act="set" data-s="'+k+'" aria-pressed="'+(k===S.set)+'">'+SETS[k].name+'</button>').join('')+'</div></div>';
   h+='<div class="banner"><span>'+examLine()+' (Mittwoch, 18.11.)</span><button class="btn ghost" style="border-color:var(--ball-ink);color:var(--ball-ink)" data-act="nav" data-v="probe">Lernplan ansehen</button></div>';
+  const due=dueIds();if(due.length)h+='<section class="panel stack"><span class="label">Wiederholen, damit es im Kopf bleibt</span><h2>'+(due.length===1?'1 Aufgabe ist':due.length+' Aufgaben sind')+' heute dran</h2><p class="muted small">Immer höchstens 5 auf einmal. Fang am besten damit an.</p><div class="row"><button class="btn" data-act="review">Wiederholen</button></div></section>';
   h+='<div class="plan">'+BLOCKS.map((b,i)=>{const d=S.blocks.includes(b.id);const n=b.tasks.filter(t=>S.done[t.id]).length;
     return '<section class="card'+(d?' done':'')+'"><span class="label">'+b.fach+' · ca. '+b.min+' Min.</span><h3>'+b.title+'</h3><p class="muted small">'+b.tasks.length+' Aufgaben'+(n&&!d?' · '+n+' geschafft':'')+'</p>'+
     (d?'<p><b>Fertig.</b></p>':'<button class="btn" data-act="start" data-b="'+i+'">'+(n?'Weitermachen':'Los geht’s')+'</button>')+'</section>'}).join('')+'</div>';
@@ -390,27 +446,31 @@ function vHeute(){
 }
 
 function vUeben(){
-  const b=BLOCKS[cur.b];
+  const b=(cur.blk||BLOCKS[cur.b]);
+  if(cur.status==='blockdone'&&cur.blk){const g=cur.res.filter(x=>x===2).length,n=cur.blk.tasks.length,rest=dueIds().length;
+    return '<section class="panel stack"><span class="label">Wiederholung fertig</span><h1>'+g+' von '+n+' sofort gewusst</h1><p>'+(g===n?'Alles saß. Diese Aufgaben kommen erst in ein paar Tagen wieder.':'Was noch nicht sofort saß, kommt bald wieder dran.')+'</p><div class="row">'+(rest?'<button class="btn" data-act="review">Noch '+Math.min(rest,5)+' wiederholen</button>':'')+'<button class="btn ghost" data-act="nav" data-v="heute">Zurück zum Plan</button></div></section>'}
   if(cur.status==='blockdone'){
     const rs=b.tasks.map(t=>S.done[t.id]).filter(Boolean),self=rs.filter(r=>r.solved==='self').length,tips=rs.reduce((a,r)=>a+r.tips,0);
     return '<section class="panel stack"><span class="label">Block fertig</span><h1>'+b.title+'</h1><p>Du hast '+self+' von '+b.tasks.length+' Aufgaben selbst gelöst.'+(tips?' Du hast '+tips+(tips===1?' Tipp':' Tipps')+' geholt. Das ist klug: Tipps helfen beim Denken.':'')+'</p>'+
       (rs.some(r=>r.solved!=='self'||r.tries>1)?'<p class="muted">Was noch nicht geklappt hat, wartet im Fehlerheft auf dich.</p>':'')+
       '<div class="row"><button class="btn" data-act="nav" data-v="heute">Zurück zum Plan</button></div></section>';
   }
-  const t=b.tasks[cur.i],open=cur.status==='open',has=t.type==='order'?(cur.sel||[]).length===t.words.length:cur.sel!==null&&cur.sel!==''&&!(Array.isArray(cur.sel)&&!cur.sel.length);
+  const t=b.tasks[cur.i];if(t.type==='choice'&&!cur.perm){cur.perm=t.opts.map((_,k)=>k);for(let x=cur.perm.length-1;x>0;x--){const y=Math.floor(Math.random()*(x+1));[cur.perm[x],cur.perm[y]]=[cur.perm[y],cur.perm[x]]}}
+  const open=cur.status==='open',has=t.type==='order'?(cur.sel||[]).length===t.words.length:cur.sel!==null&&cur.sel!==''&&!(Array.isArray(cur.sel)&&!cur.sel.length);
   let h='<div class="row" style="justify-content:space-between"><div class="stack" style="gap:4px"><span class="label">'+(cur.retry?'Fehlerheft · nochmal üben':b.title)+'</span>'+
     (cur.retry?'':'<div class="dots" aria-label="Aufgabe '+(cur.i+1)+' von '+b.tasks.length+'">'+b.tasks.map((x,k)=>'<b class="'+(k<cur.i?'on':k===cur.i?'cur':'')+'"></b>').join('')+'</div>')+'</div>'+
     '<button class="btn ghost" data-act="nav" data-v="'+(cur.retry?'heft':'heute')+'">Pause</button></div>';
   h+='<div class="work'+(b.text?' two':'')+'">';
   if(b.text){const ev=!open&&t.ev?t.ev:[];h+='<article class="panel stack"><h2>'+b.text.title+'</h2><p class="read">'+b.text.s.map((s,k)=>ev.includes(k)?'<mark>'+s+'</mark>':s).join(' ')+'</p>'+(ev.length?'<p class="muted small">Gelb markiert: die Stelle, an der die Antwort steht.</p>':'')+'</article>'}
   h+='<section class="panel stack">'+(cur.i===0&&!cur.retry&&open&&!cur.tries?'<p class="note small">'+b.info+'</p>':'')+'<p class="q">'+t.q+'</p>';
-  if(t.type==='choice')h+='<div class="opts">'+t.opts.map((o,k)=>{const yes=!open&&k===t.a,no=cur.wrong.includes(k);return '<button class="opt'+(yes?' yes':'')+(no?' no':'')+'" data-act="pick" data-k="'+k+'" aria-pressed="'+(cur.sel===k)+'"'+(!open||no?' disabled':'')+'>'+o+'</button>'}).join('')+'</div>';
+  if(t.type==='choice')h+='<div class="opts">'+cur.perm.map(k=>{const o=t.opts[k],yes=!open&&k===t.a,no=cur.wrong.includes(k);return '<button class="opt'+(yes?' yes':'')+(no?' no':'')+'" data-act="pick" data-k="'+k+'" aria-pressed="'+(cur.sel===k)+'"'+(!open||no?' disabled':'')+'>'+o+'</button>'}).join('')+'</div>';
   if(t.type==='words')h+='<div class="words">'+t.words.map((w,k)=>{const on=(cur.sel||[]).includes(k),yes=!open&&t.a.includes(k);return '<button class="opt'+(yes?' yes':'')+'" data-act="word" data-k="'+k+'" aria-pressed="'+on+'"'+(open?'':' disabled')+'>'+w+'</button>'}).join('')+'</div>';
   if(t.type==='order')h+='<div class="opts">'+t.words.map((w,k)=>{const pos=open?(cur.sel||[]).indexOf(k):t.a.indexOf(k);return '<button class="opt'+(open?'':' yes')+'" data-act="word" data-k="'+k+'" aria-pressed="'+(open&&pos>=0)+'"'+(open?'':' disabled')+'>'+(pos>=0?'<b>'+(pos+1)+'.</b> ':'')+w+'</button>'}).join('')+'</div>';
   if(t.type==='number')h+='<div class="row"><label for="num-'+t.id+'" class="label">Dein Ergebnis</label><input class="num" id="num-'+t.id+'" inputmode="numeric" autocomplete="off" value="'+(cur.sel||'')+'"'+(open?'':' disabled')+'><b>'+t.unit+'</b></div>';
   for(let k=0;k<cur.tips;k++)h+='<p class="tip"><b>Tipp '+(k+1)+':</b> '+t.tips[k]+'</p>';
   if(cur.msg)h+='<p class="msg '+(cur.status==='right'?'ok':'bad')+'" role="status">'+cur.msg+'</p>';
-  if(open){
+  if(t.type==='recall')h+=recallUI(t,open);
+  else if(open){
     h+='<div class="stack" style="gap:8px"><span class="label">Antwort abgeben: Wie sicher bist du?</span><div class="row" id="confrow">'+Object.keys(CONF).map(c=>'<button class="btn" data-act="conf" data-c="'+c+'"'+(has?'':' disabled')+'>'+CONF[c][0].toUpperCase()+CONF[c].slice(1)+'</button>').join('')+'</div></div>';
     h+='<div class="row">'+(cur.tips<3?'<button class="btn tipb" data-act="tip">Tipp holen ('+(cur.tips+1)+' von 3)</button>':'')+((cur.tries>=2||cur.tips>=3)?'<button class="btn ghost" data-act="show">Lösung zeigen</button>':'')+'</div>';
   }else{
@@ -441,6 +501,9 @@ function report(){
   let s='Heute wurden '+n+' von '+TOTAL+' Aufgaben bearbeitet und '+self+' davon selbst gelöst, '+first+' im ersten Versuch. Dabei wurden '+tips+(tips===1?' Tipp':' Tipps')+' genutzt.';
   if(over)s+=' Bei '+over+(over===1?' Aufgabe':' Aufgaben')+' war er sich sicher und lag zunächst daneben. Das spricht für zu schnelles Lesen der Angabe.';
   s+=hf.length?' Noch üben: '+[...new Set(hf.map(id=>T[id].t.thema))].join('; ')+'.':' Im Fehlerheft ist nichts offen.';
+  const rc=rs.filter(([id])=>T[id].t.type==='recall');if(rc.length)s+=' Beim Aufschreiben ohne Auswahl waren '+rc.filter(([,x])=>x.solved==='self').length+' von '+rc.length+' Aufgaben vollständig.';
+  const lt=rs.filter(([,x])=>x.solved==='late').length;if(lt)s+=' '+lt+(lt===1?' Aufgabe wurde':' Aufgaben wurden')+' erst nach mehr als zwei Versuchen richtig und '+(lt===1?'zählt':'zählen')+' nicht als gelöst.';
+  s+=' Heute zur Wiederholung fällig: '+dueIds().length+'.';
   if(feel())s+=' Seine eigene Einschätzung der Einheit: '+feel()+'.';
   return s;
 }
@@ -448,8 +511,8 @@ function vEltern(){
   if(!pinOk)return '<div class="stack"><h1>Elternbereich</h1><p class="muted">Bitte PIN eingeben. Im Prototyp lautet sie 1234.</p></div><section class="panel stack"><div class="row"><label for="pin" class="label">PIN</label><input class="num" id="pin" inputmode="numeric" maxlength="4" autocomplete="off"><button class="btn" data-act="pin">Öffnen</button></div>'+(pinMsg?'<p class="msg bad" role="status">'+pinMsg+'</p>':'')+'</section>';
   let h='<div class="stack"><h1>Elternbereich</h1></div><section class="panel stack"><span class="label">Kurzbericht von heute · '+SETS[S.set].name+'</span><p>'+report()+'</p></section>';
   h+='<section class="panel stack"><span class="label">Abdeckung des Stoffs</span><div class="scroll"><table><thead><tr><th>Block</th><th>Hefteintrag</th><th>Aufgaben</th><th>Bearbeitet</th><th>Selbst gelöst</th></tr></thead><tbody>'+BLOCKS.map(b=>{const d=b.tasks.filter(t=>S.done[t.id]);return '<tr><td>'+b.title+'</td><td>'+(b.src||'–')+'</td><td>'+b.tasks.length+'</td><td>'+d.length+'</td><td>'+d.filter(t=>S.done[t.id].solved==='self').length+'</td></tr>'}).join('')+'</tbody></table></div></section>';
-  h+='<section class="panel stack"><span class="label">Aufgaben im Detail</span><div class="scroll"><table><thead><tr><th>Thema</th><th>Versuche</th><th>Tipps</th><th>Einschätzung</th><th>Ergebnis</th></tr></thead><tbody>'+
-    ids().map(id=>{const r=S.done[id];return '<tr><td>'+T[id].t.thema+'</td>'+(r?'<td>'+r.tries+'</td><td>'+r.tips+'</td><td>'+(r.conf?CONF[r.conf]:'–')+'</td><td>'+(r.solved==='self'?'selbst gelöst':'Lösung gezeigt')+'</td>':'<td colspan="4" class="muted">noch offen</td>')+'</tr>'}).join('')+'</tbody></table></div></section>';
+  h+='<section class="panel stack"><span class="label">Aufgaben im Detail</span><div class="scroll"><table><thead><tr><th>Thema</th><th>Versuche</th><th>Tipps</th><th>Einschätzung</th><th>Ergebnis</th><th>Wiederholung</th></tr></thead><tbody>'+
+    ids().map(id=>{const r=S.done[id];return '<tr><td>'+T[id].t.thema+'</td>'+(r?'<td>'+r.tries+'</td><td>'+r.tips+'</td><td>'+(r.conf?CONF[r.conf]:'–')+'</td><td>'+(r.solved==='self'?(r.need?r.got+' von '+T[id].t.items.length+' aufgeschrieben':'selbst gelöst'):r.solved==='late'?'erst nach '+r.tries+' Versuchen':r.solved==='miss'?r.got+' aufgeschrieben, '+r.need+' gebraucht':'Lösung gezeigt')+'</td><td>'+(S.rev&&S.rev[id]?(S.rev[id].due<=today()?'heute':'in '+(S.rev[id].due-today())+(S.rev[id].due-today()===1?' Tag':' Tagen')):'–')+'</td>':'<td colspan="5" class="muted">noch offen</td>')+'</tr>'}).join('')+'</tbody></table></div></section>';
   h+='<section class="panel stack"><span class="label">Einstellungen (im Prototyp nur Anzeige)</span><p>Zeitlimit je Einheit: 20 Minuten · Nächste Probe: Leseprobe am 18.11. · Themen aus dem Alltag: Fußball, Pokémon, Reisen, Skifahren, Tennis</p><div class="row"><button class="btn ghost" data-act="reset">Lernstand zurücksetzen</button></div></section>';
   return h;
 }
@@ -460,8 +523,32 @@ function render(){
   main.innerHTML=({heute:vHeute,ueben:vUeben,heft:vHeft,probe:vProbe,eltern:vEltern})[view]();
 }
 function addHeft(id){if(!S.heft.includes(id))S.heft.push(id)}
+const INT=[1,3,7,21];
+function today(){const n=new Date();return Math.round(new Date(n.getFullYear(),n.getMonth(),n.getDate()).getTime()/864e5)}
+function sched(id){const x=T[id];return !SETS[x.set].blocks[x.bi].text}
+function dueIds(){const d=today();return ids().filter(id=>S.rev&&S.rev[id]&&S.rev[id].due<=d&&!S.heft.includes(id)).sort((a,b)=>S.rev[a].due-S.rev[b].due)}
+function record(t,solved,extra){
+  const ql=solved==='self'?(cur.tries===1&&cur.tips===0?2:1):0;
+  if(!cur.retry&&!cur.blk)S.done[t.id]=Object.assign({tries:cur.tries,tips:cur.tips,conf:cur.conf,solved},extra||{});
+  if(ql===0)addHeft(t.id);else if(cur.retry||cur.blk)S.heft=S.heft.filter(x=>x!==t.id);
+  if(sched(t.id)){S.rev=S.rev||{};const r=S.rev[t.id]||{box:0};if(ql===2){r.due=today()+INT[r.box];r.box=Math.min(r.box+1,INT.length-1)}else{r.box=0;r.due=today()+(ql?1:0)}S.rev[t.id]=r}
+  if(cur.res)cur.res.push(ql);
+}
+function selfcheck(){
+  const t=(cur.blk||BLOCKS[cur.b]).tasks[cur.i],got=(cur.sel||[]).length,ok=got>=t.need;
+  cur.tries=1;cur.status=ok?'right':'shown';
+  cur.msg=ok?'Du hast '+got+' von '+t.items.length+' aufgeschrieben. '+t.lob:'Du hattest '+got+', gebraucht werden '+t.need+'. Schau dir an, was gefehlt hat.';
+  record(t,ok?'self':'miss',{got,need:t.need});save();
+}
+function recallUI(t,open){
+  const next='<div class="row"><button class="btn" data-act="next">'+(cur.retry?'Zurück zum Fehlerheft':'Weiter')+'</button></div>';
+  if(open&&!cur.revealed)return '<p class="note">Schreibe die Antwort in dein Heft.'+(t.need<t.items.length?' Du brauchst '+t.need+'.':'')+' Tippe erst danach weiter.</p><div class="row">'+(cur.tips<3?'<button class="btn tipb" data-act="tip">Tipp holen ('+(cur.tips+1)+' von 3)</button>':'')+'<button class="btn" data-act="reveal">Ich habe es aufgeschrieben</button></div>';
+  let h='<span class="label">'+(open?'Vergleiche mit deinem Heft. Tippe alles an, was du aufgeschrieben hast.':'Die Lösung')+'</span><div class="opts">'+t.items.map((w,k)=>{const on=(cur.sel||[]).includes(k);return '<button class="opt'+(on?' yes':'')+'" data-act="word" data-k="'+k+'" aria-pressed="'+on+'"'+(open?'':' disabled')+'>'+w+'</button>'}).join('')+'</div>';
+  if(open)return h+'<p class="muted small">Sei ehrlich zu dir. Nur so weißt du, was du noch üben musst.</p><div class="row"><button class="btn" data-act="selfcheck">Fertig verglichen</button></div>';
+  return h+(cur.status==='right'?'':'<p class="muted small">Diese Aufgabe kommt ins Fehlerheft. Dort übst du sie noch einmal.</p>')+next;
+}
 function check(c){
-  const b=BLOCKS[cur.b],t=b.tasks[cur.i];let ok;
+  const b=(cur.blk||BLOCKS[cur.b]),t=b.tasks[cur.i];let ok;
   if(t.type==='choice')ok=cur.sel===t.a;
   else if(t.type==='words')ok=[...cur.sel].sort((x,y)=>x-y).join()===t.a.join();
   else if(t.type==='order')ok=cur.sel.join()===t.a.join();
@@ -469,8 +556,9 @@ function check(c){
   if(!cur.conf)cur.conf=c;
   cur.tries++;
   if(ok){
-    cur.status='right';cur.msg=(cur.tries===1?'Richtig, gleich beim ersten Mal. ':'Jetzt stimmt es. Dranbleiben lohnt sich. ')+t.lob;
-    if(cur.retry){S.heft=S.heft.filter(x=>x!==t.id)}else{S.done[t.id]={tries:cur.tries,tips:cur.tips,conf:cur.conf,solved:'self'}}
+    const late=cur.tries>2;
+    cur.status='right';cur.msg=late?'Jetzt stimmt es. Du hast dafür viele Versuche gebraucht. Deshalb üben wir die Aufgabe noch einmal.':(cur.tries===1?'Richtig, gleich beim ersten Mal. ':'Jetzt stimmt es. Dranbleiben lohnt sich. ')+t.lob;
+    record(t,late?'late':'self');
   }else{
     if(t.type==='choice'){cur.wrong.push(cur.sel);cur.sel=null}
     cur.msg=['Noch nicht. Lies die Aufgabe noch einmal ganz langsam.','Fast. Schau genau hin: Was ist wirklich gefragt?','Das passt noch nicht. Ein Tipp kann dir jetzt helfen.'][Math.min(cur.tries-1,2)];
@@ -484,20 +572,23 @@ document.addEventListener('click',e=>{
   else if(a==='start'){const b=+el.dataset.b;let i=BLOCKS[b].tasks.findIndex(t=>!S.done[t.id]);if(i<0)i=0;cur=Object.assign({b,i},fresh());view='ueben'}
   else if(a==='set'){useSet(el.dataset.s);save()}
   else if(a==='retry'){const x=T[el.dataset.id];useSet(x.set);cur=Object.assign({b:x.bi,i:x.ti,retry:true},fresh());view='ueben'}
+  else if(a==='review'){const l=dueIds().slice(0,5).map(id=>T[id].t);if(l.length){cur=Object.assign({b:0,i:0,blk:{id:'rev',title:'Wiederholen',info:'Diese Aufgaben kennst du schon. Mal sehen, was noch im Kopf ist.',tasks:l},res:[]},fresh());view='ueben'}}
+  else if(a==='reveal'){cur.revealed=true;cur.sel=[]}
+  else if(a==='selfcheck'){selfcheck()}
   else if(a==='pick'){cur.sel=+el.dataset.k}
   else if(a==='word'){const k=+el.dataset.k;cur.sel=cur.sel||[];cur.sel=cur.sel.includes(k)?cur.sel.filter(x=>x!==k):cur.sel.concat(k)}
   else if(a==='tip'){cur.tips++}
   else if(a==='conf'){check(el.dataset.c)}
-  else if(a==='show'){const t=BLOCKS[cur.b].tasks[cur.i];cur.status='shown';cur.msg='';addHeft(t.id);if(!cur.retry)S.done[t.id]={tries:cur.tries,tips:cur.tips,conf:cur.conf,solved:'shown'};save()}
+  else if(a==='show'){const t=(cur.blk||BLOCKS[cur.b]).tasks[cur.i];cur.status='shown';cur.msg='';record(t,'shown');save()}
   else if(a==='next'){
     if(cur.retry){view='heft';cur=null}
-    else{const b=BLOCKS[cur.b];if(cur.i+1<b.tasks.length){cur=Object.assign({b:cur.b,i:cur.i+1},fresh())}else{if(!S.blocks.includes(b.id))S.blocks.push(b.id);save();cur.status='blockdone'}}
+    else{const b=(cur.blk||BLOCKS[cur.b]);if(cur.i+1<b.tasks.length){cur=Object.assign({b:cur.b,i:cur.i+1,blk:cur.blk,res:cur.res},fresh())}else{if(!cur.blk&&!S.blocks.includes(b.id))S.blocks.push(b.id);save();cur.status='blockdone'}}
   }
   else if(a==='feel'){S.feels=S.feels||{};S.feels[S.set]=el.dataset.f;save()}
   else if(a==='pin'){const v=document.getElementById('pin').value;if(v==='1234'){pinOk=true;pinMsg=''}else{pinMsg='Die PIN stimmt nicht. Im Prototyp lautet sie 1234.'}}
   else if(a==='reset'){S={done:{},blocks:[],heft:[],feels:{},set:S.set};save()}
   render();
-  if(a==='next'||a==='start'||a==='retry'||a==='nav')window.scrollTo(0,0);
+  if(a==='next'||a==='start'||a==='retry'||a==='nav'||a==='review')window.scrollTo(0,0);
 });
 document.addEventListener('input',e=>{
   if(cur&&e.target.id&&e.target.id.indexOf('num-')===0){cur.sel=e.target.value.trim();document.querySelectorAll('#confrow button').forEach(b=>b.disabled=!cur.sel)}
