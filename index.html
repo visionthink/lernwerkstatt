@@ -93,6 +93,12 @@ table{border-collapse:collapse;width:100%;font-size:.95rem}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
 th{font-size:.8rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 summary{cursor:pointer;font-weight:800}
+.steps{display:grid;gap:10px}
+.srow{display:grid;grid-template-columns:8rem max-content;gap:12px;align-items:center;font-weight:800;font-size:1.2rem;font-variant-numeric:tabular-nums}
+.srow label{text-align:right}
+.srow.sum{border-top:3px solid var(--ink);padding-top:12px}
+.num.bad{border-color:var(--warn);background:var(--warn-bg)}
+.num:disabled{opacity:1;color:var(--ink)}
 .note{border:2px dashed var(--line);border-radius:12px;padding:10px 14px}
 </style>
 </head>
@@ -411,7 +417,65 @@ const HSU=[
    tips:['Zuerst tun sich Menschen zusammen.','Dann sammeln sie Unterschriften für ein Begehren.','Am Ende stimmen alle ab. Was muss der Gemeinderat danach tun?'],
    lob:'Du hast die Bürger-Wörter auseinandergehalten.'}]}
 ];
-const SETS={hsu:{name:'HSU: Unsere Gemeinde',blocks:HSU,twin:true},lesen:{name:'Leseprobe-Training',blocks:LESEN}};
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),f=n=>String(n).replace(/\B(?=(\d{3})+$)/g,' ');
+function digs(k){const p=[2,3,4,5,6,7,8,9];for(let x=p.length-1;x>0;x--){const y=ri(0,x);[p[x],p[y]]=[p[y],p[x]]}return p.slice(0,k)}
+function parts(n){const t=String(n);return [...t].map((d,i)=>+d*Math.pow(10,t.length-1-i)).filter(x=>x>0)}
+function hze(zero){const [h,z,e]=digs(3);return h*100+(zero?0:z*10)+e}
+function thze(zero){const [h,z,e]=digs(3);return ri(2,4)*1000+(zero?0:h*100)+z*10+e}
+function zeze(){return [ri(2,4)*10+ri(2,9),ri(2,6)*10+ri(2,9)]}
+function expl(a,n){return parts(n).map(q=>a+' · '+f(q)+' = '+f(a*q)).join(', ')+'. Zusammen: '+f(a*n)+'.'}
+function expl2(x,y){const xz=x-x%10,xe=x%10;return xz+' · '+y+' = '+f(xz*y)+', '+xe+' · '+y+' = '+f(xe*y)+'. Zusammen: '+f(x*y)+'.'}
+const TIPS1=['Zerlege die große Zahl in ihre Stellenwerte.','Rechne erst das kleine Einmaleins. Hänge dann die Nullen an.','Beispiel: 3 · 214 = 3 · 200 + 3 · 10 + 3 · 4 = 600 + 30 + 12 = 642.'];
+const TIPS2=['Zerlege die erste Zahl in Zehner und Einer.','Für die Zehnerzahl: Rechne ohne die Null und hänge sie danach an.','Beispiel: 23 · 45 = 20 · 45 + 3 · 45 = 900 + 135 = 1 035.'];
+function stepsG(a,n){return {q:'Rechne '+a+' · '+f(n)+' halbschriftlich. Fülle jede Zeile aus.',rows:parts(n).map(q=>({label:a+' · '+f(q),a:a*q})).concat([{label:'Zusammen',a:a*n,sum:true}]),tips:TIPS1,lob:'Du hast jede Teilaufgabe einzeln gerechnet und dann addiert.',explain:expl(a,n)}}
+function steps2G(x,y){const xz=x-x%10,xe=x%10;return {q:'Rechne '+x+' · '+y+' halbschriftlich. Fülle jede Zeile aus.',rows:[{label:xz+' · '+y,a:xz*y},{label:xe+' · '+y,a:xe*y},{label:'Zusammen',a:x*y,sum:true}],tips:TIPS2,lob:'Du hast die erste Zahl zerlegt und beide Teile gerechnet.',explain:expl2(x,y)}}
+function heftG(a,n){return {q:'Rechne halbschriftlich im Heft: '+a+' · '+f(n)+'. Tippe nur das Ergebnis ein.',a:a*n,tips:TIPS1,lob:'Du hast im Heft Schritt für Schritt gerechnet.',explain:expl(a,n)}}
+function heft2G(x,y){return {q:'Rechne halbschriftlich im Heft: '+x+' · '+y+'. Tippe nur das Ergebnis ein.',a:x*y,tips:TIPS2,lob:'Du hast im Heft Schritt für Schritt gerechnet.',explain:expl2(x,y)}}
+const MI='Bei jedem Versuch kommen neue Zahlen. Rechne in Ruhe, es gibt keine Zeit.';
+const MATHE=[
+ {id:'m1',title:'Zerlegen und Zehner-Einmaleins',src:'Grundlage',fach:'Mathe',min:5,info:MI,tasks:[
+  {id:'m1a',thema:'Zerlegen in Stellenwerte',type:'choice',q:'Eine Zahl in Hunderter, Zehner und Einer zerlegen.',gen(){const [h,z,e]=digs(3),n=h*100+z*10+e;return {q:'Zerlege '+n+' in Hunderter, Zehner und Einer.',opts:[h*100+' + '+z*10+' + '+e,h*100+' + '+z+' + '+e,h*10+' + '+z*10+' + '+e,h+' + '+z+' + '+e],a:0,tips:['Jede Ziffer hat einen Wert. Was ist die erste Ziffer wert?','Die erste Ziffer steht für Hunderter, die zweite für Zehner.','Beispiel: 528 = 500 + 20 + 8.'],lob:'Du hast auf den Wert jeder Ziffer geachtet.',explain:n+' = '+h*100+' + '+z*10+' + '+e+'.'}}},
+  {id:'m1b',thema:'Einmaleins mit Zehnerzahlen',type:'number',unit:'',q:'Eine Zahl mit einer Zehnerzahl malnehmen.',gen(){const a=ri(3,9),z=ri(2,9);return {q:a+' · '+z*10+' = ?',a:a*z*10,tips:['Rechne zuerst '+a+' · '+z+'.','Das Ergebnis ist zehnmal so groß. Hänge eine Null an.','Beispiel: 3 · 40. Erst 3 · 4 = 12, dann die Null: 120.'],lob:'Du hast erst das kleine Einmaleins gerechnet und dann die Null angehängt.',explain:a+' · '+z+' = '+a*z+', also '+a+' · '+z*10+' = '+f(a*z*10)+'.'}}},
+  {id:'m1c',thema:'Einmaleins mit Hunderterzahlen',type:'number',unit:'',q:'Eine Zahl mit einer Hunderterzahl malnehmen.',gen(){const a=ri(3,9),h=ri(2,9);return {q:a+' · '+h*100+' = ?',a:a*h*100,tips:['Rechne zuerst '+a+' · '+h+'.','Das Ergebnis ist hundertmal so groß. Hänge zwei Nullen an.','Beispiel: 4 · 300. Erst 4 · 3 = 12, dann zwei Nullen: 1 200.'],lob:'Du hast die zwei Nullen nicht vergessen.',explain:a+' · '+h+' = '+a*h+', also '+a+' · '+h*100+' = '+f(a*h*100)+'.'}}},
+  {id:'m1d',thema:'Einmaleins mit Tausenderzahlen',type:'number',unit:'',q:'Eine Zahl mit einer Tausenderzahl malnehmen.',gen(){const a=ri(2,6),t=ri(2,9);return {q:a+' · '+f(t*1000)+' = ?',a:a*t*1000,tips:['Rechne zuerst '+a+' · '+t+'.','Das Ergebnis ist tausendmal so groß. Hänge drei Nullen an.','Beispiel: 3 · 2 000. Erst 3 · 2 = 6, dann drei Nullen: 6 000.'],lob:'Du hast die drei Nullen angehängt.',explain:a+' · '+t+' = '+a*t+', also '+a+' · '+f(t*1000)+' = '+f(a*t*1000)+'.'}}}]},
+ {id:'m2',title:'Teilaufgaben finden',src:'Grundlage',fach:'Mathe',min:5,info:MI,tasks:[
+  {id:'m2a',thema:'Teilaufgaben aufstellen',type:'words',q:'Die drei Teilaufgaben einer Malaufgabe finden.',gen(){const a=ri(3,9),[h,z,e]=digs(3),n=h*100+z*10+e,l=[[a+' · '+h*100,1],[a+' · '+z*10,1],[a+' · '+e,1],[a+' · '+h*10,0],[a+' · '+z,0],[a*10+' · '+e,0]];for(let x=l.length-1;x>0;x--){const y=ri(0,x);[l[x],l[y]]=[l[y],l[x]]}
+    return {q:'Du rechnest '+a+' · '+n+' halbschriftlich. Tippe die drei Teilaufgaben an.',words:l.map(x=>x[0]),a:l.map((x,k)=>x[1]?k:-1).filter(k=>k>=0),tips:['Zerlege '+n+' zuerst in Hunderter, Zehner und Einer.',n+' = '+h*100+' + '+z*10+' + '+e+'. Jeder Teil wird mit '+a+' malgenommen.','Achte auf die Nullen: Die Hunderter haben zwei, die Zehner eine.'],lob:'Du hast jeden Stellenwert mit seinem richtigen Wert genommen.',explain:a+' · '+h*100+', '+a+' · '+z*10+' und '+a+' · '+e+'.'}}},
+  {id:'m2c',thema:'Teilergebnisse addieren',type:'number',unit:'',q:'Die Teilergebnisse zusammenzählen.',gen(){const a=ri(3,9),n=hze(),q=parts(n).map(x=>a*x);return {q:'Bei '+a+' · '+n+' sind die Teilergebnisse '+f(q[0])+', '+q[1]+' und '+q[2]+'. Wie heißt das Ergebnis?',a:a*n,tips:['Die Teilergebnisse werden zusammengezählt.','Rechne schrittweise: erst die ersten beiden, dann das dritte dazu.',f(q[0])+' + '+q[1]+' = '+f(q[0]+q[1])+'. Jetzt noch '+q[2]+' dazu.'],lob:'Du hast schrittweise addiert.',explain:f(q[0])+' + '+q[1]+' + '+q[2]+' = '+f(a*n)+'.'}}},
+  {id:'m2d',thema:'Fehler in einer Rechnung finden',type:'choice',q:'In einer fertigen Rechnung die falsche Zeile finden.',gen(){const a=ri(3,9),[h,z,e]=digs(3),n=h*100+z*10+e,er=ri(0,3),v=[a*h*100,a*z*10,a*e];if(er===0)v[0]=a*h*10;if(er===1)v[1]=a*z;if(er===2)v[2]=a*e+a;const sum=v[0]+v[1]+v[2]+(er===3?100:0);
+    return {q:'Tim rechnet '+a+' · '+n+'. Eine Zeile ist falsch. Welche?',opts:[a+' · '+h*100+' = '+f(v[0]),a+' · '+z*10+' = '+f(v[1]),a+' · '+e+' = '+v[2],'Zusammen: '+f(v[0])+' + '+f(v[1])+' + '+v[2]+' = '+f(sum)],a:er,tips:['Rechne jede Zeile selbst nach.','Achte besonders auf die Nullen.','Wenn alle Malaufgaben stimmen, prüfe die Addition.'],lob:'Du hast jede Zeile einzeln nachgerechnet.',explain:'Richtig wäre: '+expl(a,n)}}}]},
+ {id:'m3',title:'Einstellig mal dreistellig',src:'Kern',fach:'Mathe',min:8,info:MI,tasks:[
+  {id:'m3a',thema:'Halbschriftlich: einstellig mal dreistellig',type:'steps',q:'Einstellig mal dreistellig, Zeile für Zeile.',gen(){return stepsG(ri(3,9),hze())}},
+  {id:'m3b',thema:'Halbschriftlich: einstellig mal dreistellig',type:'steps',q:'Einstellig mal dreistellig, Zeile für Zeile.',gen(){return stepsG(ri(6,9),hze())}},
+  {id:'m3c',thema:'Halbschriftlich: Zahl mit Null in der Mitte',type:'steps',q:'Einstellig mal dreistellig mit einer Null in der Mitte.',gen(){return stepsG(ri(3,9),hze(true))}},
+  {id:'m3d',thema:'Halbschriftlich im Heft: einstellig mal dreistellig',type:'number',unit:'',q:'Einstellig mal dreistellig im Heft.',gen(){return heftG(ri(3,9),hze())}}]},
+ {id:'m4',title:'Mit dem Überschlag prüfen',src:'Kontrolle',fach:'Mathe',min:5,info:MI,tasks:[
+  {id:'m4a',thema:'Überschlag: passend runden',type:'choice',q:'Den passenden Überschlag auswählen.',gen(){const a=ri(3,9),n=hze(),r=Math.round(n/100)*100,o=r>n?r-100:r+100;return {q:'Welcher Überschlag passt am besten zu '+a+' · '+n+'?',opts:[a+' · '+r+' = '+f(a*r),a+' · '+o+' = '+f(a*o),a+' · '+r/10+' = '+f(a*r/10),a*10+' · '+r+' = '+f(a*10*r)],a:0,tips:['Runde die große Zahl auf Hunderter.','Schau auf die Zehnerziffer: 0 bis 4 abrunden, 5 bis 9 aufrunden.','Beispiel: 6 · 347. Aus 347 wird 300, also 6 · 300 = 1 800.'],lob:'Du hast richtig auf Hunderter gerundet.',explain:n+' ist gerundet '+r+'. Der Überschlag ist '+a+' · '+r+' = '+f(a*r)+'.'}}},
+  {id:'m4c',thema:'Überschlag: selbst rechnen',type:'number',unit:'',q:'Einen Überschlag selbst rechnen.',gen(){const a=ri(3,9),n=hze(),r=Math.round(n/100)*100;return {q:'Rechne nur den Überschlag zu '+a+' · '+n+'. Runde die große Zahl auf Hunderter.',a:a*r,tips:['Auf welchen Hunderter rundest du '+n+'?',n+' ist gerundet '+r+'.','Rechne '+a+' · '+r/100+' und hänge zwei Nullen an.'],lob:'Du hast erst gerundet und dann gerechnet.',explain:a+' · '+r+' = '+f(a*r)+'.'}}},
+  {id:'m4b',thema:'Überschlag: Kann das stimmen?',type:'choice',q:'Mit dem Überschlag prüfen, ob ein Ergebnis stimmen kann.',gen(){const a=ri(3,9),n=hze(),r=Math.round(n/100)*100;return {q:'Lena rechnet '+a+' · '+n+' = '+f(a*n*10)+'. Kann das stimmen?',opts:['Nein. Der Überschlag '+a+' · '+r+' = '+f(a*r)+' ist viel kleiner.','Ja, das passt zum Überschlag.','Das kann man ohne Nachrechnen nicht sagen.'],a:0,tips:['Du musst nicht genau rechnen. Mach einen Überschlag.','Überschlag: '+a+' · '+r+'.','Vergleiche: Liegt Lenas Ergebnis in der Nähe von '+f(a*r)+'?'],lob:'Du hast mit dem Überschlag geprüft, statt alles neu zu rechnen.',explain:'Der Überschlag ergibt '+f(a*r)+'. Lenas Ergebnis ist etwa zehnmal so groß. Sie hat eine Null zu viel. Richtig ist '+f(a*n)+'.'}}}]},
+ {id:'m5',title:'Einstellig mal vierstellig',src:'Kern',fach:'Mathe',min:7,info:MI,tasks:[
+  {id:'m5a',thema:'Halbschriftlich: einstellig mal vierstellig',type:'steps',q:'Einstellig mal vierstellig, Zeile für Zeile.',gen(){return stepsG(ri(3,7),thze())}},
+  {id:'m5b',thema:'Halbschriftlich: vierstellig mit Null',type:'steps',q:'Einstellig mal vierstellig mit einer Null.',gen(){return stepsG(ri(3,7),thze(true))}},
+  {id:'m5c',thema:'Halbschriftlich im Heft: einstellig mal vierstellig',type:'number',unit:'',q:'Einstellig mal vierstellig im Heft.',gen(){return heftG(ri(3,7),thze())}}]},
+ {id:'m6',title:'Zweistellig mal zweistellig',src:'Kern',fach:'Mathe',min:10,info:MI,tasks:[
+  {id:'m6a',thema:'Zweistellig mal zweistellig: richtig zerlegen',type:'choice',q:'Eine Aufgabe mit zwei zweistelligen Zahlen richtig zerlegen.',gen(){const [x,y]=zeze(),xz=x-x%10,xe=x%10,yz=y-y%10,ye=y%10;return {q:'Wie zerlegst du '+x+' · '+y+' richtig?',opts:[xz+' · '+y+' und '+xe+' · '+y,xz+' · '+yz+' und '+xe+' · '+ye,xz/10+' · '+y+' und '+xe+' · '+y,xz+' · '+y+' und '+xe+' · '+ye],a:0,tips:['Zerlege nur die erste Zahl in Zehner und Einer.','Beide Teile werden mit der ganzen zweiten Zahl malgenommen.','Beispiel: 23 · 45 = 20 · 45 und 3 · 45.'],lob:'Du hast beide Teile mit der ganzen zweiten Zahl malgenommen.',explain:x+' = '+xz+' + '+xe+'. Also '+xz+' · '+y+' und '+xe+' · '+y+'.'}}},
+  {id:'m6b',thema:'Zehnerzahl mal zweistellige Zahl',type:'number',unit:'',q:'Eine Zehnerzahl mit einer zweistelligen Zahl malnehmen.',gen(){const [x,y]=zeze(),xz=x-x%10;return {q:xz+' · '+y+' = ?',a:xz*y,tips:['Rechne zuerst '+xz/10+' · '+y+'.','Hänge dann eine Null an.','Beispiel: 20 · 45. Erst 2 · 45 = 90, dann die Null: 900.'],lob:'Du hast erst ohne die Null gerechnet.',explain:xz/10+' · '+y+' = '+xz/10*y+', also '+xz+' · '+y+' = '+f(xz*y)+'.'}}},
+  {id:'m6c',thema:'Halbschriftlich: zweistellig mal zweistellig',type:'steps',q:'Zweistellig mal zweistellig, Zeile für Zeile.',gen(){const [x,y]=zeze();return steps2G(x,y)}},
+  {id:'m6d',thema:'Halbschriftlich: zweistellig mal zweistellig',type:'steps',q:'Zweistellig mal zweistellig, Zeile für Zeile.',gen(){const [x,y]=zeze();return steps2G(x,y)}},
+  {id:'m6e',thema:'Halbschriftlich im Heft: zweistellig mal zweistellig',type:'number',unit:'',q:'Zweistellig mal zweistellig im Heft.',gen(){const [x,y]=zeze();return heft2G(x,y)}}]},
+ {id:'m7',title:'Sachaufgaben',src:'Anwendung',fach:'Mathe',min:8,info:'Lies die Aufgabe zweimal. Eine Zahl brauchst du nicht.',tasks:[
+  {id:'m7a',thema:'Sachaufgabe: Trikots',type:'number',unit:'€',q:'Sachaufgabe mit Trikots.',gen(){const k=ri(12,19),pr=ri(23,38),tr=ri(2,3);return {q:'Ein Fußballtrikot kostet '+pr+' €. Der Verein bestellt '+k+' Trikots. Die Mannschaft hat '+tr+' Trainer. Wie viel kosten alle Trikots zusammen?',a:k*pr,ask:{q:'Wonach wird gefragt?',opts:['nach dem Preis für alle Trikots','nach der Zahl der Trainer','nach dem Preis für ein Trikot'],a:0},tips:['Welche Zahl brauchst du nicht?','Die Trainer sind eine Falle. Du brauchst Preis und Anzahl.','Rechne '+k+' · '+pr+' halbschriftlich: erst '+(k-k%10)+' · '+pr+', dann '+k%10+' · '+pr+'.'],lob:'Du hast die unwichtige Zahl weggelassen.',explain:expl2(k,pr)+' Alle Trikots kosten '+f(k*pr)+' €.'}}},
+  {id:'m7b',thema:'Sachaufgabe: Skilift',type:'number',unit:'Personen',q:'Sachaufgabe mit einem Skilift.',gen(){const st=ri(6,9),n=hze(),m=ri(5,9);return {q:'Ein Skilift bringt in einer Stunde '+n+' Personen nach oben. Er läuft '+st+' Stunden am Tag. Eine Fahrt dauert '+m+' Minuten. Wie viele Personen schafft der Lift an einem Tag?',a:st*n,ask:{q:'Wonach wird gefragt?',opts:['nach den Personen an einem ganzen Tag','nach der Dauer einer Fahrt','nach den Personen in einer Stunde'],a:0},tips:['Welche Zahl brauchst du nicht?','Die Minuten sind eine Falle. Du brauchst Stunden und Personen.','Rechne '+st+' · '+n+' halbschriftlich.'],lob:'Du hast nur die Zahlen benutzt, die zur Frage passen.',explain:expl(st,n)+' Der Lift schafft '+f(st*n)+' Personen.'}}},
+  {id:'m7c',thema:'Sachaufgabe: Sammelalbum',type:'number',unit:'Karten',q:'Sachaufgabe mit einem Sammelalbum.',gen(){const se=ri(32,48),ka=pick([6,8,9]),hat=ri(11,19)*10;return {q:'Ein Sammelalbum für Pokémon-Karten hat '+se+' Seiten. Auf jede Seite passen '+ka+' Karten. Jonas hat schon '+hat+' Karten. Wie viele Karten passen in das ganze Album?',a:se*ka,ask:{q:'Wonach wird gefragt?',opts:['wie viele Karten in das Album passen','wie viele Karten Jonas noch fehlen','wie viele Karten Jonas hat'],a:0},tips:['Welche Zahl brauchst du nicht?','Wie viele Karten Jonas schon hat, ist hier egal.','Rechne '+ka+' · '+se+' halbschriftlich: '+ka+' · '+(se-se%10)+' und '+ka+' · '+se%10+'.'],lob:'Du hast genau gelesen, wonach gefragt ist.',explain:expl(ka,se)+' In das Album passen '+f(se*ka)+' Karten.'}}}]},
+ {id:'m8',title:'Rechnen wie in der Probe',src:'alles',fach:'Mathe',min:12,info:'Hier rechnest du alles im Heft, genau wie in der Probe.',tasks:[
+  {id:'m8a',thema:'Probe: einstellig mal dreistellig',type:'number',unit:'',q:'Einstellig mal dreistellig im Heft.',gen(){return heftG(ri(6,9),hze())}},
+  {id:'m8b',thema:'Probe: Zahl mit Null',type:'number',unit:'',q:'Einstellig mal dreistellig mit Null im Heft.',gen(){return heftG(ri(6,9),hze(true))}},
+  {id:'m8c',thema:'Probe: einstellig mal vierstellig',type:'number',unit:'',q:'Einstellig mal vierstellig im Heft.',gen(){return heftG(ri(4,7),thze())}},
+  {id:'m8d',thema:'Probe: zweistellig mal zweistellig',type:'number',unit:'',q:'Zweistellig mal zweistellig im Heft.',gen(){const [x,y]=zeze();return heft2G(x,y)}},
+  {id:'m8e',thema:'Aufschreiben: So rechne ich halbschriftlich',type:'recall',q:'Erkläre, wie du halbschriftlich multiplizierst. Schreibe mindestens drei Schritte auf.',items:['Ich zerlege die große Zahl in ihre Stellenwerte.','Ich rechne jede Teilaufgabe einzeln aus.','Ich addiere die Teilergebnisse.','Ich prüfe mit einem Überschlag.'],need:3,tips:['Was machst du als Erstes mit der großen Zahl?','Was passiert mit jedem Teil?','Was machst du am Schluss mit den Teilergebnissen?'],lob:'Du kannst den Rechenweg in eigenen Worten erklären.'}]}
+];
+const pick=a=>a[ri(0,a.length-1)];
+const SETS={hsu:{name:'HSU: Unsere Gemeinde',blocks:HSU,twin:true},mathe:{name:'Mathe: Halbschriftlich multiplizieren',blocks:MATHE,twin:true},lesen:{name:'Leseprobe-Training',blocks:LESEN}};
 const T={};Object.keys(SETS).forEach(k=>SETS[k].blocks.forEach((b,bi)=>b.tasks.forEach((t,ti)=>T[t.id]={t,bi,ti,set:k})));
 let BLOCKS,TOTAL;
 function useSet(k){S.set=SETS[k]?k:'hsu';BLOCKS=SETS[S.set].blocks;TOTAL=BLOCKS.reduce((a,b)=>a+b.tasks.length,0)}
@@ -460,8 +524,8 @@ function vUeben(){
       '<div class="row"><button class="btn" data-act="nav" data-v="heute">Zurück zum Plan</button></div></section>';
   }
   const t=curT();if(t.type==='choice'&&!cur.perm)cur.perm=shuffled(t.opts.length);
-  const open=cur.status==='open',has=t.type==='order'?(cur.sel||[]).length===t.words.length:cur.sel!==null&&cur.sel!==''&&!(Array.isArray(cur.sel)&&!cur.sel.length);
-  let h='<div class="row" style="justify-content:space-between"><div class="stack" style="gap:4px"><span class="label">'+(cur.twin?'Gleich noch einmal, jetzt ohne Auswahl':cur.retry?'Fehlerheft · nochmal üben':b.title)+'</span>'+
+  const open=cur.status==='open',has=t.type==='steps'?t.rows.every((_,k)=>(cur.sel||[])[k]):t.type==='order'?(cur.sel||[]).length===t.words.length:cur.sel!==null&&cur.sel!==''&&!(Array.isArray(cur.sel)&&!cur.sel.length);
+  let h='<div class="row" style="justify-content:space-between"><div class="stack" style="gap:4px"><span class="label">'+(cur.twin?(cur.twin.gen?'Gleich noch einmal, mit neuen Zahlen':'Gleich noch einmal, jetzt ohne Auswahl'):cur.retry?'Fehlerheft · nochmal üben':b.title)+'</span>'+
     (cur.retry?'':'<div class="dots" aria-label="Aufgabe '+(cur.i+1)+' von '+b.tasks.length+'">'+b.tasks.map((x,k)=>'<b class="'+(k<cur.i?'on':k===cur.i?'cur':'')+'"></b>').join('')+'</div>')+'</div>'+
     '<button class="btn ghost" data-act="nav" data-v="'+(cur.retry?'heft':'heute')+'">Pause</button></div>';
   h+='<div class="work'+(b.text?' two':'')+'">';
@@ -473,6 +537,7 @@ function vUeben(){
   if(t.type==='choice')h+='<div class="opts">'+cur.perm.map(k=>{const o=t.opts[k],yes=!open&&k===t.a,no=cur.wrong.includes(k);return '<button class="opt'+(yes?' yes':'')+(no?' no':'')+'" data-act="pick" data-k="'+k+'" aria-pressed="'+(cur.sel===k)+'"'+(!open||no?' disabled':'')+'>'+o+'</button>'}).join('')+'</div>';
   if(t.type==='words')h+='<div class="words">'+t.words.map((w,k)=>{const on=(cur.sel||[]).includes(k),yes=!open&&t.a.includes(k);return '<button class="opt'+(yes?' yes':'')+'" data-act="word" data-k="'+k+'" aria-pressed="'+on+'"'+(open?'':' disabled')+'>'+w+'</button>'}).join('')+'</div>';
   if(t.type==='order')h+='<div class="opts">'+t.words.map((w,k)=>{const pos=open?(cur.sel||[]).indexOf(k):t.a.indexOf(k);return '<button class="opt'+(open?'':' yes')+'" data-act="word" data-k="'+k+'" aria-pressed="'+(open&&pos>=0)+'"'+(open?'':' disabled')+'>'+(pos>=0?'<b>'+(pos+1)+'.</b> ':'')+w+'</button>'}).join('')+'</div>';
+  if(t.type==='steps')h+='<div class="steps">'+t.rows.map((r,k)=>{const bad=open&&(cur.badRows||[]).includes(k);return '<div class="srow'+(r.sum?' sum':'')+'"><label for="st-'+t.id+'-'+k+'">'+r.label+' =</label><input class="num'+(bad?' bad':'')+'" id="st-'+t.id+'-'+k+'" data-k="'+k+'" inputmode="numeric" autocomplete="off" value="'+(open?((cur.sel||[])[k]||''):f(r.a))+'"'+(open?'':' disabled')+'></div>'}).join('')+'</div>';
   if(t.type==='number')h+='<div class="row"><label for="num-'+t.id+'" class="label">Dein Ergebnis</label><input class="num" id="num-'+t.id+'" inputmode="numeric" autocomplete="off" value="'+(cur.sel||'')+'"'+(open?'':' disabled')+'><b>'+t.unit+'</b></div>';
   for(let k=0;k<cur.tips;k++)h+='<p class="tip"><b>Tipp '+(k+1)+':</b> '+t.tips[k]+'</p>';
   if(cur.msg)h+='<p class="msg '+(cur.status==='right'?'ok':'bad')+'" role="status">'+cur.msg+'</p>';
@@ -549,8 +614,9 @@ function tm(){if(!S.time||S.time.d!==today())S.time={d:today(),sec:0,extra:0};re
 function over(){return Math.floor(tm().sec/60)>=LIMIT+tm().extra}
 function tick(){const n=Date.now();if(view==='ueben'&&cur){tm().sec+=Math.min((n-lastTick)/1000,90);save()}lastTick=n}
 function dayPlan(){S.days=S.days||{};let d=S.days[S.set];if(!d||d.d!==today()){d=S.days[S.set]={d:today(),ids:BLOCKS.filter(b=>!S.blocks.includes(b.id)).slice(0,3).map(b=>b.id),feel:null};save()}return d}
-function curT(){return cur.twin||(cur.blk||BLOCKS[cur.b]).tasks[cur.i]}
+function curT(){if(cur.twin)return cur.twin;const t=(cur.blk||BLOCKS[cur.b]).tasks[cur.i];if(!t.gen)return t;if(!cur.inst)cur.inst=Object.assign({},t,t.gen());return cur.inst}
 function twinOf(t){
+  if(t.gen)return Object.assign({},t,t.gen(),{id:t.id+'~'});
   const base={id:t.id+'~',thema:t.thema,type:'recall',tips:t.tips,lob:'Jetzt hast du es ohne Auswahl gewusst.'},fix=x=>x.replace(/Tippe/g,'Schreibe').replace(/ an\./g,' auf.');
   if(t.type==='choice')return Object.assign(base,{q:t.q,items:[t.opts[t.a]],need:1});
   if(t.type==='words'){const it=t.a.map(k=>t.words[k]);return Object.assign(base,{q:fix(t.q),items:it,need:it.length})}
@@ -577,6 +643,7 @@ function check(c){
   if(t.type==='choice')ok=cur.sel===t.a;
   else if(t.type==='words')ok=[...cur.sel].sort((x,y)=>x-y).join()===t.a.join();
   else if(t.type==='order')ok=cur.sel.join()===t.a.join();
+  else if(t.type==='steps'){cur.badRows=t.rows.map((r,k)=>Number(String(cur.sel[k]).replace(/[^0-9]/g,''))===r.a?-1:k).filter(k=>k>=0);ok=!cur.badRows.length}
   else ok=Number(String(cur.sel).replace(/[^0-9]/g,''))===t.a;
   if(!cur.conf)cur.conf=c;
   cur.tries++;
@@ -587,7 +654,8 @@ function check(c){
   }else{
     if(t.type==='choice'){cur.wrong.push(cur.sel);cur.sel=null}
     cur.msg=['Noch nicht. Lies die Aufgabe noch einmal ganz langsam.','Fast. Schau genau hin: Was ist wirklich gefragt?','Das passt noch nicht. Ein Tipp kann dir jetzt helfen.'][Math.min(cur.tries-1,2)];
-    addHeft(t.id);
+    if(t.type==='steps')cur.msg=cur.badRows.length===1&&t.rows[cur.badRows[0]].sum?'Die Teilaufgaben stimmen. Schau dir die Addition noch einmal an.':'Rot markiert: '+(cur.badRows.length===1?'Diese Zeile stimmt':'Diese Zeilen stimmen')+' noch nicht.';
+    if(!cur.twin)addHeft(t.id);
   }
   save();
 }
@@ -622,7 +690,8 @@ document.addEventListener('click',e=>{
   if(a==='next'||a==='start'||a==='retry'||a==='nav'||a==='review')window.scrollTo(0,0);
 });
 document.addEventListener('input',e=>{
-  if(cur&&e.target.id&&e.target.id.indexOf('num-')===0){cur.sel=e.target.value.trim();document.querySelectorAll('#confrow button').forEach(b=>b.disabled=!cur.sel)}
+  if(cur&&e.target.id&&e.target.id.indexOf('st-')===0){cur.sel=cur.sel||[];cur.sel[+e.target.dataset.k]=e.target.value.trim();e.target.classList.remove('bad');const t=curT(),full=t.rows.every((_,k)=>cur.sel[k]);document.querySelectorAll('#confrow button').forEach(b=>b.disabled=!full)}
+  else if(cur&&e.target.id&&e.target.id.indexOf('num-')===0){cur.sel=e.target.value.trim();document.querySelectorAll('#confrow button').forEach(b=>b.disabled=!cur.sel)}
 });
 render();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}

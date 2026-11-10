@@ -1,5 +1,5 @@
 // Lernwerkstatt: Offline-Betrieb. Bei neuen Aufgaben VERSION hochzählen.
-const VERSION = 'lernwerkstatt-v5';
+const VERSION = 'lernwerkstatt-v7';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 
 self.addEventListener('install', e => {
