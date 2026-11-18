@@ -99,8 +99,44 @@ summary{cursor:pointer;font-weight:800}
 .fig{display:flex;justify-content:center}
 .fig svg{width:100%;max-width:340px;height:auto}
 .fig line,.fig polygon{stroke:var(--ink);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.fig .court{fill:var(--good-bg);stroke:none}
 .fig text{fill:var(--ink);font-family:var(--body);font-weight:800;font-size:18px}
+.fig svg.grid{max-width:620px}
+.fig svg.courtsvg{max-width:300px}
+.fig .kq{stroke:var(--line);stroke-width:1}
+.fig .gl{stroke:var(--ink);stroke-width:3}
+.fig .ul{stroke:var(--sky);stroke-width:3;stroke-dasharray:9 6}
+.fig .ul.ok{stroke:var(--pitch);stroke-dasharray:none;stroke-width:3.5}
+.fig .dim{stroke:var(--pitch);stroke-width:2;stroke-dasharray:3 4}
+.fig .hit{fill:transparent;stroke:none;cursor:pointer}
+.fig .hitl{stroke:transparent;stroke-width:24;cursor:pointer}
+.fig .pt{fill:var(--ink)}
+.fig .sel{fill:var(--sky)}
+.fig .vtx{fill:var(--ink)}
+.fig .fg{stroke:var(--ink);stroke-width:3;fill:none}
+.fig .gn{font-size:17px}
+.fig .gn.small{font-size:13px;fill:var(--pitch)}
+.fig .crf{fill:var(--good-bg);stroke:none}
+.fig .cl{stroke:var(--ink);stroke-width:3}
+.fig .cl.thin{stroke-width:1.5}
+.fig .cl.net{stroke-width:3.5}
+.fig .cl.lsel{stroke:var(--sky);stroke-width:6}
+.fig .cl.lok{stroke:var(--pitch);stroke-width:6}
+.fig .cn{fill:var(--warn);font-size:18px}
+.mark{stroke:var(--pitch);stroke-width:2.8;fill:none}
+.mark.u{stroke:var(--sky)}
+.mark.big{stroke-width:3}
+.markdot{fill:var(--pitch);stroke:none}
+.markdot.u{fill:var(--sky)}
+.geo{fill:var(--tip-bg);fill-opacity:.88;stroke:var(--sky);stroke-width:1.5}
+.geom{stroke:var(--sky);stroke-width:1.5}
+.geoh{stroke:var(--sky);stroke-width:1}
+.geot{fill:var(--sky);font-size:12px;font-weight:800;font-family:var(--body)}
+.opt .gl{stroke:var(--ink);stroke-width:2.5}
+.opt .pt{fill:var(--ink)}
+.opt .gn{fill:var(--ink);font:800 15px var(--body)}
+.opts.pics{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.opt.pic{padding:8px}
+.opt.pic svg{display:block;width:100%;max-width:320px;height:auto;margin:0 auto}
 .pill{font-size:.8rem;font-weight:800;border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--muted)}
 .dsel{font:inherit;font-weight:700;min-height:48px;padding:6px 10px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);min-width:0;flex:1 1 220px;max-width:100%}
 .sol{margin:0;padding-left:1.3em;display:grid;gap:4px}
@@ -487,6 +523,114 @@ const MATHE=[
   {id:'m8e',thema:'Aufschreiben: So rechne ich halbschriftlich',type:'recall',q:'Erkläre, wie du halbschriftlich multiplizierst. Schreibe mindestens drei Schritte auf.',items:['Ich zerlege die große Zahl in ihre Stellenwerte.','Ich rechne jede Teilaufgabe einzeln aus.','Ich addiere die Teilergebnisse.','Ich prüfe mit einem Überschlag.'],need:3,tips:['Was machst du als Erstes mit der großen Zahl?','Was passiert mit jedem Teil?','Was machst du am Schluss mit den Teilergebnissen?'],lob:'Du kannst den Rechenweg in eigenen Worten erklären.'}]}
 ];
 const pick=a=>a[ri(0,a.length-1)];
+// ---------- Geometrie: Karopapier, Tennisplatz, Figuren, Geodreieck ----------
+const GS=30,GM=18;
+const vdot=(a,b)=>a[0]*b[0]+a[1]*b[1],vcrs=(a,b)=>a[0]*b[1]-a[1]*b[0],vsub=(a,b)=>[a[0]-b[0],a[1]-b[1]],vperp=d=>[-d[1],d[0]],vlen=a=>Math.hypot(a[0],a[1]),vunit=a=>{const l=vlen(a);return [a[0]/l,a[1]/l]};
+const n1=x=>x.toFixed(1);
+function gpx(p){return [GM+p[0]*GS,GM+p[1]*GS]}
+function gClip(W,H,p,d){let lo=-1e9,hi=1e9;for(let i=0;i<2;i++){const b=i?H:W;if(d[i]===0){if(p[i]<0||p[i]>b)return null}else{let t1=(0-p[i])/d[i],t2=(b-p[i])/d[i];if(t1>t2)[t1,t2]=[t2,t1];lo=Math.max(lo,t1);hi=Math.min(hi,t2)}}return [[p[0]+lo*d[0],p[1]+lo*d[1]],[p[0]+hi*d[0],p[1]+hi*d[1]]]}
+function gLine(a,b,c){const A=gpx(a),B=gpx(b);return '<line class="'+c+'" x1="'+n1(A[0])+'" y1="'+n1(A[1])+'" x2="'+n1(B[0])+'" y2="'+n1(B[1])+'"/>'}
+function rMark(at,u,v,cls,r){r=r||13;const a=[at[0]+u[0]*r,at[1]+u[1]*r],b=[at[0]+v[0]*r,at[1]+v[1]*r],c=vcrs(u,v),s=[u[0]+v[0],u[1]+v[1]],sl=vlen(s)||1,m=[at[0]+s[0]/sl*r*0.55,at[1]+s[1]/sl*r*0.55];
+  return '<path class="mark '+(cls||'')+'" d="M'+n1(a[0])+' '+n1(a[1])+' A'+r+' '+r+' 0 0 '+(c>0?1:0)+' '+n1(b[0])+' '+n1(b[1])+'"/><circle class="markdot '+(cls||'')+'" cx="'+n1(m[0])+'" cy="'+n1(m[1])+'" r="2.4"/>'}
+function gLab(W,H,p,d,name){const s=gClip(W,H,p,d),e=s[0][0]>s[1][0]?s[0]:s[1],E=gpx(e);return '<text class="gn" x="'+n1(Math.min(E[0]-14,2*GM+W*GS-16))+'" y="'+n1(Math.max(E[1]-10,14))+'">'+name+'</text>'}
+function gPt(p,name){const A=gpx(p);return '<circle class="pt" cx="'+A[0]+'" cy="'+A[1]+'" r="5"/><text class="gn" x="'+(A[0]+8)+'" y="'+(A[1]+20)+'">'+name+'</text>'}
+const eqp=(a,b)=>a&&b&&a[0]===b[0]&&a[1]===b[1];
+function gOkLine(t,X){if(t.mode==='perp'||t.mode==='par'){if(!X||eqp(X,t.P))return false;const v=vsub(X,t.P);return t.mode==='perp'?vdot(v,t.g.d)===0:vcrs(v,t.g.d)===0}
+  if(t.mode==='dist'){if(!X||X.length!==2)return false;const [A,B]=X;return A[1]===B[1]&&A[0]!==B[0]&&Math.abs(A[1]-t.k.y)===4}return false}
+// Tennisplatz wie in der Übungsprobe
+const CRT={a:[70,30,70,285],b:[210,30,210,285],c:[70,30,210,30],d:[58,157,222,157],e:[140,86,140,229],f:[70,86,210,86]},CRTX=[[70,229,210,229],[70,285,210,285]],CRTL={a:[54,128],b:[222,128],c:[140,21],d:[234,162],e:[152,106],f:[222,80]};
+const CRV=['a','b','e'],CRH=['c','d','f'];
+const crRel=(x,y)=>CRV.includes(x)===CRV.includes(y)?'par':'perp';
+function courtSVG(sel,good,interactive){let s='<svg viewBox="0 0 260 300" class="courtsvg" role="img" aria-label="Tennisplatz von oben mit den Linien a bis f"><rect class="crf" x="70" y="30" width="140" height="255"/>';
+  CRTX.forEach(l=>s+='<line class="cl thin" x1="'+l[0]+'" y1="'+l[1]+'" x2="'+l[2]+'" y2="'+l[3]+'"/>');
+  Object.keys(CRT).forEach(k=>{const l=CRT[k],cls=(good||[]).includes(k)?' lok':(sel||[]).includes(k)?' lsel':'';s+='<line class="cl'+(k==='e'?' thin':'')+(k==='d'?' net':'')+cls+'" x1="'+l[0]+'" y1="'+l[1]+'" x2="'+l[2]+'" y2="'+l[3]+'"/>'});
+  Object.keys(CRTL).forEach(k=>s+='<text class="cn" x="'+CRTL[k][0]+'" y="'+CRTL[k][1]+'" text-anchor="middle">'+k+'</text>');
+  if(interactive)Object.keys(CRT).forEach(k=>{const l=CRT[k];s+='<line class="hitl" data-act="gline" data-l="'+k+'" x1="'+l[0]+'" y1="'+l[1]+'" x2="'+l[2]+'" y2="'+l[3]+'"/>'});
+  return s+'</svg>'}
+// Figuren wie in der Übungsprobe (gerade, nicht gedreht)
+const FIG=[['ein Rechteck',[[50,50],[210,50],[210,150],[50,150]]],['ein Quadrat',[[80,40],[190,40],[190,150],[80,150]]],['ein rechtwinkliges Dreieck',[[70,30],[70,160],[200,160]]],['ein Parallelogramm',[[95,50],[215,50],[175,150],[55,150]]],['ein Trapez mit zwei rechten Winkeln',[[70,45],[150,45],[200,155],[70,155]]],['ein Fünfeck wie ein Haus',[[60,80],[130,30],[200,80],[200,160],[60,160]]],['ein Trapez ohne rechten Winkel',[[100,50],[160,50],[210,150],[50,150]]],['ein Drachen',[[130,25],[195,80],[130,170],[65,80]]]];
+function figRight(P){const n=P.length,r=[];for(let i=0;i<n;i++){const a=P[(i+n-1)%n],b=P[i],c=P[(i+1)%n];if(vdot(vsub(a,b),vsub(c,b))===0)r.push(i)}return r}
+function figSVG(t,sel,mode){const P=t.pts,n=P.length;let s='<svg viewBox="0 0 260 190" role="img" aria-label="Figur"><polygon class="fg" points="'+P.map(p=>p.join(',')).join(' ')+'"/>';
+  const show=mode==='open'?(sel||[]):mode==='right'?(sel||[]):t.right;
+  show.forEach(i=>{const b=P[i],u=vunit(vsub(P[(i+n-1)%n],b)),v=vunit(vsub(P[(i+1)%n],b));s+=rMark(b,u,v,mode==='open'?'u':'',15)});
+  P.forEach((p,i)=>{s+='<circle class="vtx" cx="'+p[0]+'" cy="'+p[1]+'" r="4"/>';if(mode==='open')s+='<circle class="hit" data-act="gcorner" data-k="'+i+'" cx="'+p[0]+'" cy="'+p[1]+'" r="20"/>'});
+  return s+'</svg>'}
+// Karopapier
+function gridSVG(t,sel,mode){const W=t.W,H=t.H;let s='<svg viewBox="0 0 '+(2*GM+W*GS)+' '+(2*GM+H*GS)+'" class="grid" role="img" aria-label="Karopapier">';
+  for(let x=0;x<=W;x++)s+=gLine([x,0],[x,H],'kq');for(let y=0;y<=H;y++)s+=gLine([0,y],[W,y],'kq');
+  if(t.mode==='dist'){s+=gLine([t.k.x1,t.k.y],[t.k.x2,t.k.y],'gl');const E=gpx([t.k.x2,t.k.y]);s+='<text class="gn" x="'+(E[0]+8)+'" y="'+(E[1]+6)+'">k</text>'}
+  else{const c=gClip(W,H,t.g.p,t.g.d);s+=gLine(c[0],c[1],'gl')+gLab(W,H,t.g.p,t.g.d,t.g.n)}
+  let ans=null;
+  if(mode==='open'){if(t.mode==='dist'){(sel||[]).forEach(p=>{const A=gpx(p);s+='<circle class="sel" cx="'+A[0]+'" cy="'+A[1]+'" r="6"/>'});if(sel&&sel.length===2&&!eqp(sel[0],sel[1]))ans=[sel[0],vsub(sel[1],sel[0])]}
+    else if(sel){const A=gpx(sel);s+='<circle class="sel" cx="'+A[0]+'" cy="'+A[1]+'" r="6"/>';ans=[t.P,vsub(sel,t.P)]}}
+  else{const X=mode==='right'&&sel?sel:t._ans;ans=t.mode==='dist'?[X[0],vsub(X[1],X[0])]:[t.P,vsub(X,t.P)]}
+  if(ans){const c=gClip(W,H,ans[0],ans[1]);if(c)s+=gLine(c[0],c[1],'ul'+(mode==='open'?'':' ok'))}
+  if(mode!=='open'&&t.mode==='perp'){const d=t.g.d,P=t.P,tt=vdot(vsub(P,t.g.p),d)/vdot(d,d),F=[t.g.p[0]+tt*d[0],t.g.p[1]+tt*d[1]],on=Math.abs(tt*0)+(Math.hypot(P[0]-F[0],P[1]-F[1])<1e-9),du=d[0]<0?[-d[0],-d[1]]:d;let v=vperp(du);if(on){if(v[1]>0)v=[-v[0],-v[1]]}else if(vdot(vsub(P,F),v)<0)v=[-v[0],-v[1]];s+=rMark(gpx(F),vunit(du),vunit(v),'',19)}
+  if(mode!=='open'&&t.mode==='dist'){const y=t._ans[0][1],x=t.k.x1+1,A=gpx([x,t.k.y]),B=gpx([x,y]);s+='<line class="dim" x1="'+A[0]+'" y1="'+A[1]+'" x2="'+B[0]+'" y2="'+B[1]+'"/><text class="gn small" x="'+(A[0]+6)+'" y="'+n1((A[1]+B[1])/2+5)+'">2 cm</text>'}
+  if(t.P)s+=gPt(t.P,t.Pn);
+  if(mode==='open')for(let x=0;x<=W;x++)for(let y=0;y<=H;y++){const A=gpx([x,y]);s+='<circle class="hit" data-act="gpt" data-x="'+x+'" data-y="'+y+'" cx="'+A[0]+'" cy="'+A[1]+'" r="13"/>'}
+  return s+'</svg>'}
+function gView(t,sel,mode){if(t.mode==='lines'){const good=mode==='open'?[]:(mode==='right'?sel:t._ans);return courtSVG(mode==='open'?sel:[],good,mode==='open')}if(t.mode==='corners')return figSVG(t,sel,mode);return gridSVG(t,sel,mode)}
+function gHas(t,sel){if(t.mode==='corners')return true;if(t.mode==='lines')return t.need==='pair'?(sel||[]).length===2:(sel||[]).length>0;if(t.mode==='dist')return !!sel&&sel.length===2;return !!sel}
+function gOk(t,sel){if(t.mode==='corners')return [...(sel||[])].sort((a,b)=>a-b).join()===t.right.join();
+  if(t.mode==='lines'){const s=sel||[];if(t.need==='pair')return s.length===2&&s[0]!==s[1]&&crRel(s[0],s[1])===t.rel;return [...s].sort().join()===[...t._ans].sort().join()}
+  return gOkLine(t,sel)}
+function gMsg(t,sel){if(t.mode==='corners'){const n=(sel||[]).length;return 'Noch nicht. Du hast '+(n===1?'1 Ecke':n+' Ecken')+' markiert. Prüfe jede Ecke mit dem Geodreieck.'}
+  if(t.mode==='lines')return t.need==='pair'?'Diese zwei Linien sind nicht '+(t.rel==='par'?'parallel':'senkrecht zueinander')+'. Schau, in welche Richtung jede Linie läuft.':'Noch nicht ganz. Prüfe jede Linie einzeln: Läuft sie von oben nach unten oder von links nach rechts?';
+  if(t.mode==='perp')return 'Deine Linie steht noch nicht senkrecht auf g. Leg dein Geodreieck auf den Bildschirm: Mittellinie genau auf g, lange Kante durch P.';
+  if(t.mode==='par')return 'Deine Linie ist noch nicht parallel zu h. Leg eine Hilfslinie des Geodreiecks genau auf h und schieb die lange Kante bis Q.';
+  const [A,B]=sel;if(A[1]!==B[1])return 'Deine Linie ist schräg. Sie muss überall gleich weit von k entfernt sein.';const dd=Math.abs(A[1]-t.k.y);return 'Deine Linie ist parallel, aber '+(dd===1?'1 Kästchen':dd+' Kästchen')+' von k entfernt. 2 cm sind 4 Kästchen.'}
+// Geodreieck als Bild
+function geoTri(O,eu,ev){const L=80,P=(u,v)=>[O[0]+u*eu[0]+v*ev[0],O[1]+u*eu[1]+v*ev[1]],pt=a=>n1(a[0])+','+n1(a[1]),ln=(a,b,c)=>'<line class="'+c+'" x1="'+n1(a[0])+'" y1="'+n1(a[1])+'" x2="'+n1(b[0])+'" y2="'+n1(b[1])+'"/>',tx=(a,x)=>'<text class="geot" x="'+n1(a[0])+'" y="'+n1(a[1]+4)+'" text-anchor="middle">'+x+'</text>';
+  let s='<polygon class="geo" points="'+[P(-L,0),P(L,0),P(0,L)].map(pt).join(' ')+'"/>';
+  for(let u=-72;u<=72;u+=8)s+=ln(P(u,0),P(u,u%16===0?6:3),'geoh');
+  for(let k=1;k<=4;k++){const v=16*k;s+=ln(P(-(L-v)+2,v),P(-15,v),'geoh')+ln(P(-3,v),P(L-v-2,v),'geoh')+tx(P(-9,v),k)}
+  return s+ln(P(0,0),P(0,L-4),'geom')+tx(P(7,9),0)}
+function scene(W,H,lines,pts,tri){let s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Geodreieck angelegt">';lines.forEach(l=>{s+='<line class="gl" x1="'+n1(l[0][0])+'" y1="'+n1(l[0][1])+'" x2="'+n1(l[1][0])+'" y2="'+n1(l[1][1])+'"/><text class="gn" x="'+n1(l[2][0])+'" y="'+n1(l[2][1])+'">'+l[3]+'</text>'});
+  s+=tri;pts.forEach(p=>{s+='<circle class="pt" cx="'+n1(p[0][0])+'" cy="'+n1(p[0][1])+'" r="4.5"/><text class="gn" x="'+n1(p[0][0]+7)+'" y="'+n1(p[0][1]+18)+'">'+p[1]+'</text>'});return s+'</svg>'}
+const rot=(v,a)=>[v[0]*Math.cos(a)-v[1]*Math.sin(a),v[0]*Math.sin(a)+v[1]*Math.cos(a)];
+function frame(C){const th=ri(-16,16)*Math.PI/180,d=[Math.cos(th),Math.sin(th)],n=[Math.sin(th),-Math.cos(th)],at=(p,a,b)=>[p[0]+a*d[0]+b*n[0],p[1]+a*d[1]+b*n[1]];return {d,n,at,line:(p,name)=>[at(p,-140,0),at(p,140,0),at(p,96,12),name]}}
+function picSenk(){const C=[110,96],F=frame(C),{d,n}=F,neg=v=>[-v[0],-v[1]],L=[F.line(C,'g')],P=[[C,'P']];
+  const ok=scene(240,190,L,P,geoTri(C,n,d)),w1=scene(240,190,L,P,geoTri(C,d,n)),w2=scene(240,190,L,P,geoTri(C,rot(n,0.5),rot(d,0.5)));
+  return {q:'Du willst die Senkrechte zu g durch P zeichnen. Auf welchem Bild liegt das Geodreieck richtig?',pics:true,opts:[ok,w1,w2],a:0,tips:['Schau, welche Linie des Geodreiecks auf g liegt: die lange Kante, die Mittellinie oder keine?','Für die Senkrechte gehört die Mittellinie genau auf g.','Die lange Kante muss dann durch P gehen. An ihr zeichnest du.'],lob:'Du weißt, wie das Geodreieck für die Senkrechte liegt.',explain:'Richtig liegt die Mittellinie genau auf g, und die lange Kante geht durch P. An der langen Kante entsteht die Senkrechte. Liegt die lange Kante auf g, zeichnest du nur g nach. Liegt das Geodreieck schräg, wird die Linie schief.'}}
+function picPar(){const C=[115,128],F=frame(C),{d,n}=F,Q=F.at(C,-10,48),L=[F.line(C,'h')],P=[[Q,'Q']],neg=v=>[-v[0],-v[1]];
+  const ok=scene(240,190,L,P,geoTri(F.at(C,0,48),d,neg(n))),w1=scene(240,190,L,P,geoTri(F.at(C,-10,0),n,d)),w2=scene(240,190,L,P,geoTri(C,d,n));
+  return {q:'Du willst die Parallele zu h durch Q zeichnen. Auf welchem Bild liegt das Geodreieck richtig?',pics:true,opts:[ok,w1,w2],a:0,tips:['Schau, welche Linie des Geodreiecks auf h liegt.','Für die Parallele gehört eine Hilfslinie genau auf h.','Die lange Kante muss dann durch Q gehen. An ihr zeichnest du.'],lob:'Du weißt, wie das Geodreieck für die Parallele liegt.',explain:'Richtig liegt eine Hilfslinie genau auf h, und die lange Kante geht durch Q. An der langen Kante entsteht die Parallele. Mit der Mittellinie auf h entsteht eine Senkrechte. Mit der langen Kante auf h zeichnest du nur h nach.'}}
+function picAbst(){const C=[115,112],F=frame(C),{d,n}=F,L=[F.line(C,'k')],neg=v=>[-v[0],-v[1]];
+  const ok=scene(240,190,L,[],geoTri(F.at(C,0,32),d,neg(n))),w1=scene(240,190,L,[],geoTri(F.at(C,0,16),d,neg(n))),w2=scene(240,190,L,[],geoTri(C,d,n));
+  return {q:'Du willst eine Parallele zu k im Abstand von 2 cm zeichnen. Auf welchem Bild liegt das Geodreieck richtig?',pics:true,opts:[ok,w1,w2],a:0,tips:['Schau auf die kleinen Zahlen an den Hilfslinien. Sie zeigen den Abstand zur langen Kante in Zentimetern.','Welche Hilfslinie liegt auf k?','Für 2 cm gehört die Hilfslinie mit der 2 auf k. Gezeichnet wird an der langen Kante.'],lob:'Du hast auf die richtige Zahl geachtet.',explain:'Richtig liegt die Hilfslinie mit der 2 genau auf k. Die lange Kante ist dann 2 cm von k entfernt, und dort zeichnest du. Mit der Hilfslinie 1 wären es nur 1 cm. Mit der langen Kante auf k zeichnest du nur k nach.'}}
+function picMark(){const k=ri(0,3),R=v=>{let r=v;for(let i=0;i<k;i++)r=[-r[1],r[0]];return r},C=[100,75],u=R([1,0]),v=R([0,-1]),A=[C[0]+u[0]*70,C[1]+u[1]*70],B=[C[0]+v[0]*60,C[1]+v[1]*60];
+  const base='<line class="gl" x1="'+C[0]+'" y1="'+C[1]+'" x2="'+n1(A[0])+'" y2="'+n1(A[1])+'"/><line class="gl" x1="'+C[0]+'" y1="'+C[1]+'" x2="'+n1(B[0])+'" y2="'+n1(B[1])+'"/>',r=22,a=[C[0]+u[0]*r,C[1]+u[1]*r],b=[C[0]+v[0]*r,C[1]+v[1]*r],sw=vcrs(u,v)>0?1:0,arc='<path class="mark big" d="M'+n1(a[0])+' '+n1(a[1])+' A'+r+' '+r+' 0 0 '+sw+' '+n1(b[0])+' '+n1(b[1])+'"/>',s2=[u[0]+v[0],u[1]+v[1]],m=[C[0]+s2[0]/vlen(s2)*r*0.55,C[1]+s2[1]/vlen(s2)*r*0.55],mid=[C[0]+s2[0]/vlen(s2)*r,C[1]+s2[1]/vlen(s2)*r];
+  const sv=x=>'<svg viewBox="0 0 200 150" role="img" aria-label="Winkel">'+base+x+'</svg>';
+  return {q:'Wie markierst du einen rechten Winkel richtig?',pics:true,opts:[sv(arc+'<circle class="markdot" cx="'+n1(m[0])+'" cy="'+n1(m[1])+'" r="3.2"/>'),sv(arc),sv(arc+'<line class="mark big" x1="'+n1(mid[0]-s2[0]/vlen(s2)*6)+'" y1="'+n1(mid[1]-s2[1]/vlen(s2)*6)+'" x2="'+n1(mid[0]+s2[0]/vlen(s2)*6)+'" y2="'+n1(mid[1]+s2[1]/vlen(s2)*6)+'"/>')],a:0,
+    tips:['Ein Bogen allein zeigt nur, dass dort ein Winkel ist.','Beim rechten Winkel kommt noch etwas in den Bogen.','Es ist ein kleiner Punkt.'],lob:'Du weißt, wie man rechte Winkel markiert.',explain:'Einen rechten Winkel markierst du mit einem kleinen Bogen und einem Punkt darin.'}}
+// Aufgaben auf Karopapier
+const GDIRS=[[4,-1],[3,-1],[5,-2],[4,1],[3,1],[5,2],[2,-1],[2,1],[3,-2],[3,2]];
+function mv(v){const p=[];if(v[0])p.push(Math.abs(v[0])+(Math.abs(v[0])===1?' Kästchen':' Kästchen')+' nach '+(v[0]>0?'rechts':'links'));if(v[1])p.push(Math.abs(v[1])+' nach '+(v[1]>0?'unten':'oben'));return p.join(' und ')}
+function gPts(W,H){const l=[];for(let x=0;x<=W;x++)for(let y=0;y<=H;y++)l.push([x,y]);return l}
+const inside=(p,W,H,m)=>p[0]>=m&&p[0]<=W-m&&p[1]>=m&&p[1]<=H-m;
+function genPerp(onLine){const W=14,H=10;for(let g=0;g<500;g++){const d=pick(GDIRS);let G0,P;if(onLine){P=[ri(5,9),ri(4,6)];G0=P}else{G0=[ri(4,10),ri(3,7)];const v=vperp(d),s=pick([1,-1]);P=[G0[0]+s*v[0],G0[1]+s*v[1]];if(!inside(P,W,H,1))continue}
+  const t={type:'grid',mode:'perp',W,H,g:{p:G0,d,n:'g'},P,Pn:'P'},sols=gPts(W,H).filter(X=>gOkLine(t,X));if(sols.length<(onLine?2:1))continue;const pv=vperp(d);t._ans=sols[0];
+  return Object.assign(t,{q:onLine?'Zeichne die Senkrechte zu g durch P. Tippe auf einen Kästchenpunkt, durch den deine Senkrechte gehen soll.':'Der Punkt P liegt neben g. Zeichne die Senkrechte zu g durch P. Tippe auf einen Kästchenpunkt, durch den sie gehen soll.',
+    tips:['Senkrecht heißt: Deine Linie und g bilden einen rechten Winkel.','Leg dein Geodreieck auf den Bildschirm: Mittellinie genau auf g, lange Kante durch P.','Kästchen-Trick: g geht '+mv(d)+'. Die Senkrechte geht '+mv(pv)+'.'],lob:'Deine Senkrechte steht im rechten Winkel auf g.',explain:'Die Senkrechte bildet mit g einen rechten Winkel. Auf Karopapier sieht man es so: g geht '+mv(d)+', die Senkrechte geht '+mv(pv)+'.'})}}
+function genPar(){const W=14,H=10;for(let g=0;g<500;g++){const d=pick(GDIRS),H0=[ri(3,11),ri(5,8)],off=[ri(-2,2),-ri(2,4)];if(vcrs(off,d)===0)continue;const Q=[H0[0]+off[0],H0[1]+off[1]];if(!inside(Q,W,H,1))continue;
+  const t={type:'grid',mode:'par',W,H,g:{p:H0,d,n:'h'},P:Q,Pn:'Q'},sols=gPts(W,H).filter(X=>gOkLine(t,X));if(sols.length<2)continue;t._ans=sols[0];
+  return Object.assign(t,{q:'Zeichne die Parallele zu h durch Q. Tippe auf einen Kästchenpunkt, durch den deine Parallele gehen soll.',tips:['Parallel heißt: überall gleich weit von h entfernt.','Leg dein Geodreieck auf den Bildschirm: eine Hilfslinie genau auf h, lange Kante durch Q.','Kästchen-Trick: h geht '+mv(d)+'. Von Q aus gehst du genauso.'],lob:'Deine Parallele ist überall gleich weit von h entfernt.',explain:'Die Parallele läuft in dieselbe Richtung wie h. Auf Karopapier: h geht '+mv(d)+', die Parallele durch Q genauso.'})}}
+function genAbst(){const W=14,H=10,y=ri(4,6),up=ri(0,1),ya=up?y-4:y+4;return {type:'grid',mode:'dist',W,H,k:{y,x1:2,x2:11},_ans:[[2,ya],[12,ya]],
+  q:'Zeichne eine Parallele zu k im Abstand von 2 cm. Ein Kästchen ist 5 mm breit. Tippe zwei Kästchenpunkte an, durch die deine Parallele gehen soll.',tips:['Die neue Linie muss überall 2 cm von k entfernt sein.','1 Kästchen sind 5 mm. 2 cm sind also 4 Kästchen.','Geh von k aus 4 Kästchen nach oben oder nach unten. Tippe dort zwei Punkte nebeneinander an.'],lob:'Dein Abstand stimmt genau.',explain:'2 cm sind 4 Kästchen. Die Parallele liegt 4 Kästchen über oder unter k. Mit dem Geodreieck legst du dafür die Hilfslinie mit der 2 auf k.'}}
+function genCorners(){const f=pick(FIG),mir=ri(0,1),pts=f[1].map(p=>mir?[260-p[0],p[1]]:p.slice()),right=figRight(pts);return {type:'grid',mode:'corners',pts,right,_ans:right,
+  q:'Wie viele rechte Winkel hat die Figur? Tippe jede Ecke an, die ein rechter Winkel ist. So markierst du sie. Hat die Figur keinen, tippst du keine Ecke an.',tips:['Schau dir jede Ecke einzeln an.','Ein rechter Winkel sieht aus wie die Ecke eines Blatts Papier.','Leg dein Geodreieck auf den Bildschirm: lange Kante an eine Seite, Nullpunkt an die Ecke. Liegt die andere Seite auf der Mittellinie?'],lob:'Du hast jede Ecke einzeln geprüft.',
+  explain:'Das ist '+f[0]+'. Die Figur hat '+(right.length?right.length+(right.length===1?' rechten Winkel.':' rechte Winkel.'):'keinen rechten Winkel.')}}
+const CREX='Von oben nach unten laufen a, b und e. Von links nach rechts laufen c, d und f. Parallel sind zwei Linien aus derselben Gruppe, zum Beispiel a || b oder c || d. Senkrecht aufeinander stehen zwei Linien aus verschiedenen Gruppen, zum Beispiel a ⊥ c oder e ⊥ d.';
+function genCourt(rel,need){if(need==='pair'){const p=rel==='par'?sh2(pick([CRV,CRH])).slice(0,2):[pick(CRV),pick(CRH)];return {type:'grid',mode:'lines',rel,need,_ans:p,
+    q:'Der Tennisplatz von oben, wie in der Probe. Tippe zwei Linien an, die '+(rel==='par'?'parallel sind.':'senkrecht aufeinander stehen.'),tips:rel==='par'?['Parallele Linien laufen in dieselbe Richtung und treffen sich nie.','Welche Linien laufen von oben nach unten? Welche von links nach rechts?','Nimm zwei Linien, die beide von links nach rechts laufen.']:['Senkrechte Linien bilden einen rechten Winkel.','Eine Linie läuft von oben nach unten, die andere von links nach rechts.','Zum Beispiel eine Seitenlinie und das Netz.'],
+    lob:'Du hast die Richtungen der Linien verglichen.',explain:'Es gibt mehrere richtige Lösungen. '+CREX}}
+  const ref=pick(CRV.concat(CRH)),grp=CRV.includes(ref)?CRV:CRH,ans=rel==='par'?grp.filter(x=>x!==ref):(grp===CRV?CRH:CRV);return {type:'grid',mode:'lines',rel,need,ref,_ans:ans,
+    q:'Der Tennisplatz von oben. Tippe alle Linien an, die '+(rel==='par'?'parallel zu '+ref+' sind.':'senkrecht auf '+ref+' stehen.'),tips:['Läuft '+ref+' von oben nach unten oder von links nach rechts?',rel==='par'?'Parallel zu '+ref+' sind die Linien mit derselben Richtung.':'Senkrecht auf '+ref+' stehen die Linien mit der anderen Richtung.','Es sind '+ans.length+' Linien.'],lob:'Du hast alle Linien gefunden.',
+    explain:(rel==='par'?'Parallel zu '+ref+' sind '+ans.join(' und ')+'.':'Senkrecht auf '+ref+' stehen '+ans.join(', ').replace(/, ([^,]*)$/,' und $1')+'.')+' '+CREX}}
+const sh2=a=>{const p=a.slice();for(let x=p.length-1;x>0;x--){const y=ri(0,x);[p[x],p[y]]=[p[y],p[x]]}return p};
+const COURT_STATIC=courtSVG([],[],false);
+
 const MPROBE=(()=>{
 const sh=a=>{const p=a.slice();for(let x=p.length-1;x>0;x--){const y=ri(0,x);[p[x],p[y]]=[p[y],p[x]]}return p};
 const divs=n=>{const d=[];for(let k=1;k<=n;k++)if(n%k===0)d.push(k);return d};
@@ -529,31 +673,6 @@ function k12(){let n;do{n=ri(101,899)}while(n%10===0);return {q:'1 000 − '+n+'
 function k13(){let n;do{n=ri(101,899)}while(n%10===0);return {q:n+' + ? = 1 000. Welche Zahl fehlt?',a:1000-n,tips:ergTips(n),lob:'Du hast in Schritten bis 1 000 ergänzt.',explain:n+' + '+(1000-n)+' = 1 000.'}}
 const KG=[k1,k2,k5,k6,k7,k8,k9,k10,k11,k12];
 
-// Geodreieck-Figuren
-function lines(rel){const th=ri(0,179)*Math.PI/180,u=[Math.cos(th),Math.sin(th)],nn=[-u[1],u[0]],C=[130,110],L=80;let c1=C,d1=u,c2=C,d2=u,ang=0;
-  if(rel==='s'){const t=ri(-30,30);c2=[C[0]+u[0]*t,C[1]+u[1]*t];d2=nn;ang=90}
-  else if(rel==='p'){c1=[C[0]+nn[0]*25,C[1]+nn[1]*25];c2=[C[0]-nn[0]*25,C[1]-nn[1]*25]}
-  else{ang=ri(30,60);const ph=th+(ri(0,1)?1:-1)*ang*Math.PI/180;d2=[Math.cos(ph),Math.sin(ph)]}
-  const seg=(c,d)=>[c[0]-d[0]*L,c[1]-d[1]*L,c[0]+d[0]*L,c[1]+d[1]*L],ln=s=>'<line x1="'+s[0].toFixed(1)+'" y1="'+s[1].toFixed(1)+'" x2="'+s[2].toFixed(1)+'" y2="'+s[3].toFixed(1)+'"/>',lab=(s,d,t)=>'<text x="'+(s[2]+d[0]*15).toFixed(1)+'" y="'+(s[3]+d[1]*15+6).toFixed(1)+'" text-anchor="middle">'+t+'</text>';
-  const s1=seg(c1,d1),s2=seg(c2,d2);
-  return {svg:'<svg viewBox="0 0 260 220" role="img" aria-label="Zwei Geraden g und h">'+ln(s1)+ln(s2)+lab(s1,d1,'g')+lab(s2,d2,'h')+'</svg>',ang,_seg:[s1,s2]}}
-function linesTask(){const rel=pick(['s','p','k']),L=lines(rel);return {q:'Wie liegen die Geraden g und h zueinander?',svg:L.svg,_ang:L.ang,_seg:L._seg,_rel:rel,opts:['senkrecht (g ⊥ h)','parallel (g || h)','weder senkrecht noch parallel'],a:{s:0,p:1,k:2}[rel],
-  tips:['Treffen sich die Geraden? Wenn nein, könnten sie parallel sein.','Wenn sie sich treffen: Ist es ein rechter Winkel wie bei einer Blattecke?','Im Heft prüfst du das mit dem Geodreieck.'],lob:'Du hast genau hingeschaut.',
-  explain:{s:'Die Geraden schneiden sich im rechten Winkel. Sie sind senkrecht zueinander: g ⊥ h.',p:'Die Geraden sind überall gleich weit voneinander entfernt und treffen sich nie. Sie sind parallel: g || h.',k:'Die Geraden schneiden sich, aber nicht im rechten Winkel. Sie sind weder senkrecht noch parallel.'}[rel]}}
-const COURT='<svg viewBox="0 0 260 238" role="img" aria-label="Tennisplatz von oben mit den Linien a bis f"><rect class="court" x="50" y="34" width="160" height="170"/><line x1="50" y1="34" x2="50" y2="204"/><line x1="210" y1="34" x2="210" y2="204"/><line x1="50" y1="34" x2="210" y2="34"/><line x1="50" y1="204" x2="210" y2="204"/><line x1="130" y1="119" x2="130" y2="204"/><line x1="50" y1="119" x2="210" y2="119"/><text x="34" y="92" text-anchor="middle">a</text><text x="226" y="92" text-anchor="middle">b</text><text x="130" y="24" text-anchor="middle">c</text><text x="130" y="228" text-anchor="middle">d</text><text x="144" y="168" text-anchor="middle">e</text><text x="66" y="111" text-anchor="middle">f</text></svg>';
-const CV=['a','b','e'],CH=['c','d','f'],pr=(x,y)=>[x,y].sort().join(' und ');
-function courtPar(){const p=sh(pick([CV,CH])).slice(0,2),ok=pr(p[0],p[1]),w=[];while(w.length<3){const s=pr(pick(CV),pick(CH));if(!w.includes(s))w.push(s)}
-  return {q:'Der Tennisplatz von oben. Welche zwei Linien sind parallel?',svg:COURT,opts:[ok].concat(w),a:0,tips:['Parallele Linien laufen in dieselbe Richtung und treffen sich nie.','Welche Linien laufen von oben nach unten? Welche von links nach rechts?','Zwei Linien, die beide von links nach rechts laufen, sind parallel.'],lob:'Du hast die Richtungen der Linien verglichen.',
-  explain:'Parallel sind Linien mit derselben Richtung. Von oben nach unten: a, b und e. Von links nach rechts: c, d und f. Also zum Beispiel '+ok+'.'}}
-function courtSenk(){const ok=pr(pick(CV),pick(CH)),all=[pr('a','b'),pr('a','e'),pr('b','e'),pr('c','d'),pr('c','f'),pr('d','f')],w=sh(all).slice(0,3);
-  return {q:'Der Tennisplatz von oben. Welche zwei Linien stehen senkrecht aufeinander?',svg:COURT,opts:[ok].concat(w),a:0,tips:['Senkrechte Linien bilden einen rechten Winkel.','Eine Linie läuft von oben nach unten, die andere von links nach rechts.','Prüfe im Heft mit dem Geodreieck: Passt der rechte Winkel genau?'],lob:'Du hast eine Linie von oben nach unten und eine von links nach rechts gewählt.',
-  explain:'Senkrecht stehen immer eine Linie von oben nach unten (a, b, e) und eine von links nach rechts (c, d, f) aufeinander. Also zum Beispiel '+ok+'.'}}
-const SHAPES=[['ein Rechteck',[[0,0],[150,0],[150,85],[0,85]],4],['ein Quadrat',[[0,0],[100,0],[100,100],[0,100]],4],['ein rechtwinkliges Dreieck',[[0,0],[140,0],[0,95]],1],['eine Raute',[[75,0],[150,50],[75,100],[0,50]],0],['ein Trapez mit zwei rechten Winkeln',[[0,0],[150,0],[105,90],[0,90]],2],['ein Parallelogramm',[[35,0],[160,0],[125,85],[0,85]],0],['ein Dreieck ohne rechten Winkel',[[0,95],[150,95],[55,0]],0],['ein Fünfeck wie ein Haus',[[0,45],[65,0],[130,45],[130,120],[0,120]],2]];
-function shapeSVG(pts,deg){const t=deg*Math.PI/180,c=Math.cos(t),s=Math.sin(t),r=pts.map(([x,y])=>[x*c-y*s,x*s+y*c]),xs=r.map(p=>p[0]),ys=r.map(p=>p[1]),mx=Math.min(...xs),my=Math.min(...ys),w=Math.max(...xs)-mx,h=Math.max(...ys)-my,k=Math.min(200/w,140/h,1.3),ox=130-(mx+w/2)*k,oy=95-(my+h/2)*k;
-  return '<svg viewBox="0 0 260 190" role="img" aria-label="Eine Figur"><polygon points="'+r.map(p=>(p[0]*k+ox).toFixed(1)+','+(p[1]*k+oy).toFixed(1)).join(' ')+'"/></svg>'}
-function shapeTask(){const s=pick(SHAPES),deg=pick([0,0,12,-18,25]);return {q:'Wie viele rechte Winkel hat diese Figur?',svg:shapeSVG(s[1],deg),a:s[2],_pts:s[1],
-  tips:['Schau dir jede Ecke einzeln an.','Ein rechter Winkel sieht aus wie die Ecke eines Blatts Papier.','Im Heft prüfst du jede Ecke mit dem Geodreieck. Zähle nur die Ecken, die genau passen.'],lob:'Du hast jede Ecke einzeln geprüft.',
-  explain:'Das ist '+s[0]+'. Die Figur hat '+(s[2]?s[2]+(s[2]===1?' rechten Winkel.':' rechte Winkel.'):'keinen rechten Winkel.')}}
 const PR50=[];for(let k=2;k<=50;k++)if(isP(k))PR50.push(k);
 const sf=v=>v===1?'1 (nur ein Teiler)':v+' = '+spf(v)+' · '+v/spf(v);
 const Ns=[12,18,20,24,28,30,32,36,40,42,48];
@@ -629,30 +748,37 @@ return [
   {id:'mp_sa5',thema:'Sachaufgabe: Reise mit dem Zug',type:'number',unit:'Abteile',q:'Sachaufgabe mit einer Zugreise.',gen(){const {d,q,r,a}=mk(40,99,6,8,true,1);return {q:'Eine Schulklasse fährt mit dem Zug in die Berge. Es reisen '+a+' Personen. In ein Abteil passen '+d+' Personen. Wie viele Abteile braucht die Klasse mindestens?',a:q+1,ask:{q:'Wonach wird gefragt?',opts:['nach den Abteilen für alle Personen','nach den Personen in einem Abteil','nur nach den vollen Abteilen'],a:0},tips:['Achte auf das Wort „mindestens“.','Rechne '+a+' : '+d+' = '+q+' Rest '+r+'.','Auch die übrigen '+r+' Personen brauchen ein Abteil.'],lob:'Du hast an alle Personen gedacht.',explain:a+' : '+d+' = '+q+' Rest '+r+'. Für die übrigen '+r+' Personen braucht man noch ein Abteil. Also '+(q+1)+' Abteile.'}}},
   {id:'mp_sa7',thema:'Sachaufgabe: Rechnung und Antwortsatz',type:'recall',q:'Rechnung und Antwortsatz ins Heft schreiben.',gen(){const {d,q,r,a}=mk(40,99,4,8,true,1);return {q:'Beim Tennisturnier spielen '+a+' Kinder in Gruppen zu je '+d+'. Wie viele volle Gruppen gibt es? Wie viele Kinder bleiben übrig? Schreibe R: und A: in dein Heft.',items:['R: '+a+' : '+d+' = '+q+' Rest '+r,'A: Es gibt '+q+' volle Gruppen. '+r+(w1(r)?' Kind bleibt':' Kinder bleiben')+' übrig.'],need:2,tips:['Schreibe zuerst die Rechnung hinter R:.','Der Antwortsatz beantwortet beide Fragen.','Lies am Ende die Frage noch einmal: Passt dein Antwortsatz?'],lob:'Du hast Rechnung und Antwortsatz aufgeschrieben.'}}},
   {id:'mp_sa8',thema:'Angabe genau lesen: drei Schritte',type:'recall',q:'Wie liest du eine Sachaufgabe richtig? Schreibe die drei Schritte in dein Heft.',items:['Die Aufgabe zweimal lesen.','Wichtige Wörter unterstreichen, zum Beispiel „mindestens“, „übrig“, „jeder“.','Am Ende die Frage nochmal lesen: Passt meine Antwort zur Frage? Steht ein Antwortsatz da?'],need:3,tips:['Was machst du, bevor du rechnest?','Welche Wörter markierst du mit dem Stift?','Was prüfst du ganz am Schluss?'],lob:'Du kennst die drei Schritte für genaues Lesen.'}]},
- {id:'mpb14',title:'Geodreieck: senkrecht und parallel',src:'Übungsprobe A7',fach:'Mathe',min:5,info:'Senkrecht heißt: im rechten Winkel. Parallel heißt: überall gleich weit entfernt.',tasks:[
+ {id:'mpb14',title:'Geodreieck: Begriffe und Zeichen',src:'Übungsprobe A7a',fach:'Mathe',min:5,info:'Senkrecht heißt: im rechten Winkel. Parallel heißt: überall gleich weit voneinander entfernt.',tasks:[
   {id:'mp_g1',thema:'Geodreieck: Was heißt senkrecht?',type:'choice',q:'Zwei Geraden schneiden sich im rechten Winkel. Wie stehen sie zueinander?',opts:['senkrecht','parallel','schräg','gleich lang'],a:0,tips:['Denk an die Ecke eines Blatts Papier.','Ein rechter Winkel hat ein eigenes Zeichen: ⊥.','Das Wort beginnt mit s.'],lob:'Du kennst den Fachbegriff.',explain:'Zwei Geraden, die sich im rechten Winkel schneiden, sind zueinander senkrecht.'},
   {id:'mp_g2',thema:'Geodreieck: Was heißt parallel?',type:'choice',q:'Zwei Geraden sind überall gleich weit voneinander entfernt. Wie sind sie zueinander?',opts:['parallel','senkrecht','gekreuzt','rechtwinklig'],a:0,tips:['Denk an Bahnschienen.','Diese Geraden treffen sich nie.','Das Zeichen dafür ist ||.'],lob:'Du kennst den Fachbegriff.',explain:'Zwei Geraden, die überall gleich weit voneinander entfernt sind, sind zueinander parallel.'},
   {id:'mp_g3',thema:'Geodreieck: Zeichen für senkrecht',type:'choice',fixed:true,q:'Welches Zeichen bedeutet „senkrecht“?',opts:['⊥','||','=','∠'],a:0,tips:['Das Zeichen sieht selbst aus wie zwei Linien im rechten Winkel.','Eine Linie steht auf der anderen.','Es sieht aus wie ein umgedrehtes T.'],lob:'Du kennst das Zeichen.',explain:'Das Zeichen für senkrecht ist ⊥. Man schreibt zum Beispiel g ⊥ h.'},
   {id:'mp_g4',thema:'Geodreieck: Zeichen für parallel',type:'choice',fixed:true,q:'Welches Zeichen bedeutet „parallel“?',opts:['⊥','||','=','∠'],a:1,tips:['Das Zeichen sieht selbst aus wie zwei parallele Linien.','Die zwei Striche stehen nebeneinander.','Es sind zwei senkrechte Striche.'],lob:'Du kennst das Zeichen.',explain:'Das Zeichen für parallel ist ||. Man schreibt zum Beispiel g || h.'},
-  {id:'mp_g5',thema:'Geodreieck: Treffen sich Parallelen?',type:'choice',q:'Können sich zwei parallele Geraden schneiden?',opts:['Nein. Sie treffen sich nie.','Ja, wenn man sie lang genug zeichnet.','Ja, immer im rechten Winkel.'],a:0,tips:['Parallele Geraden sind überall gleich weit voneinander entfernt.','Wenn der Abstand überall gleich bleibt, kann er nie 0 werden.','Denk wieder an Bahnschienen.'],lob:'Du hast die Regel verstanden.',explain:'Parallele Geraden haben überall den gleichen Abstand. Deshalb treffen sie sich nie.'}]},
- {id:'mpb15',title:'Geodreieck: Linien erkennen',src:'Übungsprobe A7',fach:'Mathe',min:5,info:'Schau genau hin. Bei jedem Versuch kommen neue Linien.',tasks:[
-  {id:'mp_g6',thema:'Geodreieck: senkrecht oder parallel?',type:'choice',fixed:true,q:'Zwei Geraden: senkrecht, parallel oder keins von beiden?',gen:linesTask},
-  {id:'mp_g7',thema:'Geodreieck: senkrecht oder parallel?',type:'choice',fixed:true,q:'Zwei Geraden: senkrecht, parallel oder keins von beiden?',gen:linesTask},
-  {id:'mp_g8',thema:'Tennisplatz: parallele Linien',type:'choice',q:'Parallele Linien auf dem Tennisplatz finden.',gen:courtPar},
-  {id:'mp_g9',thema:'Tennisplatz: senkrechte Linien',type:'choice',q:'Senkrechte Linien auf dem Tennisplatz finden.',gen:courtSenk}]},
- {id:'mpb16',title:'Rechte Winkel',src:'Übungsprobe A7',fach:'Mathe',min:6,info:'Ein rechter Winkel sieht aus wie die Ecke eines Blatts Papier.',tasks:[
-  {id:'mp_g10',thema:'Rechter Winkel: markieren',type:'choice',q:'Wie markierst du einen rechten Winkel?',opts:['Mit einem Bogen und einem Punkt darin.','Mit zwei Strichen.','Mit einem Kreuz.','Mit der Zahl 90 ohne Bogen.'],a:0,tips:['Denk an die Kontrollliste der Übungsprobe.','Zuerst zeichnest du einen kleinen Bogen in die Ecke.','In den Bogen kommt noch etwas Kleines.'],lob:'Du weißt, wie man rechte Winkel markiert.',explain:'Einen rechten Winkel markierst du mit einem kleinen Bogen und einem Punkt darin.'},
-  {id:'mp_g11',thema:'Rechter Winkel: mit dem Geodreieck prüfen',type:'choice',q:'Wie prüfst du mit dem Geodreieck, ob eine Ecke ein rechter Winkel ist?',opts:['Die lange Kante an eine Seite legen, den Nullpunkt an die Ecke. Liegt die andere Seite genau auf der Mittellinie, ist es ein rechter Winkel.','Das Geodreieck irgendwie in die Ecke legen und schauen, ob es ungefähr passt.','Die Seiten mit dem Lineal messen. Sind sie gleich lang, ist es ein rechter Winkel.'],a:0,tips:['Beim Geodreieck stehen die lange Kante und die Mittellinie senkrecht aufeinander.','Wichtig ist der Nullpunkt in der Mitte der langen Kante.','Die Länge der Seiten sagt nichts über den Winkel.'],lob:'Du weißt, wie das Geodreieck funktioniert.',explain:'Lange Kante an eine Seite, Nullpunkt an die Ecke. Liegt die andere Seite genau auf der Mittellinie, ist es ein rechter Winkel.'},
-  {id:'mp_g12',thema:'Rechter Winkel: in Figuren zählen',type:'number',unit:'',q:'Rechte Winkel in einer Figur zählen.',gen:shapeTask},
-  {id:'mp_g13',thema:'Rechter Winkel: in Figuren zählen',type:'number',unit:'',q:'Rechte Winkel in einer Figur zählen.',gen:shapeTask},
-  {id:'mp_g14',thema:'Rechter Winkel: in Figuren zählen',type:'number',unit:'',q:'Rechte Winkel in einer Figur zählen.',gen:shapeTask}]},
- {id:'mpb17',title:'Mit dem Geodreieck zeichnen',src:'Übungsprobe A7',fach:'Mathe',min:6,info:'Hier geht es darum, wie du das Geodreieck richtig anlegst.',tasks:[
-  {id:'mp_h1',thema:'Zeichnen: Senkrechte durch P',type:'choice',q:'Du sollst die Senkrechte zu g durch den Punkt P zeichnen. Wie gehst du vor?',opts:['Die Mittellinie des Geodreiecks auf g legen und schieben, bis die lange Kante durch P geht. Dann an der langen Kante zeichnen.','Die lange Kante auf g legen und an der langen Kante entlang zeichnen.','Eine Hilfslinie auf g legen und an der langen Kante zeichnen.','Das Geodreieck schräg anlegen und frei Hand zeichnen.'],a:0,tips:['Die Senkrechte soll g im rechten Winkel schneiden.','Die Mittellinie und die lange Kante stehen senkrecht aufeinander.','Was auf g liegt, muss die Mittellinie sein. Gezeichnet wird an der langen Kante.'],lob:'Du weißt, wie man die Senkrechte zeichnet.',explain:'Mittellinie auf g legen, verschieben bis die lange Kante durch P geht, dann an der langen Kante zeichnen. So entsteht ein rechter Winkel.'},
-  {id:'mp_h2',thema:'Zeichnen: Parallele durch Q',type:'choice',q:'Du sollst die Parallele zu h durch den Punkt Q zeichnen. Wie gehst du vor?',opts:['Eine Hilfslinie des Geodreiecks genau auf h legen und schieben, bis die lange Kante durch Q geht. Dann an der langen Kante zeichnen.','Die Mittellinie auf h legen und an der langen Kante zeichnen.','Das Lineal irgendwo durch Q legen und eine Linie ziehen.'],a:0,tips:['Die Hilfslinien des Geodreiecks laufen parallel zur langen Kante.','Was auf h liegt, muss eine Hilfslinie sein.','Mit der Mittellinie auf h bekommst du eine Senkrechte, keine Parallele.'],lob:'Du weißt, wie man die Parallele zeichnet.',explain:'Hilfslinie auf h, verschieben bis die lange Kante durch Q geht, dann zeichnen. Die neue Linie ist parallel zu h.'},
-  {id:'mp_h3',thema:'Zeichnen: Parallele im Abstand von 2 cm',type:'choice',q:'Du sollst eine Parallele zu k im Abstand von 2 cm zeichnen. Wie gehst du vor?',opts:['Die Hilfslinie mit der 2 genau auf k legen und an der langen Kante zeichnen.','Die lange Kante auf k legen und 2 cm daneben frei Hand zeichnen.','Die Mittellinie auf k legen und bei 2 cm einen Punkt machen.'],a:0,tips:['Die Hilfslinien tragen Zahlen. Sie geben den Abstand zur langen Kante in Zentimetern an.','Welche Hilfslinie gehört zu 2 cm?','Gezeichnet wird wieder an der langen Kante.'],lob:'Du kannst Parallelen mit genauem Abstand zeichnen.',explain:'Die Hilfslinie mit der 2 auf k legen. Die lange Kante ist dann genau 2 cm entfernt. An ihr entlang zeichnen.'},
   {id:'mp_h4',thema:'Geodreieck: Lückensätze',type:'recall',q:'Schreibe in dein Heft und ergänze: Zwei Geraden, die sich im rechten Winkel schneiden, sind zueinander … Zwei Geraden, die überall gleich weit voneinander entfernt sind, sind zueinander … Zeichen für senkrecht: … Zeichen für parallel: …',items:['senkrecht','parallel','⊥','||'],need:4,tips:['Es fehlen zwei Wörter und zwei Zeichen.','Rechter Winkel gehört zu senkrecht.','Die Zeichen sehen aus wie das, was sie bedeuten.'],lob:'Du kennst alle Begriffe und Zeichen.'}]},
- {id:'mpb18',title:'Zeichnen im Heft',src:'Übungsprobe A7',fach:'Mathe',min:10,info:'Du brauchst Heft, Geodreieck und einen spitzen Bleistift. Prüfe danach jede Zeichnung mit der Liste.',tasks:[
-  {id:'mp_z1',thema:'Zeichnen im Heft: Senkrechte',type:'recall',check:true,q:'Zeichne im Heft eine Gerade g und einen Punkt P neben g. Zeichne die Senkrechte zu g durch P.',items:['Die Mittellinie lag genau auf g.','Die neue Linie geht genau durch P.','Die Linie ist mit spitzem Bleistift sauber gezogen.','Der rechte Winkel ist mit Bogen und Punkt markiert.'],need:4,tips:['Leg zuerst die Mittellinie genau auf g.','Schieb das Geodreieck an g entlang, bis die lange Kante durch P geht.','Zeichne an der langen Kante und markiere den rechten Winkel.'],lob:'Deine Senkrechte ist sauber gezeichnet.'},
+ {id:'mpb15',title:'Der Tennisplatz',src:'Übungsprobe A7b',fach:'Mathe',min:6,info:'Der Tennisplatz ist genau wie in der Probe beschriftet. Tippe die Linien direkt an.',tasks:[
+  {id:'mp_ct1',thema:'Tennisplatz: zwei parallele Linien',type:'grid',q:'Zwei parallele Linien auf dem Tennisplatz antippen.',gen(){return genCourt('par','pair')}},
+  {id:'mp_ct2',thema:'Tennisplatz: alle parallelen Linien',type:'grid',q:'Alle Linien antippen, die zu einer Linie parallel sind.',gen(){return genCourt('par','all')}},
+  {id:'mp_ct3',thema:'Tennisplatz: zwei senkrechte Linien',type:'grid',q:'Zwei senkrechte Linien auf dem Tennisplatz antippen.',gen(){return genCourt('perp','pair')}},
+  {id:'mp_ct4',thema:'Tennisplatz: alle senkrechten Linien',type:'grid',q:'Alle Linien antippen, die auf einer Linie senkrecht stehen.',gen(){return genCourt('perp','all')}},
+  {id:'mp_ct5',thema:'Tennisplatz: mit Zeichen aufschreiben',type:'recall',check:true,q:'Schreibe in dein Heft, wie in der Probe: zwei verschiedene Paare paralleler Linien und zwei verschiedene Paare senkrechter Linien, jeweils mit Zeichen.',svg:COURT_STATIC,items:['Zwei verschiedene parallele Paare, zum Beispiel a || b und c || d.','Zwei verschiedene senkrechte Paare, zum Beispiel a ⊥ c und e ⊥ d.','Zwischen den Buchstaben steht jedes Mal das richtige Zeichen.'],need:3,tips:['Ordne zuerst: Welche Linien laufen von oben nach unten, welche von links nach rechts?','Parallel: zwei Linien aus derselben Gruppe. Senkrecht: aus verschiedenen Gruppen.','Das Zeichen für parallel ist ||, für senkrecht ⊥.'],lob:'Du kannst Linien mit den richtigen Zeichen beschreiben.'}]},
+ {id:'mpb16',title:'Rechte Winkel finden und markieren',src:'Übungsprobe A7c',fach:'Mathe',min:6,info:'Du kannst dein Geodreieck direkt auf den Bildschirm legen und jede Ecke prüfen.',tasks:[
+  {id:'mp_rw1',thema:'Rechter Winkel: richtig markieren',type:'choice',q:'Die richtige Markierung für einen rechten Winkel wählen.',gen:picMark},
+  {id:'mp_rw2',thema:'Rechte Winkel in Figuren markieren',type:'grid',q:'Rechte Winkel in einer Figur finden und markieren.',gen:genCorners},
+  {id:'mp_rw3',thema:'Rechte Winkel in Figuren markieren',type:'grid',q:'Rechte Winkel in einer Figur finden und markieren.',gen:genCorners},
+  {id:'mp_rw4',thema:'Rechte Winkel in Figuren markieren',type:'grid',q:'Rechte Winkel in einer Figur finden und markieren.',gen:genCorners},
+  {id:'mp_rw5',thema:'Rechte Winkel in Figuren markieren',type:'grid',q:'Rechte Winkel in einer Figur finden und markieren.',gen:genCorners}]},
+ {id:'mpb17',title:'Senkrechte zeichnen',src:'Übungsprobe A7d',fach:'Mathe',min:6,info:'Du zeichnest auf Karopapier. Lege dein Geodreieck ruhig auf den Bildschirm.',tasks:[
+  {id:'mp_gs0',thema:'Senkrechte: Geodreieck richtig anlegen',type:'choice',q:'Das richtig angelegte Geodreieck für die Senkrechte wählen.',gen:picSenk},
+  {id:'mp_gs1',thema:'Senkrechte durch P auf g zeichnen',type:'grid',q:'Die Senkrechte durch einen Punkt auf g einzeichnen.',gen(){return genPerp(true)}},
+  {id:'mp_gs2',thema:'Senkrechte durch P auf g zeichnen',type:'grid',q:'Die Senkrechte durch einen Punkt auf g einzeichnen.',gen(){return genPerp(true)}},
+  {id:'mp_gs3',thema:'Senkrechte durch P neben g zeichnen',type:'grid',q:'Die Senkrechte durch einen Punkt neben g einzeichnen.',gen(){return genPerp(false)}}]},
+ {id:'mpb21',title:'Parallelen zeichnen',src:'Übungsprobe A7d',fach:'Mathe',min:7,info:'Für Parallelen brauchst du die Hilfslinien des Geodreiecks.',tasks:[
+  {id:'mp_gp0',thema:'Parallele: Geodreieck richtig anlegen',type:'choice',q:'Das richtig angelegte Geodreieck für die Parallele wählen.',gen:picPar},
+  {id:'mp_gp1',thema:'Parallele durch Q zeichnen',type:'grid',q:'Die Parallele zu h durch Q einzeichnen.',gen:genPar},
+  {id:'mp_gp2',thema:'Parallele durch Q zeichnen',type:'grid',q:'Die Parallele zu h durch Q einzeichnen.',gen:genPar},
+  {id:'mp_gp3',thema:'Abstand 2 cm: Geodreieck richtig anlegen',type:'choice',q:'Das richtig angelegte Geodreieck für 2 cm Abstand wählen.',gen:picAbst},
+  {id:'mp_gp4',thema:'Parallele im Abstand von 2 cm zeichnen',type:'grid',q:'Eine Parallele zu k im Abstand von 2 cm einzeichnen.',gen:genAbst}]},
+ {id:'mpb18',title:'Zeichnen im Heft',src:'Übungsprobe A7d',fach:'Mathe',min:10,info:'Du brauchst Heft, Geodreieck und einen spitzen Bleistift. Prüfe danach jede Zeichnung mit der Liste.',tasks:[
+  {id:'mp_z1',thema:'Zeichnen im Heft: Senkrechte',type:'recall',check:true,q:'Zeichne im Heft eine Gerade g und setze einen Punkt P auf g, wie in der Probe. Zeichne die Senkrechte zu g durch P.',items:['Die Mittellinie lag genau auf g.','Die neue Linie geht genau durch P.','Die Linie ist mit spitzem Bleistift sauber gezogen.','Der rechte Winkel ist mit Bogen und Punkt markiert.'],need:4,tips:['Leg zuerst die Mittellinie genau auf g.','Schieb das Geodreieck an g entlang, bis die lange Kante durch P geht.','Zeichne an der langen Kante und markiere den rechten Winkel.'],lob:'Deine Senkrechte ist sauber gezeichnet.'},
   {id:'mp_z2',thema:'Zeichnen im Heft: Parallele durch Q',type:'recall',check:true,q:'Zeichne im Heft eine Gerade h und einen Punkt Q neben h. Zeichne die Parallele zu h durch Q.',items:['Eine Hilfslinie lag genau auf h.','Die lange Kante ging genau durch Q.','Die Linie ist mit spitzem Bleistift sauber gezogen.','Mit dem Lineal geprüft: Der Abstand ist überall gleich.'],need:4,tips:['Leg eine Hilfslinie genau auf h.','Schieb das Geodreieck, bis die lange Kante durch Q geht.','Miss am Ende an zwei Stellen den Abstand.'],lob:'Deine Parallele ist sauber gezeichnet.'},
   {id:'mp_z3',thema:'Zeichnen im Heft: Abstand 2 cm',type:'recall',check:true,q:'Zeichne im Heft eine Gerade k. Zeichne eine Parallele zu k im Abstand von 2 cm.',items:['Die Hilfslinie mit der 2 lag genau auf k.','Ich habe an der langen Kante gezeichnet.','Mit dem Lineal nachgemessen: An zwei Stellen sind es genau 2 cm.','Die Linie ist mit spitzem Bleistift sauber gezogen.'],need:4,tips:['Such auf dem Geodreieck die Hilfslinie mit der 2.','Leg sie genau auf k.','Zeichne an der langen Kante und miss nach.'],lob:'Dein Abstand stimmt.'},
   {id:'mp_z4',thema:'Rechte Winkel im Zimmer',type:'recall',check:true,q:'Suche in deinem Zimmer drei rechte Winkel, zum Beispiel an Möbeln oder Büchern. Prüfe jeden mit dem Geodreieck.',items:['Ich habe drei rechte Winkel gefunden.','Ich habe jeden mit dem Geodreieck geprüft.'],need:2,tips:['Schau dir Ecken von Tischen, Büchern und Fenstern an.','Leg die lange Kante an eine Seite und den Nullpunkt an die Ecke.','Liegt die andere Seite auf der Mittellinie, ist es ein rechter Winkel.'],lob:'Du hast rechte Winkel in deiner Umgebung entdeckt.'}]},
@@ -668,7 +794,6 @@ return [
   {id:'mp_f3',thema:'Bonus: gleiche Regel, anderer Anfang',type:'steps',q:'Eine Folge mit anderem Anfang fortsetzen.',gen(){const [x,y]=pick([[2,2],[3,3],[2,4],[1,4],[3,5],[4,4]]),s=[x,y];while(s.length<7)s.push(s.at(-1)+s.at(-2));return {q:'Gleiche Regel, anderer Anfang. Setze fort: '+s.slice(0,5).join(', ')+', …',rows:[6,7].map(k=>({label:k+'. Zahl',a:s[k-1]})),tips:['Die Regel bleibt gleich: Summe der zwei Zahlen davor.','Rechne '+s[3]+' + '+s[4]+'.','Für die nächste Zahl nimmst du die zwei letzten Zahlen.'],lob:'Du kannst die Regel auf neue Zahlen anwenden.',explain:s[3]+' + '+s[4]+' = '+s[5]+', '+s[4]+' + '+s[5]+' = '+s[6]+'.'}}}]}
 ];
 })();
-
 const SETS={hsu:{name:'HSU: Unsere Gemeinde',blocks:HSU,twin:true},mathe:{name:'Mathe: Halbschriftlich multiplizieren',blocks:MATHE,twin:true},probe:{name:'Mathe-Probe 25.11.',blocks:MPROBE,twin:true},lesen:{name:'Leseprobe-Training',blocks:LESEN}};
 const T={};Object.keys(SETS).forEach(k=>SETS[k].blocks.forEach((b,bi)=>b.tasks.forEach((t,ti)=>T[t.id]={t,bi,ti,set:k})));
 let BLOCKS,TOTAL;
@@ -680,7 +805,7 @@ const KEY='lernwerkstatt-proto-1';
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.done)return r}catch(e){}return{done:{},blocks:[],heft:[],feel:null}}
 function save(){if(demoSnap)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 let demo=null,demoSnap=null;
-let S=load(),view='heute',cur=null,pinOk=false,pinMsg='';useSet(S.set);
+let S=load(),view='heute',cur=null,pinOk=false,pinMsg='';useSet(S.set);S.heft=(S.heft||[]).filter(id=>T[id]);
 const fresh=()=>({sel:null,wrong:[],tips:0,tries:0,status:'open',msg:'',conf:null});
 const main=document.getElementById('main');
 
@@ -725,8 +850,8 @@ function vUeben(){
       '<div class="row"><button class="btn" data-act="nav" data-v="heute">Zurück zum Plan</button></div></section>';
   }
   const t=curT();if(t.type==='choice'&&!cur.perm)cur.perm=t.fixed?t.opts.map((_,k)=>k):shuffled(t.opts.length);
-  const open=cur.status==='open',has=t.type==='steps'?t.rows.every((_,k)=>(cur.sel||[])[k]):t.type==='order'?(cur.sel||[]).length===t.words.length:cur.sel!==null&&cur.sel!==''&&!(Array.isArray(cur.sel)&&!cur.sel.length);
-  let h='<div class="row" style="justify-content:space-between"><div class="stack" style="gap:4px"><span class="label">'+(cur.twin?(cur.twin.gen?(cur.twin.svg?'Gleich noch einmal, mit einer neuen Figur':'Gleich noch einmal, mit neuen Zahlen'):'Gleich noch einmal, jetzt ohne Auswahl'):cur.retry?'Fehlerheft · nochmal üben':b.title)+'</span>'+
+  const open=cur.status==='open',has=t.type==='grid'?gHas(t,cur.sel):t.type==='steps'?t.rows.every((_,k)=>(cur.sel||[])[k]):t.type==='order'?(cur.sel||[]).length===t.words.length:cur.sel!==null&&cur.sel!==''&&!(Array.isArray(cur.sel)&&!cur.sel.length);
+  let h='<div class="row" style="justify-content:space-between"><div class="stack" style="gap:4px"><span class="label">'+(cur.twin?(cur.twin.gen?(cur.twin.svg||cur.twin.pics||cur.twin.type==='grid'?'Gleich noch einmal, mit einer neuen Figur':'Gleich noch einmal, mit neuen Zahlen'):'Gleich noch einmal, jetzt ohne Auswahl'):cur.retry?'Fehlerheft · nochmal üben':b.title)+'</span>'+
     (cur.retry?'':'<div class="dots" aria-label="Aufgabe '+(cur.i+1)+' von '+b.tasks.length+'">'+b.tasks.map((x,k)=>'<b class="'+(k<cur.i?'on':k===cur.i?'cur':'')+'"></b>').join('')+'</div>')+'</div>'+
     '<button class="btn ghost" data-act="nav" data-v="'+(cur.retry?'heft':'heute')+'">Pause</button></div>';
   h+='<div class="work'+(b.text?' two':'')+'">';
@@ -735,7 +860,8 @@ function vUeben(){
   const ak=askOf(t);
   if(ak&&open&&!cur.asked&&!cur.retry&&!cur.twin){if(!cur.askPerm)cur.askPerm=ak.fixed?ak.opts.map((_,k)=>k):shuffled(ak.opts.length);
     return h+'<div class="stack" style="gap:8px"><span class="label">Erst genau lesen</span><p><b>'+ak.q+'</b></p><div class="opts">'+cur.askPerm.map(k=>'<button class="opt" data-act="ask" data-k="'+k+'">'+ak.opts[k]+'</button>').join('')+'</div></div>'+(cur.askMiss?'<p class="msg bad" role="status">Noch nicht. Lies die Aufgabe noch einmal langsam, Wort für Wort.</p>':'')+'</section></div>'}
-  if(t.type==='choice')h+='<div class="opts">'+cur.perm.map(k=>{const o=t.opts[k],yes=!open&&k===t.a,no=cur.wrong.includes(k);return '<button class="opt'+(yes?' yes':'')+(no?' no':'')+'" data-act="pick" data-k="'+k+'" aria-pressed="'+(cur.sel===k)+'"'+(!open||no?' disabled':'')+'>'+o+'</button>'}).join('')+'</div>';
+  if(t.type==='grid')h+='<div class="fig">'+gView(t,cur.sel,open?'open':(cur.status==='right'?'right':'sol'))+'</div>';
+  if(t.type==='choice')h+='<div class="opts'+(t.pics?' pics':'')+'">'+cur.perm.map(k=>{const o=t.opts[k],yes=!open&&k===t.a,no=cur.wrong.includes(k);return '<button class="opt'+(t.pics?' pic':'')+(yes?' yes':'')+(no?' no':'')+'" data-act="pick" data-k="'+k+'" aria-pressed="'+(cur.sel===k)+'"'+(!open||no?' disabled':'')+'>'+o+'</button>'}).join('')+'</div>';
   if(t.type==='words')h+='<div class="words">'+t.words.map((w,k)=>{const on=(cur.sel||[]).includes(k),yes=!open&&t.a.includes(k);return '<button class="opt'+(yes?' yes':'')+'" data-act="word" data-k="'+k+'" aria-pressed="'+on+'"'+(open?'':' disabled')+'>'+w+'</button>'}).join('')+'</div>';
   if(t.type==='order')h+='<div class="opts">'+t.words.map((w,k)=>{const pos=open?(cur.sel||[]).indexOf(k):t.a.indexOf(k);return '<button class="opt'+(open?'':' yes')+'" data-act="word" data-k="'+k+'" aria-pressed="'+(open&&pos>=0)+'"'+(open?'':' disabled')+'>'+(pos>=0?'<b>'+(pos+1)+'.</b> ':'')+w+'</button>'}).join('')+'</div>';
   if(t.type==='steps')h+='<div class="steps">'+t.rows.map((r,k)=>{const bad=open&&(cur.badRows||[]).includes(k);return '<div class="srow'+(r.sum?' sum':'')+'"><label for="st-'+t.id+'-'+k+'">'+r.label+' =</label><input class="num'+(bad?' bad':'')+'" id="st-'+t.id+'-'+k+'" data-k="'+k+'" inputmode="numeric" autocomplete="off" value="'+(open?((cur.sel||[])[k]||''):f(r.a))+'"'+(open?'':' disabled')+'></div>'}).join('')+'</div>';
@@ -794,10 +920,11 @@ function vEltern(){
   return h;
 }
 
-const TYP={choice:'Eine Antwort wählen',words:'Mehrere antippen',order:'Reihenfolge antippen',number:'Zahl eintippen',steps:'Zeile für Zeile',recall:'Ins Heft, dann selbst prüfen'};
+const TYP={grid:'Antippen und einzeichnen',choice:'Eine Antwort wählen',words:'Mehrere antippen',order:'Reihenfolge antippen',number:'Zahl eintippen',steps:'Zeile für Zeile',recall:'Ins Heft, dann selbst prüfen'};
 function dInst(t){if(!t.gen)return t;if(!demo.inst[t.id])demo.inst[t.id]=Object.assign({},t,t.gen());return demo.inst[t.id]}
 function solHTML(t){
-  if(t.type==='choice')return '<div class="opts">'+t.opts.map((o,k)=>'<div class="opt'+(k===t.a?' yes':'')+'">'+(k===t.a?'✓ ':'')+o+'</div>').join('')+'</div>';
+  if(t.type==='grid')return '<div class="fig">'+gView(t,null,'sol')+'</div>';
+  if(t.type==='choice')return '<div class="opts'+(t.pics?' pics':'')+'">'+t.opts.map((o,k)=>'<div class="opt'+(t.pics?' pic':'')+(k===t.a?' yes':'')+'">'+(k===t.a?'✓ ':'')+o+'</div>').join('')+'</div>';
   if(t.type==='words')return '<div class="words">'+t.words.map((w,k)=>'<span class="opt'+(t.a.includes(k)?' yes':'')+'">'+(t.a.includes(k)?'✓ ':'')+w+'</span>').join('')+'</div>';
   if(t.type==='order')return '<ol class="sol">'+t.a.map(k=>'<li>'+t.words[k]+'</li>').join('')+'</ol>';
   if(t.type==='number')return '<p class="msg ok">Lösung: '+f(t.a)+(t.unit?' '+t.unit:'')+'</p>';
@@ -871,6 +998,7 @@ function check(c){
   if(t.type==='choice')ok=cur.sel===t.a;
   else if(t.type==='words')ok=[...cur.sel].sort((x,y)=>x-y).join()===t.a.join();
   else if(t.type==='order')ok=cur.sel.join()===t.a.join();
+  else if(t.type==='grid')ok=gOk(t,cur.sel);
   else if(t.type==='steps'){cur.badRows=t.rows.map((r,k)=>Number(String(cur.sel[k]).replace(/[^0-9]/g,''))===r.a?-1:k).filter(k=>k>=0);ok=!cur.badRows.length}
   else ok=Number(String(cur.sel).replace(/[^0-9]/g,''))===t.a;
   if(!cur.conf)cur.conf=c;
@@ -883,6 +1011,7 @@ function check(c){
     if(t.type==='choice'){cur.wrong.push(cur.sel);cur.sel=null}
     cur.msg=['Noch nicht. Lies die Aufgabe noch einmal ganz langsam.','Fast. Schau genau hin: Was ist wirklich gefragt?','Das passt noch nicht. Ein Tipp kann dir jetzt helfen.'][Math.min(cur.tries-1,2)];
     if(t.type==='steps')cur.msg=cur.badRows.length===1&&t.rows[cur.badRows[0]].sum?'Die Teilaufgaben stimmen. Schau dir die Addition noch einmal an.':'Rot markiert: '+(cur.badRows.length===1?'Diese Zeile stimmt':'Diese Zeilen stimmen')+' noch nicht.';
+    if(t.type==='grid')cur.msg=gMsg(t,cur.sel);
     if(!cur.twin)addHeft(t.id);
   }
   save();
@@ -910,6 +1039,9 @@ document.addEventListener('click',e=>{
   else if(a==='reveal'){cur.revealed=true;cur.sel=[]}
   else if(a==='selfcheck'){selfcheck()}
   else if(a==='pick'){cur.sel=+el.dataset.k}
+  else if(a==='gpt'){if(cur&&cur.status==='open'){const t=curT(),X=[+el.dataset.x,+el.dataset.y];if(t.mode==='dist')cur.sel=cur.sel&&cur.sel.length===1&&!eqp(cur.sel[0],X)?cur.sel.concat([X]):[X];else if(!eqp(X,t.P))cur.sel=X}}
+  else if(a==='gcorner'){if(cur&&cur.status==='open'){const k=+el.dataset.k;cur.sel=cur.sel||[];cur.sel=cur.sel.includes(k)?cur.sel.filter(x=>x!==k):cur.sel.concat(k)}}
+  else if(a==='gline'){if(cur&&cur.status==='open'){const t=curT(),l=el.dataset.l;let q=cur.sel||[];q=q.includes(l)?q.filter(x=>x!==l):q.concat(l);if(t.need==='pair'&&q.length>2)q=q.slice(-2);cur.sel=q}}
   else if(a==='word'){const k=+el.dataset.k;cur.sel=cur.sel||[];cur.sel=cur.sel.includes(k)?cur.sel.filter(x=>x!==k):cur.sel.concat(k)}
   else if(a==='tip'){cur.tips++}
   else if(a==='conf'){check(el.dataset.c)}
