@@ -93,6 +93,12 @@ table{border-collapse:collapse;width:100%;font-size:.95rem}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
 th{font-size:.8rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 summary{cursor:pointer;font-weight:800}
+.jumps{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.jb{min-width:40px;height:40px;border-radius:999px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font-weight:800;font-variant-numeric:tabular-nums;padding:0 8px}
+.jb.on{background:var(--good-bg);border-color:var(--pitch)}
+.jb.cur{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.jb.arr{font-size:1.3rem;line-height:1}
+.jb:disabled{opacity:.35}
 @media (max-width:480px){.srow{grid-template-columns:8rem max-content}}
 .srow .lab{text-align:right}
 .srow .val{padding:8px 14px;border:2px solid var(--pitch);border-radius:12px;background:var(--good-bg)}
@@ -807,6 +813,12 @@ function save(){if(demoSnap)return;try{localStorage.setItem(KEY,JSON.stringify(S
 let demo=null,demoSnap=null;
 let S=load(),view='heute',cur=null,pinOk=false,pinMsg='';useSet(S.set);S.heft=(S.heft||[]).filter(id=>T[id]);
 const fresh=()=>({sel:null,wrong:[],tips:0,tries:0,status:'open',msg:'',conf:null});
+const KEEP=['sel','wrong','tips','tries','status','msg','conf','inst','perm','asked','askMiss','askPerm','revealed','badRows','late'];
+function snap(c){const o={};KEEP.forEach(k=>{if(c[k]!==undefined)o[k]=c[k]});return o}
+function saveCur(){cur.cache=cur.cache||{};if(!cur.twin)cur.cache[cur.i]=snap(cur)}
+function goTask(k){const b=(cur.blk||BLOCKS[cur.b]);if(k<0||k>=b.tasks.length)return;saveCur();const c=cur.cache;cur=Object.assign({b:cur.b,i:k,blk:cur.blk,res:cur.res,cache:c},fresh(),c[k]||{})}
+function answered(k){if(k===cur.i&&!cur.twin)return cur.status!=='open';const c=(cur.cache||{})[k];return !!c&&c.status!=='open'}
+function nextOpen(){const n=(cur.blk||BLOCKS[cur.b]).tasks.length;for(let s=1;s<=n;s++){const k=(cur.i+s)%n;if(!answered(k))return k}return -1}
 const main=document.getElementById('main');
 
 const PROBEN=[
@@ -852,7 +864,7 @@ function vUeben(){
   const t=curT();if(t.type==='choice'&&!cur.perm)cur.perm=t.fixed?t.opts.map((_,k)=>k):shuffled(t.opts.length);
   const open=cur.status==='open',has=t.type==='grid'?gHas(t,cur.sel):t.type==='steps'?t.rows.every((_,k)=>(cur.sel||[])[k]):t.type==='order'?(cur.sel||[]).length===t.words.length:cur.sel!==null&&cur.sel!==''&&!(Array.isArray(cur.sel)&&!cur.sel.length);
   let h='<div class="row" style="justify-content:space-between"><div class="stack" style="gap:4px"><span class="label">'+(cur.twin?(cur.twin.gen?(cur.twin.svg||cur.twin.pics||cur.twin.type==='grid'?'Gleich noch einmal, mit einer neuen Figur':'Gleich noch einmal, mit neuen Zahlen'):'Gleich noch einmal, jetzt ohne Auswahl'):cur.retry?'Fehlerheft · nochmal üben':b.title)+'</span>'+
-    (cur.retry?'':'<div class="dots" aria-label="Aufgabe '+(cur.i+1)+' von '+b.tasks.length+'">'+b.tasks.map((x,k)=>'<b class="'+(k<cur.i?'on':k===cur.i?'cur':'')+'"></b>').join('')+'</div>')+'</div>'+
+    (cur.retry?'':'<nav class="jumps" aria-label="Aufgaben im Block"><button class="jb arr" data-act="jump" data-k="'+(cur.i-1)+'"'+(cur.i>0?'':' disabled')+' aria-label="Vorherige Aufgabe">‹</button>'+b.tasks.map((x,k)=>'<button class="jb'+(k===cur.i?' cur':answered(k)?' on':'')+'" data-act="jump" data-k="'+k+'" aria-label="Aufgabe '+(k+1)+'"'+(k===cur.i?' aria-current="step"':'')+'>'+(k+1)+'</button>').join('')+'<button class="jb arr" data-act="jump" data-k="'+(cur.i+1)+'"'+(cur.i<b.tasks.length-1?'':' disabled')+' aria-label="Nächste Aufgabe">›</button></nav>')+'</div>'+
     '<button class="btn ghost" data-act="nav" data-v="'+(cur.retry?'heft':'heute')+'">Pause</button></div>';
   h+='<div class="work'+(b.text?' two':'')+'">';
   if(b.text){const ev=!open&&t.ev?t.ev:[];h+='<article class="panel stack"><h2>'+b.text.title+'</h2><p class="read">'+b.text.s.map((s,k)=>ev.includes(k)?'<mark>'+s+'</mark>':s).join(' ')+'</p>'+(ev.length?'<p class="muted small">Gelb markiert: die Stelle, an der die Antwort steht.</p>':'')+'</article>'}
@@ -1038,6 +1050,7 @@ document.addEventListener('click',e=>{
   else if(a==='more'){tm().extra+=10;save()}
   else if(a==='reveal'){cur.revealed=true;cur.sel=[]}
   else if(a==='selfcheck'){selfcheck()}
+  else if(a==='jump'){if(cur&&!cur.retry)goTask(+el.dataset.k)}
   else if(a==='pick'){cur.sel=+el.dataset.k}
   else if(a==='gpt'){if(cur&&cur.status==='open'){const t=curT(),X=[+el.dataset.x,+el.dataset.y];if(t.mode==='dist')cur.sel=cur.sel&&cur.sel.length===1&&!eqp(cur.sel[0],X)?cur.sel.concat([X]):[X];else if(!eqp(X,t.P))cur.sel=X}}
   else if(a==='gcorner'){if(cur&&cur.status==='open'){const k=+el.dataset.k;cur.sel=cur.sel||[];cur.sel=cur.sel.includes(k)?cur.sel.filter(x=>x!==k):cur.sel.concat(k)}}
@@ -1048,15 +1061,15 @@ document.addEventListener('click',e=>{
   else if(a==='show'){const t=curT();cur.status='shown';cur.msg='';record(t,'shown');save()}
   else if(a==='next'){
     const tw=nextTwin();
-    if(tw){cur=Object.assign({b:cur.b,i:cur.i,blk:cur.blk,res:cur.res,retry:cur.retry,twin:tw},fresh())}
+    if(tw){saveCur();cur=Object.assign({b:cur.b,i:cur.i,blk:cur.blk,res:cur.res,retry:cur.retry,cache:cur.cache,twin:tw},fresh())}
     else if(cur.retry){view='heft';cur=null}
-    else{const b=(cur.blk||BLOCKS[cur.b]);if(cur.i+1<b.tasks.length){cur=Object.assign({b:cur.b,i:cur.i+1,blk:cur.blk,res:cur.res},fresh())}else{if(!cur.blk&&!S.blocks.includes(b.id))S.blocks.push(b.id);save();cur.status='blockdone'}}
+    else{const b=(cur.blk||BLOCKS[cur.b]);saveCur();const k=nextOpen();if(k>=0){goTask(k)}else{if(!cur.blk&&!S.blocks.includes(b.id))S.blocks.push(b.id);save();cur.status='blockdone'}}
   }
   else if(a==='feel'){dayPlan().feel=el.dataset.f;save()}
   else if(a==='pin'){const v=document.getElementById('pin').value;if(v==='1234'){pinOk=true;pinMsg=''}else{pinMsg='Die PIN stimmt nicht. Im Prototyp lautet sie 1234.'}}
   else if(a==='reset'){S={done:{},blocks:[],heft:[],feels:{},set:S.set};save()}
   render();
-  if(['next','start','retry','nav','review','setgo','demo','demoend','dset','dprev','dnext','dtry'].includes(a))window.scrollTo(0,0);
+  if(['next','start','retry','nav','review','jump','setgo','demo','demoend','dset','dprev','dnext','dtry'].includes(a))window.scrollTo(0,0);
 });
 document.addEventListener('change',e=>{if(demo&&(e.target.id==='dblock'||e.target.id==='dblock2')){demo.b=+e.target.value;render();window.scrollTo(0,0)}});
 document.addEventListener('input',e=>{
