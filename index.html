@@ -93,6 +93,20 @@ table{border-collapse:collapse;width:100%;font-size:.95rem}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
 th{font-size:.8rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 summary{cursor:pointer;font-weight:800}
+.bar{height:10px;border-radius:999px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--pitch);border-radius:999px}
+.chip{font-size:.78rem;font-weight:800;border-radius:999px;padding:3px 10px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.chip.ok{background:var(--good-bg);border-color:var(--pitch);color:var(--ink)}
+.chip.go{background:var(--tip-bg);border-color:var(--sky);color:var(--sky)}
+.pcard{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.pcard.act{border-color:var(--pitch);box-shadow:inset 0 0 0 1px var(--pitch)}
+.pcard .pdate{color:var(--muted);font-weight:700;margin-top:2px}
+.blist,.plist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.brow,.plist li{display:flex;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+.brow.fin{background:var(--good-bg)}
+.bnum{min-width:28px;height:28px;border-radius:999px;display:grid;place-items:center;font-weight:800;font-size:.85rem;background:var(--surface);border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.bmain{flex:1;min-width:0;display:grid;gap:6px}
+.btn.sm{min-height:44px;padding:8px 14px}
 .jumps{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .jb{min-width:40px;height:40px;border-radius:999px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font-weight:800;font-variant-numeric:tabular-nums;padding:0 8px}
 .jb.on{background:var(--good-bg);border-color:var(--pitch)}
@@ -831,19 +845,28 @@ function nextProbe(){const up=PROBEN.filter(p=>dTo(p)>=0).sort((a,b)=>dTo(a)-dTo
 function examLine(p){const d=dTo(p);return d>1?p.name+' in '+d+' Tagen':d===1?p.name+' morgen':d===0?p.name+' heute':'Die '+p.name+' war am '+p.wd.split(', ')[1]}
 function selfCount(){return ids().filter(id=>S.done[id]&&S.done[id].solved==='self').length}
 
-function card(b){const i=BLOCKS.indexOf(b),d=S.blocks.includes(b.id),n=b.tasks.filter(t=>S.done[t.id]).length;
-  return '<section class="card'+(d?' done':'')+'"><span class="label">'+b.fach+' · ca. '+b.min+' Min.</span><h3>'+b.title+'</h3><p class="muted small">'+b.tasks.length+' Aufgaben'+(n&&!d?' · '+n+' geschafft':'')+'</p>'+(d?'<p><b>Fertig.</b></p>':'<button class="btn" data-act="start" data-b="'+i+'">'+(n?'Weitermachen':'Los geht’s')+'</button>')+'</section>'}
+function bStat(b){const n=b.tasks.length,d=b.tasks.filter(t=>S.done[t.id]).length,ok=b.tasks.filter(t=>S.done[t.id]&&S.done[t.id].solved==='self').length,fe=b.tasks.filter(t=>S.heft.includes(t.id)).length;return {n,d,ok,fe,fin:S.blocks.includes(b.id)}}
+function setStat(k){const bl=SETS[k].blocks;return {bn:bl.length,fin:bl.filter(b=>S.blocks.includes(b.id)).length,n:bl.reduce((a,b)=>a+b.tasks.length,0),d:bl.reduce((a,b)=>a+b.tasks.filter(t=>S.done[t.id]).length,0)}}
+const bar=(x,n)=>'<div class="bar" role="img" aria-label="'+x+' von '+n+'"><i style="width:'+(n?Math.round(x/n*100):0)+'%"></i></div>';
+function chip(st){return st.fin?'<span class="chip ok">Fertig</span>':st.d?'<span class="chip go">Angefangen</span>':'<span class="chip">Offen</span>'}
+function card(b){const i=BLOCKS.indexOf(b),st=bStat(b);
+  return '<section class="card'+(st.fin?' done':'')+'"><div class="row" style="justify-content:space-between"><span class="label">ca. '+b.min+' Min.</span>'+chip(st)+'</div><h3>'+b.title+'</h3>'+bar(st.d,st.n)+'<p class="muted small">'+st.d+' von '+st.n+' Aufgaben'+(st.d?' · '+st.ok+' selbst gelöst':'')+(st.fe?' · '+st.fe+' im Fehlerheft':'')+'</p><button class="btn'+(st.fin?' ghost':'')+'" data-act="start" data-b="'+i+'">'+(st.fin?'Nochmal üben':st.d?'Weitermachen':'Los geht’s')+'</button></section>'}
+function brow(b,k){const st=bStat(b);return '<li class="brow'+(st.fin?' fin':'')+'"><span class="bnum">'+(k+1)+'</span><div class="bmain"><div class="row" style="justify-content:space-between;gap:8px"><b>'+b.title+'</b>'+chip(st)+'</div>'+bar(st.d,st.n)+'<span class="muted small">'+st.d+' von '+st.n+' Aufgaben'+(st.fe?' · '+st.fe+' im Fehlerheft':'')+(b.src?' · '+b.src:'')+'</span></div><button class="btn ghost sm" data-act="start" data-b="'+k+'" aria-label="'+b.title+' starten">'+(st.fin?'Nochmal':st.d?'Weiter':'Start')+'</button></li>'}
 function vHeute(){
   const nb=BLOCKS.filter(b=>S.blocks.includes(b.id)).length,day=dayPlan(),mine=day.ids.map(id=>BLOCKS.find(b=>b.id===id)).filter(Boolean),dayDone=mine.length>0&&mine.every(b=>S.blocks.includes(b.id)),min=Math.floor(tm().sec/60),lim=LIMIT+tm().extra,due=dueIds();
-  let h='<div class="stack"><h1>Hallo!</h1><p class="muted">'+(mine.length?'Dein Plan für heute: '+(mine.length===1?'1 Block':mine.length+' Blöcke')+', etwa '+mine.reduce((x,b)=>x+b.min,0)+' Minuten. Du wählst die Reihenfolge.':'Du hast alle Blöcke einmal geschafft. Ab jetzt wiederholst du.')+'</p><div class="row"><span class="label">Paket</span>'+Object.keys(SETS).map(k=>'<button class="tab" data-act="set" data-s="'+k+'" aria-pressed="'+(k===S.set)+'">'+SETS[k].name+'</button>').join('')+'</div><p class="muted small">Heute geübt: '+min+' von '+lim+' Minuten · '+nb+' von '+BLOCKS.length+' Blöcken im Paket geschafft</p></div>';
-  const np=nextProbe();if(np)h+='<div class="banner"><span>'+examLine(np)+' ('+np.wd+')</span><button class="btn ghost" style="border-color:var(--ball-ink);color:var(--ball-ink)" data-act="nav" data-v="probe">Lernplan ansehen</button></div>';
+  const up=PROBEN.filter(p=>dTo(p)>=0&&SETS[p.set]).sort((a,b)=>dTo(a)-dTo(b)),inProbe=up.map(p=>p.set),rest=Object.keys(SETS).filter(k=>!inProbe.includes(k));
+  let h='<div class="stack"><h1>Hallo!</h1></div>';
+  h+='<section class="stack"><span class="label">Anstehende Proben</span>'+(up.length?up.map(p=>{const st=setStat(p.set),act=S.set===p.set;return '<article class="pcard'+(act?' act':'')+'"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2>'+p.name+'</h2><p class="pdate">'+p.wd+' · '+examLine(p).replace(p.name+' ','')+'</p></div>'+(act?'<span class="chip ok">Wird geübt</span>':'')+'</div>'+bar(st.d,st.n)+'<p class="small">'+st.fin+' von '+st.bn+' Blöcken fertig · '+st.d+' von '+st.n+' Aufgaben bearbeitet</p><div class="row">'+(act?'':'<button class="btn" data-act="set" data-s="'+p.set+'">Dafür üben</button>')+'<button class="btn ghost" data-act="nav" data-v="probe">Lernplan</button></div></article>'}).join(''):'<p class="muted">Gerade steht keine Probe an.</p>')+'</section>';
+  if(rest.length)h+='<details class="panel"'+(rest.includes(S.set)?' open':'')+'><summary>Weitere Pakete ('+rest.length+')</summary><ul class="plist">'+rest.map(k=>{const st=setStat(k),act=S.set===k;return '<li><div class="bmain"><b>'+SETS[k].name+'</b>'+bar(st.d,st.n)+'<span class="muted small">'+st.fin+' von '+st.bn+' Blöcken fertig</span></div>'+(act?'<span class="chip ok">Wird geübt</span>':'<button class="btn ghost sm" data-act="set" data-s="'+k+'">Wählen</button>')+'</li>'}).join('')+'</ul></details>';
+  h+='<section class="stack"><div class="row" style="justify-content:space-between;align-items:baseline"><h2>'+SETS[S.set].name+'</h2><span class="muted small">Heute geübt: '+min+' von '+lim+' Minuten</span></div></section>';
   if(over())h+='<section class="panel stack"><h2>Für heute ist Schluss.</h2><p>Du hast '+min+' Minuten geübt. Das reicht. Morgen geht es weiter.</p></section>';
   else{
     if(due.length)h+='<section class="panel stack"><span class="label">Wiederholen, damit es im Kopf bleibt</span><h2>'+(due.length===1?'1 Aufgabe ist':due.length+' Aufgaben sind')+' heute dran</h2><p class="muted small">Immer höchstens 5 auf einmal. Fang am besten damit an.</p><div class="row"><button class="btn" data-act="review">Wiederholen</button></div></section>';
-    h+='<div class="plan">'+mine.map(card).join('')+'</div>';
+    if(mine.length)h+='<p class="muted">Dein Plan für heute: '+(mine.length===1?'1 Block':mine.length+' Blöcke')+', etwa '+mine.reduce((x,b)=>x+b.min,0)+' Minuten. Du wählst die Reihenfolge.</p><div class="plan">'+mine.map(card).join('')+'</div>';
+    else h+='<p class="muted">Du hast alle Blöcke einmal geschafft. Ab jetzt wiederholst du.</p>';
     if(dayDone)h+='<section class="panel stack">'+(day.feel?'<h2>Geschafft für heute.</h2><p>Deine Blöcke für heute sind fertig. Morgen kommen neue dazu. Jetzt ist Pause.</p>':'<h2>Deine Blöcke für heute sind fertig. Wie war es?</h2><div class="row"><button class="btn ghost" data-act="feel" data-f="leicht">Leicht</button><button class="btn ghost" data-act="feel" data-f="genau richtig">Genau richtig</button><button class="btn ghost" data-act="feel" data-f="schwer">Schwer</button></div>')+'</section>';
-    if(BLOCKS.length>mine.length)h+='<details class="panel"><summary>Alle '+BLOCKS.length+' Blöcke im Paket</summary><div class="plan" style="margin-top:14px">'+BLOCKS.map(card).join('')+'</div></details>';
   }
+  h+='<section class="panel stack"><div class="row" style="justify-content:space-between;align-items:baseline"><h2>Alle Blöcke</h2><span class="muted small">'+nb+' von '+BLOCKS.length+' fertig</span></div>'+bar(nb,BLOCKS.length)+'<ol class="blist">'+BLOCKS.map(brow).join('')+'</ol></section>';
   const part=Math.round(nb/BLOCKS.length*100);
   const tiles=[['Unterfranken',100],['Oberfranken',100],null,['Mittelfranken',part,1],['Oberpfalz',0],null,['Schwaben',0],['Oberbayern',0],['Niederbayern',0]];
   h+='<section class="stack"><h2>Deine Bayern-Karte</h2><p class="muted small">Jeder fertige Block füllt Mittelfranken ein Stück. Die zwei vollen Bezirke sind ein Beispielstand.</p><div class="map">'+
