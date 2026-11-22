@@ -968,9 +968,9 @@ const MERK={
 const inFrame=(()=>{try{return window.self!==window.top}catch(e){return true}})();
 let merkSet=null;
 function merkOf(id){const x=T[id];if(!x||!MERK[x.set])return null;const bid=SETS[x.set].blocks[x.bi].id;return MERK[x.set].cards.find(c=>c[2].includes(bid))||null}
-function merkFigLines(){const fig=(svg,cap,c)=>'<figure'+(c?' class="'+c+'"':'')+'>'+svg+'<figcaption>'+cap+'</figcaption></figure>',ug=vunit([120,-30]),uk=vunit([12.1,-48.5]);
+function merkFigLines(){const fig=(svg,cap,c)=>'<figure'+(c?' class="'+c+'"':'')+'>'+svg+'<figcaption>'+cap+'</figcaption></figure>',ug=vunit([120,-30]),uk=vunit([-12,-48]);
   return fig('<svg viewBox="0 0 140 110" role="img" aria-label="Zwei parallele Linien g und h"><line class="gl" x1="10" y1="60" x2="120" y2="25"/><line class="gl" x1="20" y1="95" x2="130" y2="60"/><text class="gn" x="122" y="20">g</text><text class="gn" x="126" y="82">h</text></svg>','parallel<br>g || h')+
-   fig('<svg viewBox="0 0 140 110" role="img" aria-label="Zwei senkrechte Linien g und k mit rechtem Winkel"><line class="gl" x1="10" y1="75" x2="130" y2="45"/><line class="gl" x1="57.9" y1="108.5" x2="82.1" y2="11.5"/>'+rMark([70,60],ug,uk,'',13)+'<text class="gn" x="124" y="38">g</text><text class="gn" x="90" y="16">k</text></svg>','senkrecht<br>g ⊥ k')+
+   fig('<svg viewBox="0 0 140 110" role="img" aria-label="Zwei senkrechte Linien g und k mit rechtem Winkel"><line class="gl" x1="10" y1="75" x2="130" y2="45"/><line class="gl" x1="58" y1="12" x2="82" y2="108"/>'+rMark([70,60],ug,uk,'',13)+'<text class="gn" x="124" y="38">g</text><text class="gn" x="40" y="20">k</text></svg>','senkrecht<br>g ⊥ k')+
    fig(courtSVG([],[]),'Tennisplatz<br>a || b &nbsp; c || d &nbsp; a ⊥ c','court')}
 function merkHTML(c){return '<p class="mrule">'+c[3]+'</p>'+(c[7]?'<div class="mfig fig">'+c[7]()+'</div>':'')+(c[4].length?'<div class="mex">'+c[4].map(l=>'<div>'+l+'</div>').join('')+'</div>':'')+(c[5].length?'<ul class="mtr">'+c[5].map(x=>'<li>'+x+'</li>').join('')+'</ul>':'')+(c[6]?'<p class="mfall"><b>Vorsicht:</b> '+c[6]+'</p>':'')}
 function merkBox(c,open,label){return '<details class="mbox"'+(open?' open':'')+'><summary>'+label+': '+c[1]+'</summary><div class="mbody">'+merkHTML(c)+'</div></details>'}
