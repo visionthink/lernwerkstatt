@@ -1,5 +1,5 @@
 // Lernwerkstatt: Offline-Betrieb. Bei neuen Aufgaben VERSION hochzählen.
-const VERSION = 'lernwerkstatt-v46';
+const VERSION = 'lernwerkstatt-v47';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 
 self.addEventListener('install', e => {
@@ -14,7 +14,7 @@ self.addEventListener('fetch', e => {
   const own = url.origin === self.location.origin;
   if (own) {
     // Eigene Dateien: erst Netz (damit Updates ankommen), ohne Netz aus dem Speicher.
-    e.respondWith(fetch(e.request).then(r => {
+    e.respondWith(fetch(e.request, {cache: 'no-cache'}).then(r => {
       const copy = r.clone(); caches.open(VERSION).then(c => c.put(e.request, copy)); return r;
     }).catch(() => caches.match(e.request, {ignoreSearch: true}).then(r => r || caches.match('./index.html'))));
   } else {
