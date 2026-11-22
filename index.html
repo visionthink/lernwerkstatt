@@ -81,6 +81,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--sky);outline-of
 .tip{background:var(--tip-bg);border-left:0;border-radius:12px;padding:10px 14px}
 .tip b{color:var(--sky)}
 .msg{border-radius:12px;padding:12px 14px;font-weight:700}
+.bktext{width:100%;box-sizing:border-box;font:13px/1.4 ui-monospace,monospace;border:2px solid var(--line);border-radius:10px;padding:8px;background:var(--surface);color:var(--ink)}.bkalt summary{cursor:pointer;font-weight:700}
 .msg.bad{background:var(--warn-bg);color:var(--warn)} .msg.ok{background:var(--good-bg)}
 .dots{display:flex;gap:6px}
 .dots b{width:26px;height:8px;border-radius:4px;background:var(--line)} .dots b.on{background:var(--pitch)} .dots b.cur{background:var(--ink)}
@@ -1394,20 +1395,28 @@ function parentTop(){const wk=weekData(),mins=wk.reduce((a,x)=>a+x.min,0),days=w
   h+='</div><section class="panel stack"><span class="label">Beobachtungen</span><p>'+report()+'</p></section>';
   return h}
 // ---------- Lernstand sichern und laden ----------
-let bkMsg='',bkPending=null;
-function bkName(){const d=new Date();return 'lernwerkstatt-sicherung-'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.json'}
+let bkMsg='',bkPending=null,bkShow=false;
+function bkName(){const d=new Date();return 'lernwerkstatt-sicherung-'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.txt'}
 function bkData(){return JSON.stringify({app:'lernwerkstatt',v:1,saved:new Date().toISOString(),state:S})}
 function bkCheck(txt){let o;try{o=JSON.parse(txt)}catch(e){return {err:'Die Datei ist keine Sicherung der Lernwerkstatt.'}}if(!o||o.app!=='lernwerkstatt'||!o.state||typeof o.state!=='object'||typeof o.state.done!=='object'||!Array.isArray(o.state.heft))return {err:'Die Datei ist keine Sicherung der Lernwerkstatt.'};return {o}}
 function bkInfo(st){const n=Object.keys(st.done||{}).length;return n+(n===1?' bearbeitete Aufgabe':' bearbeitete Aufgaben')+', '+(st.heft||[]).length+' im Fehlerheft, '+((st.stamps||[]).length)+' Stempel'}
 function bkDate(iso){const d=new Date(iso);return isNaN(d)?'unbekannt':d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear()+', '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+' Uhr'}
-function bkSave(){const blob=new Blob([bkData()],{type:'application/json'}),name=bkName();
-  try{const file=new File([blob],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'Lernwerkstatt Sicherung'}).then(()=>{S.lastBackup=new Date().toISOString();save();bkMsg='Sicherung geteilt. Leg sie an einen sicheren Ort, zum Beispiel Google Drive.';render()}).catch(()=>{});return}}catch(e){}
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);S.lastBackup=new Date().toISOString();save();bkMsg='Sicherung gespeichert: '+name+' (im Ordner Downloads).'}
+function bkDone(m){S.lastBackup=new Date().toISOString();save();bkMsg=m;render()}
+function bkDownload(data,name){try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'text/plain'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);bkDone('Sicherung gespeichert: '+name+' (im Ordner Downloads). Kam keine Datei an? Dann nimm unten „Als Text kopieren“.')}catch(e){bkShow=true;bkMsg='Speichern hat nicht geklappt. Kopiere die Sicherung unten als Text.';render()}}
+function bkSave(){const data=bkData(),name=bkName();bkShow=false;let file=null,can=false;
+  try{file=new File([data],name,{type:'text/plain'});can=!!(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]}))}catch(e){can=false}
+  if(!can){bkDownload(data,name);return}
+  navigator.share({files:[file],title:'Lernwerkstatt Sicherung'}).then(()=>bkDone('Sicherung geteilt. Gut ist ein Ort außerhalb vom Tablet, zum Beispiel Google Drive oder eine E-Mail an dich.')).catch(e=>{if(e&&e.name==='AbortError'){bkMsg='Teilen abgebrochen. Es wurde nichts gesichert.';render()}else bkDownload(data,name)})}
+function bkCopy(){const data=bkData(),ok=()=>bkDone('Sicherung als Text kopiert. Füge sie in eine Notiz oder eine E-Mail an dich ein.'),fail=()=>{bkShow=true;bkMsg='Kopieren ging nicht automatisch. Markiere den Text im Feld unten und kopiere ihn selbst.';render()};
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(data).then(ok,()=>{if(!bkExec(data))fail();else ok()});return}}catch(e){}
+  if(bkExec(data))ok();else fail()}
+function bkExec(data){try{const t=document.createElement('textarea');t.value=data;t.setAttribute('readonly','');t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();const r=document.execCommand&&document.execCommand('copy');t.remove();return !!r}catch(e){return false}}
 function bkHTML(){const last=S.lastBackup,days=last?Math.floor((Date.now()-new Date(last))/864e5):null;
   let h='<section class="panel stack" id="sicherung"><span class="label">Lernstand sichern</span><h2>Sicherung</h2><p>Der ganze Lernstand liegt nur auf diesem Gerät: Fehlerheft, Wiederholungen, Stempel und Ergebnisse. Mit einer Sicherung geht nichts verloren, auch wenn der Browser-Speicher gelöscht wird oder ihr ein neues Tablet habt.</p>';
   h+='<p class="'+(days===null||days>7?'warnline':'muted small')+'">'+(last?'Letzte Sicherung: '+bkDate(last)+(days>7?'. Das ist über eine Woche her.':''):'Noch keine Sicherung gemacht.')+'</p>';
   if(inFrame)h+='<p class="muted small">Sichern und Laden geht in der installierten App.</p>';
-  else h+='<div class="row"><button class="btn" data-act="bksave">Sicherung speichern</button><label class="btn ghost" for="bkfile">Sicherung laden</label><input type="file" id="bkfile" accept=".json,application/json" hidden></div>';
+  else h+='<div class="row"><button class="btn" data-act="bksave">Sicherung speichern</button><label class="btn ghost" for="bkfile">Sicherung laden</label><input type="file" id="bkfile" hidden></div><p class="muted small">Beim Speichern öffnet sich am Tablet das Teilen-Menü. Wähle dort zum Beispiel Google Drive, „In Dateien speichern“ oder eine E-Mail an dich.</p>'+
+  '<details class="bkalt"'+(bkShow?' open':'')+'><summary>Klappt das Speichern nicht? Sicherung als Text</summary><div class="stack"><div class="row"><button class="btn ghost" data-act="bkcopy">Als Text kopieren</button></div>'+(bkShow?'<textarea id="bkout" class="bktext" readonly rows="4">'+bkData().replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</textarea>':'')+'<label class="label" for="bkin">Sicherung aus Text laden</label><textarea id="bkin" class="bktext" rows="3" placeholder="Hier den kopierten Text einfügen"></textarea><div class="row"><button class="btn ghost" data-act="bkpaste">Text laden</button></div></div></details>';
   if(bkPending)h+='<div class="panel stack bkconfirm" role="alert"><h3>Sicherung laden?</h3><p>Sicherung vom '+bkDate(bkPending.saved)+': '+bkInfo(bkPending.state)+'.</p><p><b>Der jetzige Lernstand wird ersetzt</b> ('+bkInfo(S)+').</p><div class="row"><button class="btn" data-act="bkyes">Ja, laden</button><button class="btn ghost" data-act="bkno">Abbrechen</button></div></div>';
   if(bkMsg)h+='<p class="msg ok" role="status">'+bkMsg+'</p>';
   return h+'</section>'}
@@ -1566,6 +1575,8 @@ document.addEventListener('click',e=>{
   else if(a==='mkw'){mkTap('w',+el.dataset.k)}
   else if(a==='mkgo'){if(cur&&cur.mk)cur.mk.stage=3}
   else if(a==='bksave'){bkMsg='';bkSave()}
+  else if(a==='bkcopy'){bkMsg='';bkCopy();return}
+  else if(a==='bkpaste'){const el2=document.getElementById('bkin'),r=bkCheck(el2?el2.value.trim():'');bkMsg='';if(r.err){bkPending=null;bkMsg=r.err}else bkPending={saved:r.o.saved,state:r.o.state}}
   else if(a==='bkno'){bkPending=null;bkMsg=''}
   else if(a==='bkyes'){const st=bkPending.state;S=st;S.lastBackup=bkPending.saved;bkPending=null;useSet(S.set||'probe');applyTheme&&applyTheme();save();bkMsg='Sicherung geladen. Der Lernstand ist wiederhergestellt.'}
   else if(a==='paper'){view='paper';cur=null;if(!paperData)paperMake()}
