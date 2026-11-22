@@ -257,6 +257,37 @@ details.panel>summary{cursor:pointer;font-weight:800}
 .gplist li b{float:right;font-variant-numeric:tabular-nums}
 .gplist li.no{color:var(--warn)}
 .pausebox{border:2px solid var(--sky)}
+.paper{display:flex;flex-direction:column;gap:18px;align-items:center}
+.ppage{background:#fff;color:#111;width:min(100%,210mm);box-shadow:0 2px 10px rgba(0,0,0,.15);border-radius:4px;padding:12mm 13mm 8mm;display:flex;flex-direction:column;min-height:min(297mm,140vw);font-size:11.5pt;line-height:1.4;font-family:Inter,Arial,sans-serif}
+.ppage .pinner{flex:1;display:flex;flex-direction:column;gap:2.5mm}
+.ppage h1{font-size:18pt;margin:0}.ppage h3{font-size:12.5pt;margin:2mm 0 0}
+.ppage p{margin:0}.ptitle{display:flex;flex-direction:column;gap:2mm;border-bottom:1.5px solid #111;padding-bottom:3mm;margin-bottom:2mm}
+.phead{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid #999;padding-top:3mm;margin-top:3mm}
+.ppts{float:right;font-weight:700;font-size:10pt;white-space:nowrap;color:#111}
+.psub{color:#444;font-size:10pt}
+.pgrid2{display:grid;grid-template-columns:1fr 1fr;gap:3mm 8mm}
+.pgrid2.tall .pcalc{min-height:30mm}
+.pcalc{font-size:13pt;font-variant-numeric:tabular-nums;padding:1.5mm 0}
+.pgrid2.sol>div{font-size:10.5pt;font-variant-numeric:tabular-nums}
+.psach{display:flex;flex-direction:column;gap:2mm;margin-top:2mm}
+.pline{border-bottom:1px solid #555;min-height:9mm}
+.ptab{border-collapse:collapse;font-size:10.5pt}.ptab th,.ptab td{border:1px solid #777;padding:1.2mm 2.5mm;text-align:left}.ptab td.box{width:12mm}
+.pnums{font-size:13pt;letter-spacing:.02em;line-height:2}
+.pcourt{display:grid;grid-template-columns:1.4fr 1fr;gap:6mm;align-items:center}.pcourt p{margin-bottom:3mm}
+.pfig{display:flex;flex-direction:column;align-items:center;gap:1.5mm}.pfig svg{width:100%;max-width:65mm;height:auto}
+.pfig .courtsvg{max-width:48mm}
+.ppage .fg,.ppage .gl{stroke:#111}.ppage .crf{fill:#fff}.ppage .cl,.ppage .crl{stroke:#111}.ppage .cn,.ppage .gn{fill:#111}
+.mmsvg{display:block;max-width:100%;height:auto}
+.pbonus{margin-top:4mm}
+.pfoot{text-align:center;font-size:9pt;color:#555;margin-top:4mm}
+@media print{
+  .paper{display:block}
+  .ppage{box-shadow:none;border-radius:0;width:auto;min-height:0;height:auto;padding:0;break-after:page;font-size:11pt}
+  .ppage:last-child{break-after:auto}
+  .paper[data-print="probe"] .lpage{display:none}
+  .paper[data-print="loes"] .ppage:not(.lpage){display:none}
+  .mmsvg{width:170mm;height:58mm;max-width:none}
+}
 .ponly{display:none}
 @media print{
   @page{size:A4;margin:11mm}
@@ -996,7 +1027,7 @@ const main=document.getElementById('main');
 
 const PROBEN=[
  {name:'Leseprobe',iso:'2026-11-18',wd:'Mittwoch, 18.11.',set:'lesen',plan:[['Di 10.11.','Genau lesen und Angaben verbinden','2026-11-10'],['Mi 11.11.','Zwischen den Zeilen lesen: Gefühle und Gründe','2026-11-11'],['Do 12.11.','Fragen genau nehmen: Wer? Was? Wann?','2026-11-12'],['Fr 13.11.','Frei (Joker-Tag)','2026-11-13'],['Sa 14.11.','Sachtext lesen und Stellen markieren','2026-11-14'],['So 15.11.','Frei (Joker-Tag)','2026-11-15'],['Mo 16.11.','Übungsprobe auf Papier, danach gemeinsam durchsehen','2026-11-16'],['Di 17.11.','Nur Fehlerheft, dann Schluss','2026-11-17'],['Mi 18.11.','Leseprobe in der Schule','2026-11-18']],tipT:'Drei Schritte für jede Lesefrage',tips:['Frage zweimal lesen und das Fragewort unterstreichen.','Die Stelle im Text suchen und markieren.','Antwort mit der Stelle vergleichen: Passt jedes Wort?']},
- {name:'Matheprobe',iso:'2026-11-25',wd:'Mittwoch, 25.11.',set:'probe',note:'Jeden Tag etwa 15 bis 20 Minuten. Immer mit 5 Minuten Kopfrechnen anfangen.',plan:[['Mi 18.11.','Teiler und Primzahlen: Teilerpaare, Primzahlen bis 50 mit dem Sieb','2026-11-18'],['Do 19.11.','Halbschriftlich dividieren: in leicht teilbare Teile zerlegen','2026-11-19'],['Fr 20.11.','Dividieren mit Rest, Probe, Sachaufgaben: Was bedeutet der Rest?','2026-11-20'],['Sa 21.11.','Geodreieck I: rechte Winkel suchen, Senkrechte zeichnen','2026-11-21'],['So 22.11.','Geodreieck II (kurz): Parallelen, auch im Abstand von 2 cm','2026-11-22'],['Mo 23.11.','Generalprobe in der App (45 Minuten, alle Themen gemischt) oder Übungsprobe auf Papier, danach gemeinsam anschauen','2026-11-23'],['Di 24.11.','Merkzettel in Ruhe durchlesen, dann nur die Fehler nachüben. Geodreieck und Spitzer einpacken','2026-11-24'],['Mi 25.11.','Matheprobe in der Schule','2026-11-25']],tipT:'Angabe genau lesen',tips:['Die Aufgabe zweimal lesen.','Wichtige Wörter unterstreichen, zum Beispiel „mindestens“, „übrig“, „jeder“.','Am Ende die Frage nochmal lesen: Passt meine Antwort zur Frage? Steht ein Antwortsatz da?']}
+ {name:'Matheprobe',iso:'2026-11-25',wd:'Mittwoch, 25.11.',set:'probe',note:'Jeden Tag etwa 15 bis 20 Minuten. Immer mit 5 Minuten Kopfrechnen anfangen.',plan:[['Mi 18.11.','Teiler und Primzahlen: Teilerpaare, Primzahlen bis 50 mit dem Sieb','2026-11-18'],['Do 19.11.','Halbschriftlich dividieren: in leicht teilbare Teile zerlegen','2026-11-19'],['Fr 20.11.','Dividieren mit Rest, Probe, Sachaufgaben: Was bedeutet der Rest?','2026-11-20'],['Sa 21.11.','Geodreieck I: rechte Winkel suchen, Senkrechte zeichnen','2026-11-21'],['So 22.11.','Geodreieck II (kurz): Parallelen, auch im Abstand von 2 cm','2026-11-22'],['Mo 23.11.','Generalprobe in der App (45 Minuten, alle Themen gemischt) oder Übungsprobe zum Ausdrucken, danach gemeinsam anschauen','2026-11-23'],['Di 24.11.','Merkzettel in Ruhe durchlesen, dann nur die Fehler nachüben. Geodreieck und Spitzer einpacken','2026-11-24'],['Mi 25.11.','Matheprobe in der Schule','2026-11-25']],tipT:'Angabe genau lesen',tips:['Die Aufgabe zweimal lesen.','Wichtige Wörter unterstreichen, zum Beispiel „mindestens“, „übrig“, „jeder“.','Am Ende die Frage nochmal lesen: Passt meine Antwort zur Frage? Steht ein Antwortsatz da?']}
 ];
 // ---------- Merkzettel: das Wichtigste pro Thema (Regel, Beispiel, Tricks, Falle) ----------
 // Karte: [id, Titel, [Block-IDs], Regel, [Beispielzeilen], [Tricks], Falle]
@@ -1193,6 +1224,61 @@ function vGP(){if(!gp)return '<section class="panel stack"><p>Keine Generalprobe
   h+='<section class="panel stack"><span class="label">'+(/^mp_f/.test(t.id)?'Bonus · ':'')+gpPts(t)+(gpPts(t)===1?' Punkt':' Punkte')+'</span><p class="q">'+t.q+'</p>'+(t.svg?'<div class="fig">'+t.svg+'</div>':'')+inputHTML(t,true);
   h+='<div class="row" id="gprow"><button class="btn ghost" data-act="gpprev"'+(gp.i?'':' disabled')+'>Zurück</button><button class="btn" data-act="gpnext">'+(gp.i<n-1?'Weiter':'Zum Abgeben')+'</button></div></section>';
   return h+'<div class="row"><button class="btn ghost" data-act="gpend">Abgeben</button><span class="muted small">'+(left?(left===1?'1 Aufgabe':left+' Aufgaben')+' noch ohne Antwort':'Alles beantwortet')+'</span></div>'}
+// ---------- Übungsprobe zum Ausdrucken (neue Zahlen bei jedem Erstellen) mit Lösungsblatt ----------
+let paperData=null,paperPrint='probe';
+function inst(id){const t=T[id].t;return t.gen?Object.assign({},t,genOf(t).call(t)):Object.assign({},t)}
+function instDistinct(ids,n,key){const out=[],seen=new Set();for(let g=0;out.length<n&&g<500;g++){const t=inst(ids[out.length%ids.length]),k=key(t);if(seen.has(k))continue;seen.add(k);out.push(t)}return out}
+const kopfQ=t=>{const q=String(t.q);let m;if((m=q.match(/^Verdopple ([0-9 ]+)\./)))return 'Das Doppelte von '+m[1]+' ist ____';if((m=q.match(/^Halbiere ([0-9 ]+)\./)))return 'Die Hälfte von '+m[1]+' ist ____';return q.replace(/ Welche Zahl fehlt\?/,'').replace(/\.$/,'').replace(/\?/g,'____')};
+const divOf=t=>{const m=(t.rows&&t.rows.length===1?t.rows[0].label:String(t.q)).match(/([0-9][0-9 ]*) : ([0-9]+)/);return m[1].trim()+' : '+m[2]};
+const rowsSol=t=>t.rows.map(r=>(r.sum?'Ergebnis':r.label)+' = '+f(r.a)+(r.rr!==undefined?' R '+r.rr:'')).join('<br>');
+function paperMake(){const used=new Set(),u=x=>{used.add(x);return x};
+  const kIds=['mp_k1','mp_k2','mp_k3','mp_k4','mp_k5','mp_k6','mp_k7','mp_k8','mp_k9','mp_k10','mp_k11','mp_k12','mp_k13'],ks=[];for(const i of shuffled(kIds.length)){if(ks.length>=8)break;for(let g=0;g<20;g++){const t=inst(kIds[i]);if(!ks.some(x=>kopfQ(x)===kopfQ(t))){ks.push(t);break}}}
+  const dv=[inst('mp_d3'),inst('mp_d3'),inst('mp_d8'),inst('mp_d6')];
+  const rs=[inst('mp_r1'),inst('mp_r6'),inst('mp_r6'),inst('mp_r8')];
+  const sach=[inst('mp_sa7'),inst(pick(['mp_sa10'])),inst('mp_sa11')];
+  const N=pick([24,30,36,40,42,44,45,48,50]),tN=Array.from({length:N},(_,i)=>i+1).filter(x=>N%x===0);
+  const t4=inst('mp_t4'),t7=instDistinct(['mp_t7'],2,t=>t.q),p2=inst('mp_p2');
+  let a1=genAngles(),a2;do{a2=genAngles()}while(a2.segs.length===a1.segs.length&&a2.angs.length===a1.angs.length);
+  const fib=inst('mp_f1');
+  paperData={ks,dv,rs,sach,N,tN,t4,t7,p2,ang:[a1,a2],fib,made:new Date()};paperPrint='probe'}
+function pHead(nr,title,pts,sub){return '<div class="phead"><h3>Aufgabe '+nr+': '+title+'</h3><span class="ppts">___ / '+pts+' P</span></div>'+(sub?'<p class="psub">'+sub+'</p>':'')}
+function paperHTML(){const D=paperData,P=PROBEN.find(p=>p.set==='probe');let pg=0,lg=0;const page=(cls,inner)=>{const L=cls==='lpage',n=L?++lg:++pg;return '<section class="ppage '+cls+'"><div class="pinner">'+inner+'</div><footer class="pfoot">'+(L?'Lösungen':'Übungsprobe Mathematik')+' · Seite '+n+'</footer></section>'};
+  const geoLine=(lab,pt,ptLab,onLine)=>{const y1=40,y2=22,x1=12,x2=158,px=pt,py=onLine?y1+(y2-y1)*(px-x1)/(x2-x1):30;return '<svg class="mmsvg" width="170mm" height="58mm" viewBox="0 0 170 58" role="img" aria-label="Gerade '+lab+(ptLab?' mit Punkt '+ptLab:'')+'"><line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#000" stroke-width=".5"/><text x="'+(x2+2)+'" y="'+(y2+1)+'" font-size="5">'+lab+'</text>'+(ptLab?'<circle cx="'+px+'" cy="'+n1(py)+'" r=".9" fill="#000"/><text x="'+(px+1.5)+'" y="'+n1(py-2)+'" font-size="5">'+ptLab+'</text>':'')+'</svg>'};
+  const n1=x=>Math.round(x*10)/10;
+  let h='';
+  // Seite 1
+  h+=page('ppage1','<div class="ptitle"><h1>Übungsprobe Mathematik</h1><p>Name: ______________________ &nbsp;&nbsp; Datum: ___________</p><p class="psub">Kopfrechnen · Dividieren · Rest · Sachaufgaben · Teiler und Primzahlen · Geodreieck'+(P?' · für die Probe am '+P.wd:'')+'</p></div>'+
+    pHead(1,'Kopfrechnen',8)+'<div class="pgrid2">'+D.ks.map(t=>'<div class="pcalc">'+kopfQ(t)+'</div>').join('')+'</div>'+
+    pHead(2,'Halbschriftlich dividieren',8,'Zerlege die Zahl in Teile, die du leicht teilen kannst.')+'<div class="pgrid2 tall">'+D.dv.map(t=>'<div class="pcalc">'+divOf(t)+' = </div>').join('')+'</div>');
+  // Seite 2
+  h+=page('','<div>'+pHead(3,'Dividieren mit Rest',8,'Rechne halbschriftlich. Mach bei einer Aufgabe die Probe.')+'<div class="pgrid2 tall">'+D.rs.map(t=>'<div class="pcalc">'+divOf(t)+' = &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; R</div>').join('')+'</div></div>'+
+    pHead(4,'Sachaufgaben. Lies genau!',6)+D.sach.map((t,i)=>'<div class="psach"><p>'+'abc'[i]+') '+String(t.q).replace(/ Schreibe R: und A: in dein Heft\./,'')+'</p><p class="pline">R:</p><p class="pline">A:</p></div>').join(''));
+  // Seite 3
+  h+=page('',pHead(5,'Teiler',10)+'<p>a) Schreibe alle Teiler von '+D.N+' auf. <span class="ppts">3 P</span></p><p class="pline"></p>'+
+    '<p>b) Richtig oder falsch? Kreuze an. <span class="ppts">5 P</span></p><table class="ptab"><thead><tr><th></th><th>richtig</th><th>falsch</th></tr></thead><tbody>'+D.t4.words.map(w=>'<tr><td>'+w+'</td><td class="box"></td><td class="box"></td></tr>').join('')+'</tbody></table>'+
+    '<p>c) Durch welche Zahlen kannst du ohne Rest teilen? Kreuze an. <span class="ppts">2 P</span></p><table class="ptab"><thead><tr><th></th>'+[2,3,4,5,6,9,10].map(d=>'<th>'+d+'</th>').join('')+'</tr></thead><tbody>'+D.t7.map(t=>'<tr><td>'+t.q.match(/du ([0-9]+) ohne/)[1]+'</td>'+[2,3,4,5,6,9,10].map(()=>'<td class="box"></td>').join('')+'</tr>').join('')+'</tbody></table>'+
+    pHead(6,'Primzahlen',8)+'<p>a) Was ist eine Primzahl? Erkläre in einem Satz. <span class="ppts">1 P</span></p><p class="pline"></p><p>b) Kreise alle Primzahlen ein. <span class="ppts">4 P</span></p><p class="pnums">'+D.p2.words.join('&nbsp;&nbsp;&nbsp; ')+'</p><p>c) Warum ist 1 keine Primzahl? <span class="ppts">1 P</span></p><p class="pline"></p><p>d) Schreibe alle Primzahlen zwischen 1 und 20 auf. <span class="ppts">2 P</span></p><p class="pline"></p>');
+  // Seite 4
+  h+=page('',pHead(7,'Senkrecht, parallel, rechter Winkel',12)+'<p>a) Ergänze. <span class="ppts">4 P</span></p><p>Zwei Geraden, die sich im rechten Winkel schneiden, sind zueinander ________________ .</p><p>Zwei Geraden, die überall gleich weit voneinander entfernt sind, sind zueinander ________________ .</p><p>Zeichen für „senkrecht“: _____ &nbsp;&nbsp;&nbsp; Zeichen für „parallel“: _____</p>'+
+    '<div class="pcourt"><div><p>b) Der Tennisplatz von oben. <span class="ppts">4 P</span></p><p>Zwei Linien, die parallel sind: &nbsp;_____ || _____</p><p>Zwei andere parallele Linien: &nbsp;_____ || _____</p><p>Zwei Linien, die senkrecht aufeinander stehen: &nbsp;_____ ⊥ _____</p><p>Zwei andere senkrechte Linien: &nbsp;_____ ⊥ _____</p></div><div class="pfig">'+courtSVG([],[])+'</div></div>'+
+    '<p>c) Wie viele rechte Winkel hat jede Figur? Prüfe mit dem Geodreieck und markiere sie. <span class="ppts">4 P</span></p><div class="pgrid2">'+D.ang.map(t=>'<div class="pfig">'+angSVG(t,[],'right')+'<p>rechte Winkel: ____</p></div>').join('')+'</div>');
+  // Seite 5
+  h+=page('',pHead(8,'Zeichnen mit dem Geodreieck',6,'Spitzer Bleistift! Markiere rechte Winkel mit Bogen und Punkt.')+'<p>a) Zeichne die Senkrechte zu g durch P.</p>'+geoLine('g',70,'P',true)+'<p>b) Zeichne die Parallele zu h durch Q.</p>'+geoLine('h',85,'Q',false)+'<p>c) Zeichne eine Parallele zu k im Abstand von 2 cm.</p>'+geoLine('k',0,'',false)+
+    '<div class="pbonus"><div class="phead"><h3>Bonus: Zahlenfolge</h3><span class="ppts">___ / 2 Zusatzpunkte</span></div><p>Setze fort: '+String(D.fib.q).replace(/^Setze fort: /,'').replace(/, …$/,'')+', _____ , _____ , _____</p></div>'+
+    '<p class="psub">Gesamt: ______ / 66 Punkte. Drucken in „Tatsächlicher Größe / 100 %“, damit die 2 cm stimmen.</p>');
+  // Lösungen
+  const yes=t=>t.a.map(k=>t.words[k]);
+  h+=page('lpage','<div class="ptitle"><h1>Lösungen zur Übungsprobe</h1><p class="psub">Für Eltern. Erstellt am '+D.made.getDate()+'.'+(D.made.getMonth()+1)+'. Je richtiger Teilaufgabe gibt es die angegebenen Punkte.</p></div>'+
+    '<h3>1 Kopfrechnen</h3><div class="pgrid2 sol">'+D.ks.map(t=>'<div>'+kopfQ(t).replace('____','<b>'+f(t.a)+'</b>')+'</div>').join('')+'</div>'+
+    '<h3>2 Halbschriftlich dividieren</h3><p class="psub">Andere sinnvolle Zerlegungen sind auch richtig.</p><div class="pgrid2 sol">'+D.dv.map(t=>'<div><b>'+divOf(t)+'</b><br>'+rowsSol(t)+'</div>').join('')+'</div>'+
+    '<h3>3 Dividieren mit Rest</h3><div class="pgrid2 sol">'+D.rs.map(t=>{const m=divOf(t).split(' : '),s=t.rows.find(r=>r.sum)||t.rows[0];return '<div><b>'+divOf(t)+'</b><br>'+(t.rows.length>1?rowsSol(t)+'<br>':'= '+f(s.a)+' R '+s.rr+'<br>')+'Probe mit '+f(s.a)+' · '+m[1]+' + '+s.rr+' = '+m[0]+'</div>'}).join('')+'</div>'+
+    '<h3>4 Sachaufgaben</h3>'+D.sach.map((t,i)=>'<p>'+'abc'[i]+') '+t.items.join('<br>')+'</p>').join(''));
+  h+=page('lpage','<h3>5 Teiler</h3><p>a) '+D.tN.join(', ')+'</p><p>b) richtig: '+yes(D.t4).join(' · ')+'<br>falsch: '+D.t4.words.filter((_,k)=>!D.t4.a.includes(k)).join(' · ')+'</p><p>c) '+D.t7.map(t=>t.explain).join('<br>')+'</p>'+
+    '<h3>6 Primzahlen</h3><p>a) Eine Primzahl hat genau zwei Teiler: 1 und sich selbst.<br>b) '+yes(D.p2).join(', ')+'<br>c) 1 hat nur einen Teiler, nämlich 1.<br>d) 2, 3, 5, 7, 11, 13, 17, 19</p>'+
+    '<h3>7 Senkrecht, parallel, rechter Winkel</h3><p>a) senkrecht · parallel · ⊥ · ||<br>b) Zum Beispiel a || b und c || d, a ⊥ c und e ⊥ d. Andere richtige Paare zählen auch.</p><div class="pgrid2">'+D.ang.map(t=>'<div class="pfig">'+angSVG(t,null,'sol')+'<p>'+t.right.length+' rechte Winkel</p></div>').join('')+'</div>'+
+    '<h3>8 Zeichnen</h3><p>Mit dem Geodreieck nachprüfen: rechter Winkel bei a), gleicher Abstand bei b), an zwei Stellen genau 2 cm bei c).</p><h3>Bonus</h3><p>'+D.fib.rows.map(r=>f(r.a)).join(', ')+'</p>');
+  return h}
+function vPaper(){if(!paperData)paperMake();return '<section class="stack noprint"><h1>Übungsprobe zum Ausdrucken</h1><p class="muted">Jedes Mal mit neuen Zahlen. Wie die echte Probe: alle Themen, ohne Tipps, auf Papier. Dazu ein Lösungsblatt für euch.</p><div class="row">'+(inFrame?'':'<button class="btn" data-act="pprint" data-m="probe">Probe drucken</button><button class="btn ghost" data-act="pprint" data-m="loes">Lösungen drucken</button>')+'<button class="btn ghost" data-act="pnew">Neue Zahlen</button><button class="btn ghost" data-act="nav" data-v="heute">Zurück</button></div>'+(inFrame?'<p class="muted small">Ausdrucken geht in der installierten App. Am Tablet kannst du im Druckdialog auch „Als PDF speichern“ wählen.</p>':'<p class="muted small">Am Tablet kannst du im Druckdialog auch „Als PDF speichern“ wählen.</p>')+'</section><div class="paper" data-print="'+paperPrint+'">'+paperHTML()+'</div>'}
 function vHeft(){
   let h='<div class="stack"><h1>Fehlerheft</h1><p class="muted">Hier landet, was noch nicht sofort geklappt hat. Fehler sind Trainingsstoff. Was du hier löst, verschwindet.</p></div>';
   if(!S.heft.length)return h+'<section class="panel"><p>Dein Fehlerheft ist leer. Aufgaben erscheinen hier, sobald eine beim ersten Versuch nicht klappt.</p></section>';
@@ -1204,7 +1290,7 @@ function vProbe(){
   let h='<div class="stack"><h1>Proben-Trainer</h1><p class="muted">'+(up.length?'So ist der Stoff bis zur Probe auf die Tage verteilt.':'Gerade steht keine Probe an.')+'</p></div>';
   up.forEach(p=>{h+='<section class="stack"><h2>'+p.name+' am '+p.wd+'</h2><p class="muted">'+examLine(p)+'.'+(p.note?' '+p.note:'')+'</p><div class="days">'+p.plan.map(x=>{const t=isoDay(x[2])===today(),ex=x[2]===p.iso;return '<div class="day'+(t?' today':'')+(ex?' exam':'')+'"><time>'+x[0]+'</time><span>'+x[1]+(t?' <b>(heute)</b>':'')+'</span></div>'}).join('')+'</div>'+
     (SETS[p.set]&&S.set!==p.set?'<div class="row"><button class="btn" data-act="setgo" data-s="'+p.set+'">Mit dem Paket „'+SETS[p.set].name+'“ üben</button></div>':'')+
-    '<div class="row">'+(MERK[p.set]?'<button class="btn ghost" data-act="merk" data-s="'+p.set+'">Merkzettel zum Stoff</button>':'')+(GP_SPEC[p.set]?'<button class="btn ghost" data-act="gpstart" data-s="'+p.set+'">Generalprobe starten ('+GP_MIN+' Minuten)</button>':'')+'</div>'+'<section class="panel stack"><h3>'+p.tipT+'</h3><ol style="margin:0;padding-left:1.2em" class="stack">'+p.tips.map(x=>'<li>'+x+'</li>').join('')+'</ol></section></section>'});
+    '<div class="row">'+(MERK[p.set]?'<button class="btn ghost" data-act="merk" data-s="'+p.set+'">Merkzettel zum Stoff</button>':'')+(GP_SPEC[p.set]?'<button class="btn ghost" data-act="gpstart" data-s="'+p.set+'">Generalprobe starten ('+GP_MIN+' Minuten)</button><button class="btn ghost" data-act="paper">Übungsprobe zum Ausdrucken</button>':'')+'</div>'+'<section class="panel stack"><h3>'+p.tipT+'</h3><ol style="margin:0;padding-left:1.2em" class="stack">'+p.tips.map(x=>'<li>'+x+'</li>').join('')+'</ol></section></section>'});
   if(past.length)h+='<p class="muted small">Schon vorbei: '+past.map(p=>p.name+' am '+p.wd.split(', ')[1]).join(', ')+'</p>';
   return h;
 }
@@ -1244,7 +1330,7 @@ function vEltern(){
   h+='<details class="panel"><summary>Abdeckung des Stoffs: '+BLOCKS.length+' Blöcke</summary><div class="scroll"><table><thead><tr><th>Block</th><th>Quelle</th><th>Aufgaben</th><th>Bearbeitet</th><th>Selbst gelöst</th></tr></thead><tbody>'+BLOCKS.map(b=>{const d=b.tasks.filter(t=>S.done[t.id]);return '<tr><td>'+b.title+'</td><td>'+(b.src||'–')+'</td><td>'+b.tasks.length+'</td><td>'+d.length+'</td><td>'+d.filter(t=>S.done[t.id].solved==='self').length+'</td></tr>'}).join('')+'</tbody></table></div></details>';
   h+='<details class="panel"><summary>Alle Aufgaben im Detail</summary><div class="scroll"><table><thead><tr><th>Thema</th><th>Versuche</th><th>Tipps</th><th>Ergebnis</th><th>Wiederholung</th></tr></thead><tbody>'+
     ids().map(id=>{const r=S.done[id];return '<tr><td>'+T[id].t.thema+'</td>'+(r?'<td>'+r.tries+'</td><td>'+r.tips+''+'</td><td>'+(r.solved==='self'?(r.need?r.got+' von '+(r.tot||(T[id].t.items||[]).length)+(T[id].t.check?' Punkten erfüllt':' aufgeschrieben'):'selbst gelöst'):r.solved==='late'?'erst nach '+r.tries+' Versuchen':r.solved==='miss'?r.got+' aufgeschrieben, '+r.need+' gebraucht':'Lösung gezeigt')+'</td><td>'+(S.rev&&S.rev[id]?(S.rev[id].due<=today()?'heute':'in '+(S.rev[id].due-today())+(S.rev[id].due-today()===1?' Tag':' Tagen')):'–')+'</td>':'<td colspan="4" class="muted">noch offen</td>')+'</tr>'}).join('')+'</tbody></table></div></details>';
-  h+='<section class="panel stack"><span class="label">Aufgaben prüfen</span><h2>Demo-Modus</h2><p>Zeigt alle Aufgaben eines Blocks auf einer Seite, mit Lösung, Tipps und Erklärung. Du blätterst Block für Block und musst nichts beantworten. Nichts wird gespeichert, keine Übungszeit wird gezählt.</p><div class="row"><button class="btn" data-act="demo">Demo-Modus öffnen</button></div></section>';
+  h+='<section class="panel stack"><span class="label">Zum Ausdrucken</span><h2>Übungsprobe und Merkzettel</h2><p>Eine Übungsprobe mit neuen Zahlen und Lösungsblatt, und der Merkzettel zum Stoff. Beides kannst du drucken oder als PDF speichern.</p><div class="row"><button class="btn ghost" data-act="paper">Übungsprobe</button><button class="btn ghost" data-act="merk" data-s="probe">Merkzettel</button></div></section><section class="panel stack"><span class="label">Aufgaben prüfen</span><h2>Demo-Modus</h2><p>Zeigt alle Aufgaben eines Blocks auf einer Seite, mit Lösung, Tipps und Erklärung. Du blätterst Block für Block und musst nichts beantworten. Nichts wird gespeichert, keine Übungszeit wird gezählt.</p><div class="row"><button class="btn" data-act="demo">Demo-Modus öffnen</button></div></section>';
   h+='<section class="panel stack"><span class="label">Einstellungen</span><p>Übungszeit: '+(limit()?(limit()+tm().extra)+' Minuten am Tag, dann schlägt die App eine Pause vor':'ohne Limit')+' · heute geübt: '+Math.floor(tm().sec/60)+' Minuten · '+(nextProbe()?'Nächste Probe: '+nextProbe().name+' am '+nextProbe().wd.split(', ')[1]:'Keine Probe geplant')+' · Themen aus dem Alltag: Fußball, Pokémon, Reisen, Skifahren, Tennis</p><div class="stack" style="gap:6px"><span class="label">Übungszeit am Tag</span><div class="row" role="group" aria-label="Übungszeit am Tag">'+LIMITS.map(m=>'<button class="btn sm'+(limit()===m?'':' ghost')+'" data-act="limit" data-m="'+m+'" aria-pressed="'+(limit()===m)+'">'+(m?m+' Minuten':'Ohne Limit')+'</button>').join('')+'</div><p class="muted small">Ist die Zeit um, schlägt die App eine Pause vor. Danach kann er jederzeit 10 Minuten weiter üben. Eine Generalprobe läuft immer bis zum Ende.</p></div><div class="stack" style="gap:6px"><span class="label">Darstellung</span><div class="row" role="group" aria-label="Darstellung">'+THEMES.map(([k,l])=>'<button class="btn sm'+((S.theme||'hell')===k?'':' ghost')+'" data-act="theme" data-m="'+k+'" aria-pressed="'+((S.theme||'hell')===k)+'">'+l+'</button>').join('')+'</div><p class="muted small">Zum Lernen empfohlen: Hell. Dunkle Schrift auf hellem Grund liest sich bei normalem Licht genauer, und es sieht aus wie Heft und Probe.</p></div><div class="row"><button class="btn ghost" data-act="more">Heute 10 Minuten mehr</button><button class="btn ghost" data-act="reset">Lernstand zurücksetzen</button></div></section>';
   return h;
 }
@@ -1278,7 +1364,7 @@ function vDemo(){
 function render(){
   document.querySelectorAll('.tab').forEach(t=>t.dataset.v===view?t.setAttribute('aria-current','page'):t.removeAttribute('aria-current'));
   document.getElementById('stars').textContent='★ '+selfCount()+' von '+TOTAL;
-  main.innerHTML=(view==='ueben'&&S.travel&&!demoSnap?'<p class="banner small">Unterwegs-Modus: Rechenwege tippst du ein, Antworten sagst du laut. Zeichnen im Heft kommt später.</p>':'')+(view==='ueben'&&demoSnap?'<p class="banner small">Probelauf aus dem Demo-Modus. Nichts wird gespeichert. „Pause“ führt zurück.</p>':'')+({heute:vHeute,ueben:vUeben,heft:vHeft,merk:vMerk,probe:vProbe,eltern:vEltern,demo:vDemo,gp:vGP})[view]();
+  main.innerHTML=(view==='ueben'&&S.travel&&!demoSnap?'<p class="banner small">Unterwegs-Modus: Rechenwege tippst du ein, Antworten sagst du laut. Zeichnen im Heft kommt später.</p>':'')+(view==='ueben'&&demoSnap?'<p class="banner small">Probelauf aus dem Demo-Modus. Nichts wird gespeichert. „Pause“ führt zurück.</p>':'')+({heute:vHeute,ueben:vUeben,heft:vHeft,merk:vMerk,probe:vProbe,eltern:vEltern,demo:vDemo,gp:vGP,paper:vPaper})[view]();
   if(view==='merk'&&merkFocus){const el=document.getElementById('mk-'+merkFocus);if(el&&el.scrollIntoView)el.scrollIntoView({block:'start'})}
 }
 function addHeft(id){if(!S.heft.includes(id))S.heft.push(id)}
@@ -1389,6 +1475,9 @@ document.addEventListener('click',e=>{
   else if(a==='merk'){view='merk';cur=null;merkSet=el.dataset.s||null;merkFocus=el.dataset.c||null}
   else if(a==='merkset'){merkSet=el.dataset.s}
   else if(a==='gpstart'){gpStart(el.dataset.s)}
+  else if(a==='paper'){view='paper';cur=null;if(!paperData)paperMake()}
+  else if(a==='pnew'){paperMake()}
+  else if(a==='pprint'){paperPrint=el.dataset.m;const pw=document.querySelector('.paper');if(pw)pw.setAttribute('data-print',paperPrint);window.print();return}
   else if(a==='gpresume'){if(gp&&!gp.end){view='gp';gpTick()}}
   else if(a==='gpgo'){gp.i=+el.dataset.k;gp.confirm=false}
   else if(a==='gpnext'){if(gp.i<gp.slots.length-1)gp.i++;else gp.confirm=true}

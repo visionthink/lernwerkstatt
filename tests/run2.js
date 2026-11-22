@@ -149,6 +149,17 @@ view='probe';render();A(/Matheprobe am Mittwoch, 25.11./.test(els.main.innerHTML
   gpStart('probe');gp.slots.forEach((sl,k)=>{if(k%2)sl.sel=right(sl.twin)});gpSubmit();const exp=gp.slots.filter((_,k)=>k%2).reduce((a,sl)=>a+gpPts(sl.twin),0);A(gp.end.p===exp,'GP halbe Punkte')}
  A(gpNote(95)===1&&gpNote(94)===2&&gpNote(80)===2&&gpNote(79)===3&&gpNote(65)===3&&gpNote(50)===4&&gpNote(49)===5&&gpNote(25)===5&&gpNote(24)===6&&gpNote(0)===6,'Notenschlüssel');
  gp=null;clearInterval(gpTimer);view='heute';cur=null;S=JSON.parse(save1);useSet('probe')}
+{useSet('probe');for(let rnd=0;rnd<80;rnd++){paperMake();const H=paperHTML(),cnt=re=>(H.match(re)||[]).length;A(cnt(/<section/g)===cnt(/<[/]section>/g)&&cnt(/<div/g)===cnt(/<[/]div>/g)&&cnt(/<table/g)===cnt(/<[/]table>/g),'Papier Tags');
+ const probe=H.slice(0,H.indexOf('lpage')),txt=probe.replace(/<svg[\s\S]*?<[/]svg>/g,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ');const big=(txt.match(/[0-9]{1,3}(?: [0-9]{3})+|[0-9]+/g)||[]).map(v=>+v.replace(/ /g,'')).filter(v=>v>1000);A(!big.length,'Papier Zahl über 1000 '+big);
+ const pts=[...probe.matchAll(/___ [/] ([0-9]+) P</g)].map(m=>+m[1]);A(pts.reduce((a,b)=>a+b,0)===66&&probe.includes('/ 66 Punkte'),'Papier Punkte '+pts);
+ A(new Set(paperData.ks.map(kopfQ)).size===8,'Papier Kopf doppelt');A(!/Tippe|Fülle|dein Heft/.test(txt),'Papier App-Anweisung');
+ A(cnt(/class="ppage /g)===7&&cnt(/class="ppage lpage"/g)===2,'Papier Seiten');
+ paperData.ks.forEach(t=>A(kopfQ(t).includes('____'),'Kopf Lücke '+t.q));
+ paperData.rs.forEach(t=>{const s=t.rows.find(r=>r.sum)||t.rows[0],m=divOf(t).split(' : ').map(x=>+x.replace(/ /g,''));A(s.a*m[1]+s.rr===m[0]&&s.rr<m[1]&&s.rr>0,'Papier Rest')});
+ paperData.dv.forEach(t=>{const s=t.rows.find(r=>r.sum),m=divOf(t).split(' : ').map(x=>+x.replace(/ /g,''));A(s.a*m[1]===m[0],'Papier Div')});
+ A(paperData.tN.every(x=>paperData.N%x===0)&&paperData.tN.length===Array.from({length:paperData.N},(_,i)=>i+1).filter(x=>paperData.N%x===0).length,'Papier Teiler')}
+ paperData=null;view='heute'}
+
 
 
 console.log('ALL OK 4');`;

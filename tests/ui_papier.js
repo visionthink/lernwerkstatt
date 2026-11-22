@@ -1,0 +1,13 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:900,height:1200}});const ok=(c,m)=>console.log((c?'OK   ':'FEHLER ')+m);const errs=[];p.on('pageerror',e=>errs.push(String(e)));
+await p.goto('file://'+require('path').resolve(process.argv[2]||'lernwerkstatt/index.html'));
+await p.evaluate(()=>{useSet('probe');view='probe';cur=null;render()});
+await p.click('button[data-act="paper"]');ok(await p.evaluate(()=>view==='paper'),'Übungsprobe öffnet sich aus dem Lernplan');
+const q1=await p.locator('.pcalc').first().innerText();let ch=false;for(let i=0;i<5&&!ch;i++){await p.click('text=Neue Zahlen');ch=(await p.locator('.pcalc').first().innerText())!==q1}ok(ch,'Neue Zahlen erzeugt eine neue Probe');
+ok(await p.locator('[data-act="pprint"][data-m="probe"]').count()===1&&await p.locator('[data-act="pprint"][data-m="loes"]').count()===1,'Knöpfe Probe drucken und Lösungen drucken');
+await p.emulateMedia({media:'print'});await p.evaluate(()=>{document.querySelector('.paper').setAttribute('data-print','probe')});
+let vis=await p.evaluate(()=>[...document.querySelectorAll('.ppage')].filter(e=>getComputedStyle(e).display!=='none').map(e=>e.classList.contains('lpage')));ok(vis.length===5&&!vis.includes(true),'Druck Probe: 5 Seiten ohne Lösungen');
+const mm=await p.evaluate(()=>{const s=document.querySelector('.mmsvg');return s.getBoundingClientRect().width});ok(Math.abs(mm-170*96/25.4)<2,'Zeichenfläche im Druck genau 170 mm breit ('+Math.round(mm)+' px)');
+ok(await p.evaluate(()=>getComputedStyle(document.querySelector('nav')).display==='none'&&getComputedStyle(document.querySelector('.noprint')).display==='none'),'Beim Drucken keine App-Leisten');
+await p.evaluate(()=>{document.querySelector('.paper').setAttribute('data-print','loes')});vis=await p.evaluate(()=>[...document.querySelectorAll('.ppage')].filter(e=>getComputedStyle(e).display!=='none').map(e=>e.classList.contains('lpage')));ok(vis.length===2&&vis.every(x=>x),'Druck Lösungen: nur 2 Lösungsseiten');
+await p.emulateMedia({media:'screen'});await p.evaluate(()=>{pinOk=true;view='eltern';render()});await p.click('button[data-act="paper"]');ok(await p.evaluate(()=>view==='paper'),'Übungsprobe aus dem Elternbereich');
+console.log('errors',errs);await b.close()})();
