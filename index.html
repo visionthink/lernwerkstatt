@@ -290,6 +290,13 @@ details.panel>summary{cursor:pointer;font-weight:800}
 }
 .warnline{color:var(--warn);font-weight:700}
 .bkconfirm{border:2px solid var(--warn)}
+.mktext{line-height:2.1}
+.mks{cursor:pointer;border-radius:8px;padding:3px 4px;margin:-3px -2px;-webkit-box-decoration-break:clone;box-decoration-break:clone;border-bottom:2px dashed var(--line)}
+.mks.on,.mkq{background:var(--tip-bg);border-bottom:2px solid var(--sky)}
+.mkw{cursor:pointer;border-radius:6px;padding:2px 3px;margin:0 -1px;display:inline-block;line-height:1.5;border:1.5px dashed transparent}
+.mkw:hover{border-color:var(--line)}
+.mkw.on,.mkm{background:var(--ball);color:var(--ball-ink);font-weight:800;border-radius:6px;padding:0 3px}
+.mkok{color:var(--pitch);font-weight:800}
 .ponly{display:none}
 @media print{
   @page{size:A4;margin:11mm}
@@ -1144,6 +1151,21 @@ function vHeute(){
   return h;
 }
 
+// ---------- Angabe genau lesen: Frage und Signalwörter antippen (Sachaufgaben) ----------
+const MARK_IDS=['mp_sa1','mp_sa2','mp_sa3','mp_sa4','mp_sa5','mp_x3','mp_sa7','mp_sa10','mp_sa11'];
+const SIGNAL=['mindestens','übrig','ganz','volle','gerecht'];
+function mkParse(q){const plain=String(q).replace(/ Schreibe R: und A: in dein Heft\./,'');const sents=plain.match(/[^.?!]+[.?!]/g)||[plain];let wi=0;return sents.map((t,si)=>{const ws=t.trim().split(/\s+/).map(w=>({w,i:wi++,sig:SIGNAL.includes(w.toLowerCase().replace(/[^a-zäöüß]/g,''))}));return {t:t.trim(),si,isQ:/\?$/.test(t.trim()),ws}})}
+function mkNeed(t){return MARK_IDS.includes(t.id)&&!cur.twin}
+function mkState(t){if(!cur.mk||cur.mk.q!==t.q){const P=mkParse(t.q);cur.mk={q:t.q,P,stage:1,qs:[],ws:[],wrong:0,msg:''}}return cur.mk}
+function mkText(M,act){return '<p class="q mktext">'+M.P.map(S=>{const qOn=M.qs.includes(S.si);if(act==='s')return '<span class="mks'+(qOn?' on':'')+'" data-act="mks" data-k="'+S.si+'" role="button" tabindex="0">'+S.t+'</span>';
+  return '<span class="'+(qOn?'mkq':'')+'">'+S.ws.map(W=>{const on=M.ws.includes(W.i);return act==='w'?'<span class="mkw'+(on?' on':'')+'" data-act="mkw" data-k="'+W.i+'" role="button" tabindex="0">'+W.w+'</span>':(on?'<mark class="mkm">'+W.w+'</mark>':W.w)}).join(' ')+'</span>'}).join(' ')+'</p>'}
+function mkUI(t){const M=mkState(t),nQ=M.P.filter(S=>S.isQ).length,sig=M.P.flatMap(S=>S.ws).filter(W=>W.sig),nS=sig.length;
+  if(M.stage===1)return '<span class="label">Erst genau lesen · Schritt 1 von 2</span><p><b>'+(nQ>1?'Tippe auf die Fragen. Hier gibt es '+nQ+'.':'Tippe auf die Frage.')+'</b></p>'+mkText(M,'s')+(M.msg?'<p class="msg bad" role="status">'+M.msg+'</p>':'');
+  return '<span class="label">Erst genau lesen · Schritt 2 von 2</span><p><b>'+(nS>1?'Tippe die '+nS+' wichtigen Wörter an. Sie sagen dir, wie du rechnest und was du mit dem Rest machst.':'Tippe das Wort an, das dir sagt, was du mit dem Rest machst.')+'</b></p>'+mkText(M,'w')+(M.msg?'<p class="msg '+(M.auto?'ok':'bad')+'" role="status">'+M.msg+'</p>':'')+(M.auto?'<div class="row"><button class="btn" data-act="mkgo">Weiter</button></div>':'')}
+function mkTap(kind,k){const t=curT(),M=mkState(t);M.msg='';
+  if(kind==='s'&&M.stage===1){const S=M.P[k];if(!S.isQ){M.msg='Das ist keine Frage. Eine Frage endet mit einem Fragezeichen.';return}if(!M.qs.includes(k))M.qs.push(k);if(M.P.filter(x=>x.isQ).every(x=>M.qs.includes(x.si))){M.stage=2;if(!M.P.some(S=>S.ws.some(W=>W.sig)))M.stage=3}return}
+  if(kind==='w'&&M.stage===2&&!M.auto){const all=M.P.flatMap(S=>S.ws),W=all.find(x=>x.i===k);if(W.sig){if(!M.ws.includes(k))M.ws.push(k);if(all.filter(x=>x.sig).every(x=>M.ws.includes(x.i)))M.stage=3;return}
+    M.wrong++;if(M.wrong>=3){all.filter(x=>x.sig).forEach(x=>{if(!M.ws.includes(x.i))M.ws.push(x.i)});M.auto=true;M.msg='Ich zeige es dir: Die gelben Wörter sind wichtig. Lies sie genau.'}else M.msg=M.wrong===2?(all.filter(x=>x.sig&&!M.ws.includes(x.i)).every(x=>M.P.find(S=>S.ws.includes(x)).isQ)?'Tipp: Das Wort steht in der Frage.':'Tipp: Schau auch in die Sätze vor der Frage.'):'Dieses Wort ist hier nicht so wichtig. Such ein Wort, das dir sagt, wie du rechnest oder was du mit dem Rest machst.'}}
 function vUeben(){
   const b=(cur.blk||BLOCKS[cur.b]);
   if(cur.status==='blockdone'&&cur.blk){const g=cur.res.filter(x=>x===2).length,n=cur.blk.tasks.length,rest=dueIds().length;
@@ -1165,8 +1187,9 @@ function vUeben(){
     '<button class="btn ghost" data-act="nav" data-v="'+(cur.retry?'heft':'heute')+'">Pause</button></div>';
   h+='<div class="work'+(b.text?' two':'')+'">';
   if(b.text){const ev=!open&&t.ev?t.ev:[];h+='<article class="panel stack"><h2>'+b.text.title+'</h2><p class="read">'+b.text.s.map((s,k)=>ev.includes(k)?'<mark>'+s+'</mark>':s).join(' ')+'</p>'+(ev.length?'<p class="muted small">Gelb markiert: die Stelle, an der die Antwort steht.</p>':'')+'</article>'}
-  h+='<section class="panel stack">'+(first&&!(mk&&!cur.blk)?'<p class="note small">'+b.info+'</p>':'')+'<p class="q">'+t.q+'</p>'+(t.svg?'<div class="fig">'+t.svg+'</div>':'');
-  const ak=askOf(t);
+  h+='<section class="panel stack">'+(first&&!(mk&&!cur.blk)?'<p class="note small">'+b.info+'</p>':'')+(mkNeed(t)&&open?'':'<p class="q">'+t.q+'</p>')+(t.svg?'<div class="fig">'+t.svg+'</div>':'');
+  if(mkNeed(t)&&open){const M=mkState(t);if(M.stage<3)return h+mkUI(t)+'</section></div>';h+=mkText(M,'')+'<p class="mkok">✓ Gut gelesen. Jetzt rechnen.</p>'}
+  const ak=mkNeed(t)?null:askOf(t);
   if(ak&&open&&!cur.asked&&!cur.retry&&!cur.twin){if(!cur.askPerm)cur.askPerm=ak.fixed?ak.opts.map((_,k)=>k):shuffled(ak.opts.length);
     return h+'<div class="stack" style="gap:8px"><span class="label">Erst genau lesen</span><p><b>'+ak.q+'</b></p><div class="opts">'+cur.askPerm.map(k=>'<button class="opt" data-act="ask" data-k="'+k+'">'+ak.opts[k]+'</button>').join('')+'</div></div>'+(cur.askMiss?'<p class="msg bad" role="status">Noch nicht. Lies die Aufgabe noch einmal langsam, Wort für Wort.</p>':'')+'</section></div>'}
   h+=inputHTML(t,open);
@@ -1495,6 +1518,9 @@ document.addEventListener('click',e=>{
   else if(a==='merk'){view='merk';cur=null;merkSet=el.dataset.s||null;merkFocus=el.dataset.c||null}
   else if(a==='merkset'){merkSet=el.dataset.s}
   else if(a==='gpstart'){gpStart(el.dataset.s)}
+  else if(a==='mks'){mkTap('s',+el.dataset.k)}
+  else if(a==='mkw'){mkTap('w',+el.dataset.k)}
+  else if(a==='mkgo'){if(cur&&cur.mk)cur.mk.stage=3}
   else if(a==='bksave'){bkMsg='';bkSave()}
   else if(a==='bkno'){bkPending=null;bkMsg=''}
   else if(a==='bkyes'){const st=bkPending.state;S=st;S.lastBackup=bkPending.saved;bkPending=null;useSet(S.set||'probe');applyTheme&&applyTheme();save();bkMsg='Sicherung geladen. Der Lernstand ist wiederhergestellt.'}

@@ -159,6 +159,14 @@ view='probe';render();A(/Matheprobe am Mittwoch, 25.11./.test(els.main.innerHTML
  paperData.dv.forEach(t=>{const s=t.rows.find(r=>r.sum),m=divOf(t).split(' : ').map(x=>+x.replace(/ /g,''));A(s.a*m[1]===m[0],'Papier Div')});
  A(paperData.tN.every(x=>paperData.N%x===0)&&paperData.tN.length===Array.from({length:paperData.N},(_,i)=>i+1).filter(x=>paperData.N%x===0).length,'Papier Teiler')}
  paperData=null;view='heute'}
+{useSet('probe');for(const id of MARK_IDS){const bi=BLOCKS.findIndex(b=>b.tasks.some(t=>t.id===id)),ti=BLOCKS[bi].tasks.findIndex(t=>t.id===id);for(let n=0;n<150;n++){cur=Object.assign({b:bi,i:ti},fresh());const t=curT(),P=mkParse(t.q),nq=P.filter(S=>S.isQ).length,sig=P.flatMap(S=>S.ws).filter(W=>W.sig);A(nq>=1&&sig.length>=1,'Markieren '+id+' '+t.q);
+  view='ueben';render();A(/Erst genau lesen/.test(els.main.innerHTML)&&!/class="num/.test(els.main.innerHTML)&&!/class="opt"/.test(els.main.innerHTML),'Markieren zuerst '+id);
+  const nonQ=P.find(S=>!S.isQ);if(nonQ){mkTap('s',nonQ.si);A(cur.mk.stage===1&&/keine Frage/.test(cur.mk.msg),'falscher Satz')}
+  P.filter(S=>S.isQ).forEach(S=>mkTap('s',S.si));A(cur.mk.stage===2,'Stufe 2 '+id);
+  if(n%2){sig.forEach(W=>mkTap('w',W.i));A(cur.mk.stage===3,'Stufe 3 '+id)}else{const non=P.flatMap(S=>S.ws).filter(W=>!W.sig).slice(0,3);non.forEach(W=>mkTap('w',W.i));A(cur.mk.auto&&cur.mk.stage===2&&sig.every(W=>cur.mk.ws.includes(W.i)),'Hilfe nach 3 Fehlern '+id);cur.mk.stage=3}
+  render();A(!/Erst genau lesen/.test(els.main.innerHTML)&&/Gut gelesen/.test(els.main.innerHTML)&&(/mkm/.test(els.main.innerHTML)),'nach dem Markieren '+id)}}
+ cur=null;view='heute'}
+
 
 
 

@@ -1,0 +1,14 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:820,height:1100}});const ok=(c,m)=>console.log((c?'OK   ':'FEHLER ')+m);const errs=[];p.on('pageerror',e=>errs.push(String(e)));
+await p.goto('file://'+require('path').resolve(process.argv[2]||'lernwerkstatt/index.html'));
+await p.evaluate(()=>{useSet('probe');merkSeen.mpb12=true;const bi=BLOCKS.findIndex(b=>b.tasks.some(t=>t.id==='mp_sa2')),ti=BLOCKS[bi].tasks.findIndex(t=>t.id==='mp_sa2');cur=Object.assign({b:bi,i:ti},fresh());view='ueben';render()});
+let txt=await p.locator('#main').innerText();ok(/Schritt 1 von 2/i.test(txt)&&await p.locator('input.num').count()===0,'Erst lesen, noch kein Eingabefeld');
+if(false)await p.screenshot({path:'mk1.png'});
+await p.locator('.mks').first().click();txt=await p.locator('#main').innerText();ok(/keine Frage/.test(txt),'Falscher Satz: Hinweis');
+await p.locator('.mks',{hasText:'?'}).click();txt=await p.locator('#main').innerText();ok(/Schritt 2 von 2/i.test(txt),'Frage erkannt, Schritt 2');
+await p.locator('.mkw',{hasText:'Kinder'}).first().click();txt=await p.locator('#main').innerText();ok(/nicht so wichtig/.test(txt),'Unwichtiges Wort: Hinweis');
+if(false)await p.screenshot({path:'mk2.png'});
+await p.locator('.mkw',{hasText:'mindestens'}).click();txt=await p.locator('#main').innerText();ok(/Gut gelesen/.test(txt)&&await p.locator('input.num').count()===1,'Signalwort erkannt, Eingabe offen');
+ok(await p.locator('mark.mkm').innerText()==='mindestens?'||await p.locator('mark.mkm').innerText()==='mindestens','Wort bleibt markiert');
+if(false)await p.screenshot({path:'mk3.png'});
+const a=await p.evaluate(()=>curT().a);await p.fill('input.num',String(a));await p.click('text=Prüfen');ok(await p.evaluate(()=>cur.status==='right'),'Aufgabe lösbar');
+console.log('errors',errs);await b.close()})();
