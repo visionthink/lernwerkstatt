@@ -25,4 +25,12 @@ const d=l=>[l[2]-l[0],l[3]-l[1]],cr=(a,b)=>a[0]*b[1]-a[1]*b[0],dt=(a,b)=>a[0]*b[
 const par=Math.abs(cr(d(L[0]),d(L[1])))<1e-9,perp=Math.abs(dt(d(L[2]),d(L[3])))<1e-9;console.log('Skizze parallel:',par,' senkrecht:',perp);
 const pm=svg.match(/<path class="mark[^"]*" d="M([-0-9.]+) ([-0-9.]+) A[0-9.]+ [0-9.]+ 0 0 [01] ([-0-9.]+) ([-0-9.]+)"/);const onLine=(p,l)=>Math.abs(cr(d(l),[p[0]-l[0],p[1]-l[1]]))/Math.hypot(...d(l))<0.2;
 const mOk=pm&&((onLine([+pm[1],+pm[2]],L[2])&&onLine([+pm[3],+pm[4]],L[3]))||(onLine([+pm[1],+pm[2]],L[3])&&onLine([+pm[3],+pm[4]],L[2])));console.log('Winkelbogen auf beiden Linien:',!!mOk);
-if(bad||!par||!perp||!mOk){console.log('MERK FEHLER');process.exit(1)}else console.log('MERK OK')`);
+// Geodreieck-Skizzen nachrechnen (1 cm = 5 Einheiten)
+const gd=merkFigDraw(),at=(chk,k)=>{const m=gd.match(new RegExp('data-chk="'+chk+'"[^>]*?data-'+k+'="([^"]+)"'));return m?m[1].split(',').map(Number):null};
+const dist=(p,b)=>Math.abs(cr([b[2],b[3]],[p[0]-b[0],p[1]-b[1]]));let geo=true;const G=(c,m)=>{if(!c){geo=false;console.log('GEO FEHLER',m)}};
+{const b=at('a','base'),w=at('a','draw'),mid=at('a','mid');G(b&&w&&mid,'a Daten');G(Math.abs(dt([b[2],b[3]],[w[2],w[3]]))<1e-3,'a nicht senkrecht');G(dist([w[0],w[1]],b)<0.05,'a nicht durch P');G(dist([mid[0],mid[1]],b)<0.05&&dist([mid[2],mid[3]],b)<0.05,'a Mittellinie nicht auf g')}
+{const b=at('b','base'),w=at('b','draw'),p=at('b','p'),h2=at('b','h2');G(b&&w&&p&&h2,'b Daten');G(Math.abs(cr([b[2],b[3]],[w[2],w[3]]))<1e-3,'b nicht parallel');G(Math.abs(w[0]-p[0])<0.01&&Math.abs(w[1]-p[1])<0.01,'b nicht durch Q');G(Math.abs(dist(p,b)-10)<0.05,'b Q nicht 2 cm von h');G(dist([h2[0],h2[1]],b)<0.05&&dist([h2[2],h2[3]],b)<0.05,'b Hilfslinie nicht auf h')}
+{const b=at('c','base'),w=at('c','draw'),h2=at('c','h2');G(b&&w&&h2,'c Daten');G(Math.abs(cr([b[2],b[3]],[w[2],w[3]]))<1e-3,'c nicht parallel');G(Math.abs(dist([w[0],w[1]],b)-10)<0.05,'c Abstand nicht 2 cm');G(dist([h2[0],h2[1]],b)<0.05&&dist([h2[2],h2[3]],b)<0.05,'c Hilfslinie 2 nicht auf k')}
+{const t=mgTri([0,0],[1,0],[0,1],10);G(t.V[1]===80&&t.B[0]-t.A[0]===160,'Geodreieck Maße');for(let q=1;q<=6;q++){const h=t.H(q);G(h[0][1]===q*10&&h[1][1]===q*10,'Hilfslinie '+q)}}
+console.log('Geodreieck-Skizzen:',geo);
+if(!geo||bad||!par||!perp||!mOk){console.log('MERK FEHLER');process.exit(1)}else console.log('MERK OK')`);
