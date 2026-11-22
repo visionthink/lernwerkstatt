@@ -288,6 +288,8 @@ details.panel>summary{cursor:pointer;font-weight:800}
   .paper[data-print="loes"] .ppage:not(.lpage){display:none}
   .mmsvg{width:170mm;height:58mm;max-width:none}
 }
+.warnline{color:var(--warn);font-weight:700}
+.bkconfirm{border:2px solid var(--warn)}
 .ponly{display:none}
 @media print{
   @page{size:A4;margin:11mm}
@@ -1324,9 +1326,27 @@ function parentTop(){const wk=weekData(),mins=wk.reduce((a,x)=>a+x.min,0),days=w
   h+='<section class="panel stack"><span class="label">Generalprobe</span>'+(gp?'<p class="big">'+gp.p+' von '+gp.max+' Punkten</p><p class="muted small">am '+gp.date+' · '+gp.pct+' % · geschätzte Note '+gp.note+' · '+gp.min+' Minuten gebraucht</p>':'<p class="muted">Noch nicht gemacht.</p>')+(GP_SPEC[S.set]?'<p class="muted small">Startet über die Probe-Karte auf der Startseite oder im Lernplan.</p>':'')+'</section>';
   h+='</div><section class="panel stack"><span class="label">Beobachtungen</span><p>'+report()+'</p></section>';
   return h}
+// ---------- Lernstand sichern und laden ----------
+let bkMsg='',bkPending=null;
+function bkName(){const d=new Date();return 'lernwerkstatt-sicherung-'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.json'}
+function bkData(){return JSON.stringify({app:'lernwerkstatt',v:1,saved:new Date().toISOString(),state:S})}
+function bkCheck(txt){let o;try{o=JSON.parse(txt)}catch(e){return {err:'Die Datei ist keine Sicherung der Lernwerkstatt.'}}if(!o||o.app!=='lernwerkstatt'||!o.state||typeof o.state!=='object'||typeof o.state.done!=='object'||!Array.isArray(o.state.heft))return {err:'Die Datei ist keine Sicherung der Lernwerkstatt.'};return {o}}
+function bkInfo(st){const n=Object.keys(st.done||{}).length;return n+(n===1?' bearbeitete Aufgabe':' bearbeitete Aufgaben')+', '+(st.heft||[]).length+' im Fehlerheft, '+((st.stamps||[]).length)+' Stempel'}
+function bkDate(iso){const d=new Date(iso);return isNaN(d)?'unbekannt':d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear()+', '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+' Uhr'}
+function bkSave(){const blob=new Blob([bkData()],{type:'application/json'}),name=bkName();
+  try{const file=new File([blob],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'Lernwerkstatt Sicherung'}).then(()=>{S.lastBackup=new Date().toISOString();save();bkMsg='Sicherung geteilt. Leg sie an einen sicheren Ort, zum Beispiel Google Drive.';render()}).catch(()=>{});return}}catch(e){}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);S.lastBackup=new Date().toISOString();save();bkMsg='Sicherung gespeichert: '+name+' (im Ordner Downloads).'}
+function bkHTML(){const last=S.lastBackup,days=last?Math.floor((Date.now()-new Date(last))/864e5):null;
+  let h='<section class="panel stack" id="sicherung"><span class="label">Lernstand sichern</span><h2>Sicherung</h2><p>Der ganze Lernstand liegt nur auf diesem Gerät: Fehlerheft, Wiederholungen, Stempel und Ergebnisse. Mit einer Sicherung geht nichts verloren, auch wenn der Browser-Speicher gelöscht wird oder ihr ein neues Tablet habt.</p>';
+  h+='<p class="'+(days===null||days>7?'warnline':'muted small')+'">'+(last?'Letzte Sicherung: '+bkDate(last)+(days>7?'. Das ist über eine Woche her.':''):'Noch keine Sicherung gemacht.')+'</p>';
+  if(inFrame)h+='<p class="muted small">Sichern und Laden geht in der installierten App.</p>';
+  else h+='<div class="row"><button class="btn" data-act="bksave">Sicherung speichern</button><label class="btn ghost" for="bkfile">Sicherung laden</label><input type="file" id="bkfile" accept=".json,application/json" hidden></div>';
+  if(bkPending)h+='<div class="panel stack bkconfirm" role="alert"><h3>Sicherung laden?</h3><p>Sicherung vom '+bkDate(bkPending.saved)+': '+bkInfo(bkPending.state)+'.</p><p><b>Der jetzige Lernstand wird ersetzt</b> ('+bkInfo(S)+').</p><div class="row"><button class="btn" data-act="bkyes">Ja, laden</button><button class="btn ghost" data-act="bkno">Abbrechen</button></div></div>';
+  if(bkMsg)h+='<p class="msg ok" role="status">'+bkMsg+'</p>';
+  return h+'</section>'}
 function vEltern(){
   if(!pinOk)return '<div class="stack"><h1>Elternbereich</h1><p class="muted">Bitte PIN eingeben. Im Prototyp lautet sie 1234.</p></div><section class="panel stack"><div class="row"><label for="pin" class="label">PIN</label><input class="num" id="pin" inputmode="numeric" maxlength="4" autocomplete="off"><button class="btn" data-act="pin">Öffnen</button></div>'+(pinMsg?'<p class="msg bad" role="status">'+pinMsg+'</p>':'')+'</section>';
-  let h='<div class="stack"><h1>Elternbereich</h1><p class="muted">Paket: '+SETS[S.set].name+' · Oben das Wichtigste, Einzelheiten weiter unten zum Aufklappen.</p></div>'+parentTop();
+  let h='<div class="stack"><h1>Elternbereich</h1><p class="muted">Paket: '+SETS[S.set].name+' · Oben das Wichtigste, Einzelheiten weiter unten zum Aufklappen.</p></div>'+parentTop()+bkHTML();
   h+='<details class="panel"><summary>Abdeckung des Stoffs: '+BLOCKS.length+' Blöcke</summary><div class="scroll"><table><thead><tr><th>Block</th><th>Quelle</th><th>Aufgaben</th><th>Bearbeitet</th><th>Selbst gelöst</th></tr></thead><tbody>'+BLOCKS.map(b=>{const d=b.tasks.filter(t=>S.done[t.id]);return '<tr><td>'+b.title+'</td><td>'+(b.src||'–')+'</td><td>'+b.tasks.length+'</td><td>'+d.length+'</td><td>'+d.filter(t=>S.done[t.id].solved==='self').length+'</td></tr>'}).join('')+'</tbody></table></div></details>';
   h+='<details class="panel"><summary>Alle Aufgaben im Detail</summary><div class="scroll"><table><thead><tr><th>Thema</th><th>Versuche</th><th>Tipps</th><th>Ergebnis</th><th>Wiederholung</th></tr></thead><tbody>'+
     ids().map(id=>{const r=S.done[id];return '<tr><td>'+T[id].t.thema+'</td>'+(r?'<td>'+r.tries+'</td><td>'+r.tips+''+'</td><td>'+(r.solved==='self'?(r.need?r.got+' von '+(r.tot||(T[id].t.items||[]).length)+(T[id].t.check?' Punkten erfüllt':' aufgeschrieben'):'selbst gelöst'):r.solved==='late'?'erst nach '+r.tries+' Versuchen':r.solved==='miss'?r.got+' aufgeschrieben, '+r.need+' gebraucht':'Lösung gezeigt')+'</td><td>'+(S.rev&&S.rev[id]?(S.rev[id].due<=today()?'heute':'in '+(S.rev[id].due-today())+(S.rev[id].due-today()===1?' Tag':' Tagen')):'–')+'</td>':'<td colspan="4" class="muted">noch offen</td>')+'</tr>'}).join('')+'</tbody></table></div></details>';
@@ -1475,6 +1495,9 @@ document.addEventListener('click',e=>{
   else if(a==='merk'){view='merk';cur=null;merkSet=el.dataset.s||null;merkFocus=el.dataset.c||null}
   else if(a==='merkset'){merkSet=el.dataset.s}
   else if(a==='gpstart'){gpStart(el.dataset.s)}
+  else if(a==='bksave'){bkMsg='';bkSave()}
+  else if(a==='bkno'){bkPending=null;bkMsg=''}
+  else if(a==='bkyes'){const st=bkPending.state;S=st;S.lastBackup=bkPending.saved;bkPending=null;useSet(S.set||'probe');applyTheme&&applyTheme();save();bkMsg='Sicherung geladen. Der Lernstand ist wiederhergestellt.'}
   else if(a==='paper'){view='paper';cur=null;if(!paperData)paperMake()}
   else if(a==='pnew'){paperMake()}
   else if(a==='pprint'){paperPrint=el.dataset.m;const pw=document.querySelector('.paper');if(pw)pw.setAttribute('data-print',paperPrint);window.print();return}
@@ -1526,7 +1549,8 @@ document.addEventListener('click',e=>{
   render();
   if(['next','start','retry','nav','review','jump','warm','setgo','demo','demoend','dset','dprev','dnext','dtry'].includes(a))window.scrollTo(0,0);
 });
-document.addEventListener('change',e=>{if(demo&&(e.target.id==='dblock'||e.target.id==='dblock2')){demo.b=+e.target.value;render();window.scrollTo(0,0)}});
+document.addEventListener('change',e=>{if(e.target.id==='bkfile'&&e.target.files&&e.target.files[0]){const fr=new FileReader();fr.onload=()=>{const r=bkCheck(fr.result);bkMsg='';if(r.err){bkPending=null;bkMsg=r.err}else bkPending={saved:r.o.saved,state:r.o.state};render();const el=document.getElementById('sicherung');if(el&&el.scrollIntoView)el.scrollIntoView({block:'start'})};fr.readAsText(e.target.files[0]);return}
+  if(demo&&(e.target.id==='dblock'||e.target.id==='dblock2')){demo.b=+e.target.value;render();window.scrollTo(0,0)}});
 document.addEventListener('input',e=>{
   if(cur&&e.target.id&&e.target.id.indexOf('st-')===0){cur.sel=cur.sel||[];cur.sel[+e.target.dataset.k]=e.target.value.trim();e.target.classList.remove('bad');const t=curT(),full=stFull(t,cur.sel);document.querySelectorAll('#confrow button').forEach(b=>b.disabled=!full)}
   if(cur&&e.target.dataset&&['p','r','y','e','x'].includes(e.target.dataset.f)){const q=zSel(),fd=e.target.dataset.f;q.y=q.y||[];if(fd==='p'||fd==='r'||fd==='y')q[fd][+e.target.dataset.k]=e.target.value.trim();else q[fd]=e.target.value.trim();const ok=zHas(curT(),q);document.querySelectorAll('#confrow button').forEach(b=>b.disabled=!ok)}
