@@ -1010,7 +1010,7 @@ return [
   {id:'mp_f3',thema:'Bonus: gleiche Regel, anderer Anfang',type:'steps',q:'Eine Folge mit anderem Anfang fortsetzen.',gen(){const [x,y]=pick([[2,2],[3,3],[2,4],[1,4],[3,5],[4,4]]),s=[x,y];while(s.length<7)s.push(s.at(-1)+s.at(-2));return {q:'Gleiche Regel, anderer Anfang. Setze fort: '+s.slice(0,5).join(', ')+', …',rows:[6,7].map(k=>({label:k+'. Zahl',a:s[k-1]})),tips:['Die Regel bleibt gleich: Summe der zwei Zahlen davor.','Rechne '+s[3]+' + '+s[4]+'.','Für die nächste Zahl nimmst du die zwei letzten Zahlen.'],lob:'Du kannst die Regel auf neue Zahlen anwenden.',explain:s[3]+' + '+s[4]+' = '+s[5]+', '+s[4]+' + '+s[5]+' = '+s[6]+'.'}}}]}
 ];
 })();
-const SETS={hsu:{name:'HSU: Unsere Gemeinde',blocks:HSU,twin:true},mathe:{name:'Mathe: Halbschriftlich multiplizieren',blocks:MATHE,twin:true},probe:{name:'Mathe-Probe 25.11.',blocks:MPROBE,twin:true},lesen:{name:'Leseprobe-Training',blocks:LESEN}};
+const SETS={hsu:{name:'HSU: Unsere Gemeinde',blocks:HSU,twin:true,done:true},mathe:{name:'Mathe: Halbschriftlich multiplizieren',blocks:MATHE,twin:true},probe:{name:'Mathe-Probe 25.11.',blocks:MPROBE,twin:true},lesen:{name:'Leseprobe-Training',blocks:LESEN}};
 const T={};Object.keys(SETS).forEach(k=>SETS[k].blocks.forEach((b,bi)=>b.tasks.forEach((t,ti)=>T[t.id]={t,bi,ti,set:k})));
 let BLOCKS,TOTAL;
 function useSet(k){S.set=SETS[k]?k:'hsu';BLOCKS=SETS[S.set].blocks;TOTAL=BLOCKS.reduce((a,b)=>a+b.tasks.length,0)}
@@ -1021,7 +1021,10 @@ const KEY='lernwerkstatt-proto-1';
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.done)return r}catch(e){}return{done:{},blocks:[],heft:[],feel:null}}
 function save(){if(demoSnap)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 let demo=null,demoSnap=null;
-let S=load(),view='heute',cur=null,pinOk=false,pinMsg='';useSet(S.set);
+let S=load(),view='heute',cur=null,pinOk=false,pinMsg='';
+function archived(k){const ps=PROBEN.filter(p=>p.set===k);return !!SETS[k].done||(ps.length>0&&ps.every(p=>dTo(p)<0))}
+const activeSets=()=>Object.keys(SETS).filter(k=>!archived(k));
+useSet(S.set);
 const THEMES=[['hell','Hell'],['dunkel','Dunkel'],['auto','Wie das Tablet']];
 function applyTheme(){const m=S.theme||'hell',r=document.documentElement;if(!r||!r.setAttribute)return;if(m==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',m==='dunkel'?'dark':'light')}
 applyTheme();S.heft=(S.heft||[]).filter(id=>T[id]);
@@ -1079,8 +1082,8 @@ function merkFigLines(){const fig=(svg,cap,c)=>'<figure'+(c?' class="'+c+'"':'')
    fig(courtSVG([],[]),'Tennisplatz<br>a || b &nbsp; c || d &nbsp; a ⊥ c','court')}
 function merkHTML(c){return '<p class="mrule">'+c[3]+'</p>'+(c[7]?'<div class="mfig fig">'+c[7]()+'</div>':'')+(c[4].length?'<div class="mex">'+c[4].map(l=>'<div>'+l+'</div>').join('')+'</div>':'')+(c[5].length?'<ul class="mtr">'+c[5].map(x=>'<li>'+x+'</li>').join('')+'</ul>':'')+(c[6]?'<p class="mfall"><b>Vorsicht:</b> '+c[6]+'</p>':'')}
 function merkBox(c,open,label){return '<details class="mbox"'+(open?' open':'')+'><summary>'+label+': '+c[1]+'</summary><div class="mbody">'+merkHTML(c)+'</div></details>'}
-function vMerk(){const k=MERK[merkSet]?merkSet:MERK[S.set]?S.set:'probe',m=MERK[k],p=PROBEN.find(x=>x.set===k&&dTo(x)>=0);
-  let h='<section class="stack noprint"><div class="row" style="justify-content:space-between;align-items:baseline"><h1>Merkzettel</h1>'+(inFrame?'':'<button class="btn ghost sm" data-act="print">Ausdrucken</button>')+'</div><p class="muted">Das Wichtigste zum Stoff auf einen Blick. Bist du bei einem Thema unsicher? Dann lies die passende Karte.</p><div class="row">'+Object.keys(MERK).map(x=>'<button class="btn sm'+(x===k?'':' ghost')+'" data-act="merkset" data-s="'+x+'" aria-pressed="'+(x===k)+'">'+MERK[x].short+'</button>').join('')+'</div>'+(inFrame?'<p class="muted small">Ausdrucken geht in der installierten App.</p>':'')+'</section>';
+function vMerk(){const k=MERK[merkSet]?merkSet:MERK[S.set]&&!archived(S.set)?S.set:(Object.keys(MERK).find(x=>!archived(x))||'probe'),m=MERK[k],p=PROBEN.find(x=>x.set===k&&dTo(x)>=0);
+  let h='<section class="stack noprint"><div class="row" style="justify-content:space-between;align-items:baseline"><h1>Merkzettel</h1>'+(inFrame?'':'<button class="btn ghost sm" data-act="print">Ausdrucken</button>')+'</div><p class="muted">Das Wichtigste zum Stoff auf einen Blick. Bist du bei einem Thema unsicher? Dann lies die passende Karte.</p><div class="row">'+Object.keys(MERK).filter(x=>!archived(x)||x===k).map(x=>'<button class="btn sm'+(x===k?'':' ghost')+'" data-act="merkset" data-s="'+x+'" aria-pressed="'+(x===k)+'">'+MERK[x].short+'</button>').join('')+'</div>'+(inFrame?'<p class="muted small">Ausdrucken geht in der installierten App.</p>':'')+'</section>';
   h+='<header class="ponly"><h1>'+m.title+'</h1>'+(p?'<p>'+p.name+' am '+p.wd+'</p>':'')+'</header>';
   return h+'<div class="mgrid">'+m.cards.map((c,i)=>'<article class="mcard'+(merkFocus===c[0]?' focus':'')+'" id="mk-'+c[0]+'"><span class="mnum" aria-hidden="true">'+(i+1)+'</span><h2>'+c[1]+'</h2>'+merkHTML(c)+'</article>').join('')+'</div>'}
 // ---------- Skitour (Fortschritt zur Probe) und Reisepass (Stempel für jeden Gipfel) ----------
@@ -1113,6 +1116,7 @@ function skiHTML(p){const k=p?p.set:S.set,st=skiStat(k),fr=st.fr,cur_=SKI_ST.fil
 function passHTML(){const st=S.stamps||[];return '<section class="zone z4" aria-label="Reisepass"><div class="zone-head"><div class="zone-title"><span class="znum" aria-hidden="true">✈</span><div><h2 class="zh">Dein Reisepass</h2><p class="muted small">Für jeden Gipfel, also jede fertig geübte Probe, bekommst du einen Stempel.</p></div></div><span class="chip">'+st.length+' von '+PASS.length+' Stempeln</span></div><div class="pass">'+PASS.map((x,i)=>i<st.length?'<div class="stampw"><div class="stamp on s'+(i%4)+'"><b>'+x[0]+'</b></div><p>'+x[1]+'</p></div>':'<div class="stampw"><div class="stamp'+(i===st.length?' next':'')+'"><b>?</b></div><p>'+(i===st.length?'Dein nächster Stempel':'')+'</p></div>').join('')+'</div></section>'}
 function isoDay(x){const [y,m,d]=x.split('-').map(Number);return Math.round(new Date(y,m-1,d).getTime()/864e5)}
 function dTo(p){return isoDay(p.iso)-today()}
+if(SETS[S.set]&&archived(S.set))useSet(PROBEN.filter(p=>dTo(p)>=0&&SETS[p.set]).sort((a,b)=>dTo(a)-dTo(b)).map(p=>p.set)[0]||activeSets()[0]||S.set);
 function nextProbe(){const up=PROBEN.filter(p=>dTo(p)>=0).sort((a,b)=>dTo(a)-dTo(b));return up.find(p=>p.set===S.set)||up[0]||null}
 function examLine(p){const d=dTo(p);return d>1?p.name+' in '+d+' Tagen':d===1?p.name+' morgen':d===0?p.name+' heute':'Die '+p.name+' war am '+p.wd.split(', ')[1]}
 function selfCount(){return ids().filter(id=>S.done[id]&&S.done[id].solved==='self').length}
@@ -1126,7 +1130,7 @@ function card(b){const i=BLOCKS.indexOf(b),st=bStat(b);
 function brow(b,k){const st=bStat(b);return '<li class="brow'+(st.fin?' fin':'')+'"><span class="bnum">'+(k+1)+'</span><div class="bmain"><div class="row" style="justify-content:space-between;gap:8px"><b>'+b.title+'</b>'+chip(st)+'</div>'+bar(st.d,st.n)+'<span class="muted small">'+st.d+' von '+st.n+' Aufgaben'+(st.fe?' · '+st.fe+' im Fehlerheft':'')+(b.src?' · '+b.src:'')+'</span></div><button class="btn ghost sm" data-act="start" data-b="'+k+'" aria-label="'+b.title+' starten"'+(st.nh?' disabled':'')+'>'+(st.fin?'Nochmal':st.d?'Weiter':'Start')+'</button></li>'}
 function vHeute(){
   const nb=BLOCKS.filter(b=>S.blocks.includes(b.id)).length,day=dayPlan(),mine=S.travel?BLOCKS.filter(b=>!S.blocks.includes(b.id)&&b.tasks.some(t=>avail(t)&&!S.done[t.id])).slice(0,3):day.ids.map(id=>BLOCKS.find(b=>b.id===id)).filter(Boolean),dayDone=!S.travel&&mine.length>0&&mine.every(b=>S.blocks.includes(b.id)),min=Math.floor(tm().sec/60),lim=limit()?limit()+tm().extra:0,due=dueIds();
-  const up=PROBEN.filter(p=>dTo(p)>=0&&SETS[p.set]).sort((a,b)=>dTo(a)-dTo(b)),inProbe=up.map(p=>p.set),rest=Object.keys(SETS).filter(k=>!inProbe.includes(k));
+  const up=PROBEN.filter(p=>dTo(p)>=0&&SETS[p.set]).sort((a,b)=>dTo(a)-dTo(b)),inProbe=up.map(p=>p.set),rest=Object.keys(SETS).filter(k=>!inProbe.includes(k)&&!archived(k));
   stampCheck();const ns=S.newStamp!=null?PASS[S.newStamp]:null;
   const zh=(n,t,sub,right)=>'<div class="zone-head"><div class="zone-title"><span class="znum" aria-hidden="true">'+n+'</span><div><h2 class="zh">'+t+'</h2>'+(sub?'<p class="muted small">'+sub+'</p>':'')+'</div></div>'+(right||'')+'</div>';
   let h='<div class="stack"><h1>Hallo!</h1></div>'+(ns?'<section class="panel stack newstamp" role="status"><span class="label">Gipfel erreicht</span><h2>Neuer Stempel: '+ns[0]+'</h2><p>'+ns[1]+'</p></section>':'');
@@ -1306,8 +1310,9 @@ function paperHTML(){const D=paperData,P=PROBEN.find(p=>p.set==='probe');let pg=
 function vPaper(){if(!paperData)paperMake();return '<section class="stack noprint"><h1>Übungsprobe zum Ausdrucken</h1><p class="muted">Jedes Mal mit neuen Zahlen. Wie die echte Probe: alle Themen, ohne Tipps, auf Papier. Dazu ein Lösungsblatt für euch.</p><div class="row">'+(inFrame?'':'<button class="btn" data-act="pprint" data-m="probe">Probe drucken</button><button class="btn ghost" data-act="pprint" data-m="loes">Lösungen drucken</button>')+'<button class="btn ghost" data-act="pnew">Neue Zahlen</button><button class="btn ghost" data-act="nav" data-v="heute">Zurück</button></div>'+(inFrame?'<p class="muted small">Ausdrucken geht in der installierten App. Am Tablet kannst du im Druckdialog auch „Als PDF speichern“ wählen.</p>':'<p class="muted small">Am Tablet kannst du im Druckdialog auch „Als PDF speichern“ wählen.</p>')+'</section><div class="paper" data-print="'+paperPrint+'">'+paperHTML()+'</div>'}
 function vHeft(){
   let h='<div class="stack"><h1>Fehlerheft</h1><p class="muted">Hier landet, was noch nicht sofort geklappt hat. Fehler sind Trainingsstoff. Was du hier löst, verschwindet.</p></div>';
-  if(!S.heft.length)return h+'<section class="panel"><p>Dein Fehlerheft ist leer. Aufgaben erscheinen hier, sobald eine beim ersten Versuch nicht klappt.</p></section>';
-  return h+'<div class="stack">'+S.heft.map(id=>{const x=T[id];return '<section class="card"><span class="label">'+x.t.thema+'</span><p>'+x.t.q+'</p><button class="btn" data-act="retry" data-id="'+id+'">Nochmal üben</button></section>'}).join('')+'</div>';
+  const hl=S.heft.filter(id=>T[id]&&!archived(T[id].set));
+  if(!hl.length)return h+'<section class="panel"><p>Dein Fehlerheft ist leer. Aufgaben erscheinen hier, sobald eine beim ersten Versuch nicht klappt.</p></section>';
+  return h+'<div class="stack">'+hl.map(id=>{const x=T[id];return '<section class="card"><span class="label">'+x.t.thema+'</span><p>'+x.t.q+'</p><button class="btn" data-act="retry" data-id="'+id+'">Nochmal üben</button></section>'}).join('')+'</div>';
 }
 
 function vProbe(){
@@ -1392,7 +1397,7 @@ function solHTML(t){
   return '';
 }
 function vDemo(){
-  const ks=Object.keys(SETS),bl=SETS[demo.set].blocks;if(demo.b>=bl.length)demo.b=0;const b=bl[demo.b];
+  const ks=activeSets(),bl=SETS[demo.set].blocks;if(demo.b>=bl.length)demo.b=0;const b=bl[demo.b];
   const nav=id=>'<div class="row dnav"><button class="btn ghost" data-act="dprev"'+(demo.b?'':' disabled')+'>← Zurück</button><select id="'+id+'" class="dsel" aria-label="Block wählen">'+bl.map((x,k)=>'<option value="'+k+'"'+(k===demo.b?' selected':'')+'>'+(k+1)+'. '+x.title+'</option>').join('')+'</select><button class="btn ghost" data-act="dnext"'+(demo.b<bl.length-1?'':' disabled')+'>Weiter →</button></div>';
   let h='<div class="banner"><span>Demo-Modus: alle Aufgaben mit Lösung. Nichts wird gespeichert.</span><button class="btn ghost" style="border-color:var(--ball-ink);color:var(--ball-ink)" data-act="demoend">Demo beenden</button></div>';
   h+='<div class="row"><span class="label">Paket</span>'+ks.map(k=>'<button class="tab" data-act="dset" data-s="'+k+'" aria-pressed="'+(k===demo.set)+'">'+SETS[k].name+'</button>').join('')+'</div>'+nav('dblock');
@@ -1537,7 +1542,7 @@ document.addEventListener('click',e=>{
   else if(a==='gpclose'){gp=null;view='heute';cur=null}
   else if(a==='merkok'){merkSeen[BLOCKS[cur.b].id]=true}
   else if(a==='setgo'){useSet(el.dataset.s);save();view='heute'}
-  else if(a==='demo'){if(!demo||!SETS[demo.set])demo={set:S.set,b:0,inst:{}};view='demo'}
+  else if(a==='demo'){if(!demo||!SETS[demo.set]||archived(demo.set))demo={set:archived(S.set)?activeSets()[0]:S.set,b:0,inst:{}};view='demo'}
   else if(a==='demoend'){view='eltern'}
   else if(a==='dset'){demo.set=el.dataset.s;demo.b=0;demo.inst={}}
   else if(a==='dprev'){demo.b=Math.max(0,demo.b-1)}
