@@ -1,0 +1,6 @@
+const els={};const mk=()=>({innerHTML:'',dataset:{},setAttribute(){},value:''});global.document={getElementById:id=>els[id]||(els[id]=mk()),querySelectorAll:()=>[],addEventListener(){}};global.localStorage={getItem:()=>null,setItem(){}};global.window={scrollTo(){}};
+eval(require('fs').readFileSync(process.argv[2],'utf8')+`
+useSet('probe');const hit={};const nums=x=>(String(x==null?'':x).replace(/<[^>]+>/g,' ').match(/[0-9]{1,3}(?:[ \\u00a0][0-9]{3})+|[0-9]+/g)||[]).map(v=>+v.replace(/[ \\u00a0]/g,''));
+BLOCKS.forEach((b,bi)=>b.tasks.forEach((t0,ti)=>{for(let i=0;i<(t0.gen?300:1);i++){cur=Object.assign({b:bi,i:ti},fresh());const t=curT();const L=[t.q,t.explain,...(t.tips||[]),...(t.opts||[]),...(t.items||[]),...(t.words||[]),...(t.rows||[]).flatMap(r=>[r.label,r.a]),typeof t.a==='number'?t.a:'',t.z?t.z.a:''];if(t.alt){try{const a=t.alt();L.push(a.q,a.explain,...(a.tips||[]),...(a.opts||[]),typeof a.a==='number'?a.a:'')}catch(e){}}
+ const mx=Math.max(0,...L.flatMap(nums));if(mx>1000){hit[b.id+' '+t0.id]=hit[b.id+' '+t0.id]||{n:0,ex:''};hit[b.id+' '+t0.id].n++;if(!hit[b.id+' '+t0.id].ex)hit[b.id+' '+t0.id].ex=String(t.q).replace(/<[^>]+>/g,'').slice(0,90)+' | max '+mx}}}));
+for(const k in hit)console.log(k,'('+hit[k].n+')',hit[k].ex);console.log('Aufgaben mit Zahlen über 1000:',Object.keys(hit).length)`);
