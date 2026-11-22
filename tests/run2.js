@@ -70,11 +70,11 @@ for(let rnd=0;rnd<300;rnd++)BLOCKS.forEach((b,bi)=>b.tasks.forEach((bt,ti)=>{cur
  // Zerlegung: nur Antwort 0 ist gültig
  if(t.id==='mp_d1'||t.id==='mp_d5'){const m=t.q.match(/rechnest ([0-9\u00a0 ]+) : ([0-9]+)/),a=num(m[1]),d=+m[2];A(t.opts.length===4,'4 opts '+t.q);t.opts.forEach((o,k)=>{const l=o.split(' + ').map(num),ok=l.every(x=>x>0&&x%d===0)&&l.reduce((x,y)=>x+y,0)===a;A(ok===(k===0),'zerleg '+t.q+' | '+o)})}
  // Teilen: Ergebnis stimmt
- if(t.type==='steps'&&/^Rechne .* : [0-9]+ halbschriftlich/.test(t.q)){const m=t.q.match(/Rechne ([0-9\u00a0 ]+) : ([0-9]+)/),a=num(m[1]),d=+m[2],res=t.rows.find(r=>r.sum).a,rest=t.rows.find(r=>r.sum).rr||0;A(res*d+rest===a&&rest<d,'div '+t.q);let rs=0,ps=0;t.rows.filter(r=>!r.sum).forEach(r=>{const mm=r.label.match(/([0-9\u00a0 ]+) : ([0-9]+)/),p=num(mm[1]);ps+=p;rs+=r.rr||0;A(Math.floor(p/+mm[2])===r.a&&p%+mm[2]===(r.rr||0),'teil '+r.label)});A(ps===a&&rs===rest,'teile summe '+t.q);A(t.rows.filter(r=>!r.sum&&r.rr).length===(rest?1:0),'nur letzter Rest')}
- if(/halbschriftlich im Heft/.test(t.q)){const m=t.q.match(/Heft: ([0-9\u00a0 ]+) : ([0-9]+)/),a=num(m[1]),d=+m[2];if(t.type==='number')A(t.a*d===a,'heft '+t.q);else{A(t.rows[0].a*d+t.rows[0].rr===a&&t.rows[0].rr<d&&t.rows[0].rr>0,'heftrest '+t.q)}}
+ if(t.type==='steps'&&/^Rechne .* : [0-9]+ halbschriftlich/.test(t.q)&&!/im Heft/.test(t.q)){const m=t.q.match(/Rechne ([0-9\u00a0 ]+) : ([0-9]+)/),a=num(m[1]),d=+m[2],res=t.rows.find(r=>r.sum).a,rest=t.rows.find(r=>r.sum).rr||0;A(res*d+rest===a&&rest<d,'div '+t.q);let rs=0,ps=0;t.rows.filter(r=>!r.sum).forEach(r=>{const mm=r.label.match(/([0-9\u00a0 ]+) : ([0-9]+)/),p=num(mm[1]);ps+=p;rs+=r.rr||0;A(Math.floor(p/+mm[2])===r.a&&p%+mm[2]===(r.rr||0),'teil '+r.label)});A(ps===a&&rs===rest,'teile summe '+t.q);A(t.rows.filter(r=>!r.sum&&r.rr).length===(rest?1:0),'nur letzter Rest')}
+ if(/halbschriftlich im Heft/.test(t.q)){const m=t.q.match(/Rechne ([0-9\u00a0 ]+) : ([0-9]+) halbschriftlich im Heft/),a=num(m[1]),d=+m[2];if(t.type==='number')A(t.a*d===a,'heft '+t.q);else{A(t.rows[0].a*d+t.rows[0].rr===a&&t.rows[0].rr<d&&t.rows[0].rr>0,'heftrest '+t.q)}}
  if(t.id==='mp_r1'){const m=t.q.match(/Rechne ([0-9]+) : ([0-9]+)/);A(t.rows[0].a*+m[2]+t.rows[0].rr===+m[1]&&t.rows[0].rr<+m[2]&&t.rows.length===1,'r1')}
  if(t.id==='mp_r5'){const m=t.q.match(/Rechne ([0-9]+) · ([0-9]+) [+] ([0-9]+)/);A(+m[1]*+m[2]+ +m[3]===t.a,'r5')}
- if(t.id==='mp_r7'){const m=t.q.match(/Stimmt ([0-9\u00a0 ]+) : ([0-9]+) = ([0-9]+) Rest ([0-9]+)/);A(+m[3]*+m[2]+ +m[4]!==num(m[1])&&+m[4]<+m[2],'r7 '+t.q)}
+ if(t.id==='mp_r7'){const m=t.q.match(/Stimmt ([0-9\u00a0 ]+) : ([0-9]+) = ([0-9]+) R ([0-9]+)/);A(+m[3]*+m[2]+ +m[4]!==num(m[1])&&+m[4]<+m[2],'r7 '+t.q)}
  if(t.id==='mp_r2'){const d=+t.q.match(/durch ([0-9]+)/)[1];A(t.a.map(k=>+t.words[k]).join()===dv(d).length&&false||t.a.map(k=>+t.words[k]).join()===[...Array(d-1).keys()].map(x=>x+1).join(),'r2')}
  // Sachaufgaben
  if(['mp_sa2','mp_sa5','mp_x3'].includes(t.id)){const n=t.q.match(/[0-9]+/g).map(Number);const a=n[0],d=t.id==='mp_sa5'?n[1]:n[1];A(Math.ceil(a/d)===t.a&&a%d!==0,'mindestens '+t.q)}
@@ -141,6 +141,15 @@ view='probe';render();A(/Matheprobe am Mittwoch, 25.11./.test(els.main.innerHTML
  const t0=today();S.log=[t0-2,t0-1,t0];A(streak()===3,'streak3');S.log=[t0-3,t0-2,t0-1];A(streak()===3,'streak gestern');S.log=[t0-5,t0];A(streak()===1,'streak1');S.log=[];A(streak()===0,'streak0');
  A(PASS.length===12&&new Set(PASS.map(x=>x[0])).size===12,'Pass Ziele');
  S=JSON.parse(save0);useSet('probe')}
+{const save1=JSON.stringify(S);useSet('probe');const right=t=>t.type==='zerl'?{p:t.z.parts.map(String),r:t.z.parts.map(x=>String(Math.floor(x/t.z.d))),y:t.z.rrs.map(x=>x?String(x):''),e:String(t.z.res),x:String(t.z.rest||'')}:t.type==='grid'?JSON.parse(JSON.stringify(t._ans)):t.type==='steps'?(()=>{const v=t.rows.map(r=>String(r.a));t.rows.forEach((r,k)=>{if(r.rr!==undefined)v[50+k]=String(r.rr)});return v})():t.type==='choice'?t.a:t.type==='number'?String(t.a):t.a.slice();
+ for(let rnd=0;rnd<60;rnd++){S.heft=[];S.gp=[];gpStart('probe');A(view==='gp'&&gp.slots.length===20,'GP Anzahl '+gp.slots.length);A(new Set(gp.slots.map(x=>x.twin.id)).size===20,'GP doppelt');A(gp.slots.every(x=>x.twin.type!=='recall'),'GP Heft-Aufgabe');
+  gp.slots.forEach((sl,k)=>{gp.i=k;render();A(!/Tipp holen|Lösung zeigen|Merkzettel/.test(els.main.innerHTML),'GP zeigt Hilfe');A(!isOk(sl.twin,sl.sel),'GP leer ok '+sl.twin.id);sl.sel=right(sl.twin);A(isOk(sl.twin,sl.sel),'GP richtig nicht ok '+sl.twin.id);{const t=sl.twin,w=right(t);let bad=null;if(t.type==='number')bad=String(t.a+1);else if(t.type==='choice')bad=(t.a+1)%t.opts.length;else if(t.type==='words')bad=w.length>1?w.slice(1):w.concat(t.words.map((_,j)=>j).find(j=>!w.includes(j)));else if(t.type==='steps'){bad=w.slice();bad[0]=String(+w[0]+1)}else if(t.type==='zerl'){bad=JSON.parse(JSON.stringify(w));bad.e=String(+bad.e+1)}if(bad!==null)A(!isOk(t,bad),'GP falsch als richtig '+t.id);if(t.type==='steps'&&t.rows.some(r=>r.rr!==undefined)){const b2=w.slice();const k=t.rows.findIndex(r=>r.rr!==undefined);b2[50+k]=String(+w[50+k]+1);A(!isOk(t,b2),'GP Rest falsch als richtig')}}A(gpHas(sl),'GP has '+sl.twin.id)});
+  gpSubmit();A(gp.end.p===gp.end.max+2&&gp.end.pct===100&&gp.end.note===1&&S.heft.length===0&&S.gp.length===1,'GP volle Punkte');render();A(els.main.innerHTML.includes(gp.end.p+' von '+gp.end.max+' Punkten'),'GP Ergebnis');
+  S.heft=[];gpStart('probe');gpSubmit();A(gp.end.p===0&&gp.end.note===6&&S.heft.length===19,'GP leer');
+  gpStart('probe');gp.slots.forEach((sl,k)=>{if(k%2)sl.sel=right(sl.twin)});gpSubmit();const exp=gp.slots.filter((_,k)=>k%2).reduce((a,sl)=>a+gpPts(sl.twin),0);A(gp.end.p===exp,'GP halbe Punkte')}
+ A(gpNote(95)===1&&gpNote(94)===2&&gpNote(80)===2&&gpNote(79)===3&&gpNote(65)===3&&gpNote(50)===4&&gpNote(49)===5&&gpNote(25)===5&&gpNote(24)===6&&gpNote(0)===6,'Notenschlüssel');
+ gp=null;clearInterval(gpTimer);view='heute';cur=null;S=JSON.parse(save1);useSet('probe')}
+
 
 console.log('ALL OK 4');`;
 eval(src);
