@@ -15,6 +15,9 @@ function ev(e){e=e.trim();let m=e.match(new RegExp('^('+NUM+') : ('+NUM+') *$'))
 const same=(a,b)=>{const A=a.q!==undefined?a:(a.v&&a.v.q!==undefined?a.v:{q:a.v,r:0}),B=b.q!==undefined?b:(b.v&&b.v.q!==undefined?b.v:{q:b.v,r:0});return A.q===B.q&&A.r===B.r};
 for(const k of Object.keys(MERK))for(const c of MERK[k].cards){const texts=[c[3],...c[4],...c[5],c[6]].map(strip);
   for(const t of texts)for(const seg of t.split('→')){let m;re.lastIndex=0;while((m=re.exec(seg))){const parts=m[0].split(' = ');n++;const v0=ev(parts[0]);for(const p of parts.slice(1)){if(!same(v0,ev(p))){bad++;console.log('FALSCH ['+k+'/'+c[0]+']: '+m[0])}}}}}
+let nt=0;for(const k of Object.keys(MERK))for(const c of MERK[k].cards)for(const t of [c[3],...c[4],...c[5],c[6]].map(strip)){for(const m0 of t.matchAll(/(?:([0-9]+) geht|geht ([0-9]+)) (nicht )?durch ([0-9]+)/g)){const m=[m0[0],m0[1]||m0[2],m0[3],m0[4]];nt++;const ok=(+m[1]%+m[3]===0)!==!!m[2];if(!ok){bad++;console.log('FALSCH ['+k+'/'+c[0]+']: '+m[0])}}}
+const qs=x=>String(x).split('').reduce((a,b)=>a+ +b,0);for(let z=10;z<=10000;z++){const r={2:'02468'.includes(String(z).slice(-1)),5:'05'.includes(String(z).slice(-1)),10:String(z).slice(-1)==='0',4:+String(z).slice(-2)%4===0,3:qs(z)%3===0,9:qs(z)%9===0,6:z%2===0&&qs(z)%3===0};for(const d in r)if(r[d]!==(z%d===0)){bad++;console.log('Teilbarkeitsregel falsch: '+z+' durch '+d)}}
+console.log('Aussagen „geht durch“ geprüft:',nt,'· Teilbarkeitsregeln an 10 bis 10 000 geprüft');
 console.log('Rechnungen geprüft:',n,'falsch:',bad);
 // Skizze: g ⊥ k und g || h aus dem SVG nachrechnen
 const svg=merkFigLines(),L=[...svg.matchAll(/<line class="gl" x1="([-0-9.]+)" y1="([-0-9.]+)" x2="([-0-9.]+)" y2="([-0-9.]+)"/g)].map(m=>m.slice(1).map(Number)).slice(0,4);
