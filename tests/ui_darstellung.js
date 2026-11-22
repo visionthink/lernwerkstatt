@@ -1,0 +1,15 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const ok=(c,m)=>console.log((c?'OK   ':'FEHLER ')+m);const errs=[];
+const url='file://'+require('path').resolve(process.argv[2]||'lernwerkstatt/index.html');
+const ctx=await b.newContext({colorScheme:'dark',viewport:{width:820,height:1000}});const p=await ctx.newPage();p.on('pageerror',e=>errs.push(String(e)));
+await p.goto(url);await p.evaluate(()=>{try{localStorage.clear()}catch(e){}});await p.reload();
+const bg=()=>p.evaluate(()=>getComputedStyle(document.body).backgroundColor);
+const light='rgb(242, 247, 243)',dark='rgb(14, 25, 20)';
+ok(await bg()===light,'Standard hell, obwohl das Tablet dunkel eingestellt ist: '+await bg());
+await p.evaluate(()=>{pinOk=true;view='eltern';render()});
+await p.click('[data-act="theme"][data-m="auto"]');ok(await bg()===dark,'„Wie das Tablet“ folgt dem dunklen Tablet');
+await p.click('[data-act="theme"][data-m="dunkel"]');ok(await bg()===dark,'Dunkel');
+await p.reload();ok(await bg()===dark,'Einstellung bleibt nach Neustart');
+await p.evaluate(()=>{pinOk=true;view='eltern';render()});await p.click('[data-act="theme"][data-m="hell"]');ok(await bg()===light,'zurück auf Hell');
+ok(await p.locator('[data-act="theme"][data-m="hell"]').getAttribute('aria-pressed')==='true','Knopf Hell ist markiert');
+const ctx2=await b.newContext({colorScheme:'light'});const q=await ctx2.newPage();await q.goto(url);await q.evaluate(()=>{S.theme='auto';save();applyTheme()});ok(await q.evaluate(()=>getComputedStyle(document.body).backgroundColor)===light,'„Wie das Tablet“ bei hellem Tablet');
+console.log('errors',errs);await b.close()})();

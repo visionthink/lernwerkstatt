@@ -974,7 +974,10 @@ const KEY='lernwerkstatt-proto-1';
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.done)return r}catch(e){}return{done:{},blocks:[],heft:[],feel:null}}
 function save(){if(demoSnap)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 let demo=null,demoSnap=null;
-let S=load(),view='heute',cur=null,pinOk=false,pinMsg='';useSet(S.set);S.heft=(S.heft||[]).filter(id=>T[id]);
+let S=load(),view='heute',cur=null,pinOk=false,pinMsg='';useSet(S.set);
+const THEMES=[['hell','Hell'],['dunkel','Dunkel'],['auto','Wie das Tablet']];
+function applyTheme(){const m=S.theme||'hell',r=document.documentElement;if(!r||!r.setAttribute)return;if(m==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',m==='dunkel'?'dark':'light')}
+applyTheme();S.heft=(S.heft||[]).filter(id=>T[id]);
 const fresh=()=>({sel:null,wrong:[],tips:0,tries:0,status:'open',msg:'',conf:null});
 const KEEP=['sel','wrong','tips','tries','status','msg','conf','inst','perm','asked','askMiss','askPerm','revealed','badRows','late'];
 function snap(c){const o={};KEEP.forEach(k=>{if(c[k]!==undefined)o[k]=c[k]});return o}
@@ -1235,7 +1238,7 @@ function vEltern(){
   h+='<details class="panel"><summary>Alle Aufgaben im Detail</summary><div class="scroll"><table><thead><tr><th>Thema</th><th>Versuche</th><th>Tipps</th><th>Ergebnis</th><th>Wiederholung</th></tr></thead><tbody>'+
     ids().map(id=>{const r=S.done[id];return '<tr><td>'+T[id].t.thema+'</td>'+(r?'<td>'+r.tries+'</td><td>'+r.tips+''+'</td><td>'+(r.solved==='self'?(r.need?r.got+' von '+(r.tot||(T[id].t.items||[]).length)+(T[id].t.check?' Punkten erfüllt':' aufgeschrieben'):'selbst gelöst'):r.solved==='late'?'erst nach '+r.tries+' Versuchen':r.solved==='miss'?r.got+' aufgeschrieben, '+r.need+' gebraucht':'Lösung gezeigt')+'</td><td>'+(S.rev&&S.rev[id]?(S.rev[id].due<=today()?'heute':'in '+(S.rev[id].due-today())+(S.rev[id].due-today()===1?' Tag':' Tagen')):'–')+'</td>':'<td colspan="4" class="muted">noch offen</td>')+'</tr>'}).join('')+'</tbody></table></div></details>';
   h+='<section class="panel stack"><span class="label">Aufgaben prüfen</span><h2>Demo-Modus</h2><p>Zeigt alle Aufgaben eines Blocks auf einer Seite, mit Lösung, Tipps und Erklärung. Du blätterst Block für Block und musst nichts beantworten. Nichts wird gespeichert, keine Übungszeit wird gezählt.</p><div class="row"><button class="btn" data-act="demo">Demo-Modus öffnen</button></div></section>';
-  h+='<section class="panel stack"><span class="label">Einstellungen</span><p>Zeitlimit: '+(LIMIT+tm().extra)+' Minuten am Tag, heute geübt: '+Math.floor(tm().sec/60)+' Minuten · '+(nextProbe()?'Nächste Probe: '+nextProbe().name+' am '+nextProbe().wd.split(', ')[1]:'Keine Probe geplant')+' · Themen aus dem Alltag: Fußball, Pokémon, Reisen, Skifahren, Tennis</p><div class="row"><button class="btn ghost" data-act="more">Heute 10 Minuten mehr erlauben</button><button class="btn ghost" data-act="reset">Lernstand zurücksetzen</button></div></section>';
+  h+='<section class="panel stack"><span class="label">Einstellungen</span><p>Zeitlimit: '+(LIMIT+tm().extra)+' Minuten am Tag, heute geübt: '+Math.floor(tm().sec/60)+' Minuten · '+(nextProbe()?'Nächste Probe: '+nextProbe().name+' am '+nextProbe().wd.split(', ')[1]:'Keine Probe geplant')+' · Themen aus dem Alltag: Fußball, Pokémon, Reisen, Skifahren, Tennis</p><div class="stack" style="gap:6px"><span class="label">Darstellung</span><div class="row" role="group" aria-label="Darstellung">'+THEMES.map(([k,l])=>'<button class="btn sm'+((S.theme||'hell')===k?'':' ghost')+'" data-act="theme" data-m="'+k+'" aria-pressed="'+((S.theme||'hell')===k)+'">'+l+'</button>').join('')+'</div><p class="muted small">Zum Lernen empfohlen: Hell. Dunkle Schrift auf hellem Grund liest sich bei normalem Licht genauer, und es sieht aus wie Heft und Probe.</p></div><div class="row"><button class="btn ghost" data-act="more">Heute 10 Minuten mehr erlauben</button><button class="btn ghost" data-act="reset">Lernstand zurücksetzen</button></div></section>';
   return h;
 }
 
@@ -1400,6 +1403,7 @@ document.addEventListener('click',e=>{
   else if(a==='review'){const l=dueIds().slice(0,5).map(id=>T[id].t);if(l.length){cur=Object.assign({b:0,i:0,blk:{id:'rev',title:'Wiederholen',info:'Diese Aufgaben kennst du schon. Mal sehen, was noch im Kopf ist.',tasks:l},res:[],replay:true},fresh());view='ueben'}}
   else if(a==='ask'){if(+el.dataset.k===askOf(curT()).a){cur.asked=true}else{cur.askMiss=(cur.askMiss||0)+1}}
   else if(a==='more'){tm().extra+=10;save()}
+  else if(a==='theme'){S.theme=el.dataset.m;applyTheme();save()}
   else if(a==='reveal'){cur.revealed=true;cur.sel=[]}
   else if(a==='selfcheck'){selfcheck()}
   else if(a==='jump'){if(cur&&!cur.retry)goTask(+el.dataset.k)}
