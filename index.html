@@ -218,6 +218,25 @@ summary{cursor:pointer;font-weight:800}
 .z3{background:var(--surface);border:2px solid var(--line)}
 .z3 .znum{background:var(--ink);color:var(--surface)}
 @media (max-width:480px){.zone{padding:14px;border-radius:18px}.zone .zh{font-size:1.3rem}}
+.ski{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px}
+.skisvg{width:100%;height:auto;display:block;border-radius:12px}
+.skilab{font:700 17px var(--body);fill:#14291F;paint-order:stroke;stroke:#FFFFFF;stroke-width:4px;stroke-linejoin:round}
+.skitxt{display:flex;flex-direction:column;gap:6px}.skitxt h3{font-size:1.25rem}
+.powder{background:var(--tip-bg);color:var(--sky);font-weight:800;border-radius:10px;padding:6px 10px}
+@media (max-width:640px){.ski{grid-template-columns:1fr}}
+.z4{background:var(--surface);border:1px solid var(--line)}
+.z4 .znum{background:var(--ball);color:var(--ball-ink)}
+.pass{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:16px 12px}
+.stampw{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}.stampw p{font-size:.8rem;line-height:1.3;text-align:center;color:var(--ink)}
+.stamp{width:100%;max-width:110px;aspect-ratio:1;border:2px dashed var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;color:var(--muted)}
+.stamp b{font-family:var(--display);font-size:1.3rem;color:var(--muted)}
+.stamp.next{border-color:var(--pitch);border-style:solid}
+.stamp.on{border:3px double var(--c);color:var(--ink);transform:rotate(-6deg);background:var(--surface)}
+.stamp.on b{color:var(--c);font-size:1.05rem;text-transform:uppercase;letter-spacing:.04em}
+.stamp.s0{--c:#C2410C}.stamp.s1{--c:#1D4ED8}.stamp.s2{--c:#15803D}.stamp.s3{--c:#9D174D}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stamp.s0{--c:#FDBA74}:root:not([data-theme="light"]) .stamp.s1{--c:#93C5FD}:root:not([data-theme="light"]) .stamp.s2{--c:#86EFAC}:root:not([data-theme="light"]) .stamp.s3{--c:#F9A8D4}}
+:root[data-theme="dark"] .stamp.s0{--c:#FDBA74}:root[data-theme="dark"] .stamp.s1{--c:#93C5FD}:root[data-theme="dark"] .stamp.s2{--c:#86EFAC}:root[data-theme="dark"] .stamp.s3{--c:#F9A8D4}
+.newstamp{border:2px solid var(--pitch);background:var(--good-bg)}
 .ponly{display:none}
 @media print{
   @page{size:A4;margin:11mm}
@@ -994,6 +1013,34 @@ function vMerk(){const k=MERK[merkSet]?merkSet:MERK[S.set]?S.set:'probe',m=MERK[
   let h='<section class="stack noprint"><div class="row" style="justify-content:space-between;align-items:baseline"><h1>Merkzettel</h1>'+(inFrame?'':'<button class="btn ghost sm" data-act="print">Ausdrucken</button>')+'</div><p class="muted">Das Wichtigste zum Stoff auf einen Blick. Bist du bei einem Thema unsicher? Dann lies die passende Karte.</p><div class="row">'+Object.keys(MERK).map(x=>'<button class="btn sm'+(x===k?'':' ghost')+'" data-act="merkset" data-s="'+x+'" aria-pressed="'+(x===k)+'">'+MERK[x].short+'</button>').join('')+'</div>'+(inFrame?'<p class="muted small">Ausdrucken geht in der installierten App.</p>':'')+'</section>';
   h+='<header class="ponly"><h1>'+m.title+'</h1>'+(p?'<p>'+p.name+' am '+p.wd+'</p>':'')+'</header>';
   return h+'<div class="mgrid">'+m.cards.map((c,i)=>'<article class="mcard"><span class="mnum" aria-hidden="true">'+(i+1)+'</span><h2>'+c[1]+'</h2>'+merkHTML(c)+'</article>').join('')+'</div>'}
+// ---------- Skitour (Fortschritt zur Probe) und Reisepass (Stempel für jeden Gipfel) ----------
+const SKI_T=[[120,285],[470,262],[200,225],[440,190],[290,150],[420,112],[350,82],[395,40]];
+const SKI_ST=[[0,'Talstation'],[.25,'Mittelstation'],[.5,'Hütte'],[.75,'Gipfelgrat'],[1,'Gipfel']];
+function skiAt(fr){const seg=SKI_T.slice(1).map((p,i)=>Math.hypot(p[0]-SKI_T[i][0],p[1]-SKI_T[i][1])),tot=seg.reduce((a,b)=>a+b,0);let L=Math.max(0,Math.min(1,fr))*tot;for(let i=0;i<seg.length;i++){if(L<=seg[i]||i===seg.length-1){const t=seg[i]?Math.min(1,L/seg[i]):0,a=SKI_T[i],b=SKI_T[i+1];return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]}L-=seg[i]}}
+function skiStat(k){const ts=SETS[k].blocks.flatMap(b=>b.tasks),n=ts.length,d=ts.filter(t=>S.done[t.id]&&!S.heft.includes(t.id)).length,fe=ts.filter(t=>S.heft.includes(t.id)).length;return {n,d,fe,fr:n?d/n:0}}
+function streak(){const L=S.log||[];let n=0,d=today();if(!L.includes(d))d--;while(L.includes(d)){n++;d--}return n}
+function logDay(){S.log=S.log||[];const d=today();if(!S.log.includes(d)){S.log.push(d);S.log=S.log.slice(-90)}}
+function skiSVG(fr){const P=skiAt(fr),n1=x=>Math.round(x*10)/10;
+  let s='<svg class="skisvg" viewBox="0 0 600 300" role="img" aria-label="Berg mit Skifahrer. Fortschritt '+Math.round(fr*100)+' Prozent"><defs><linearGradient id="skyg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFDDF7"/><stop offset="1" stop-color="#EAF4FD"/></linearGradient></defs>';
+  s+='<rect width="600" height="300" fill="url(#skyg)"/><circle cx="530" cy="48" r="22" fill="#FFE27A"/>';
+  s+='<polygon points="0,300 60,260 395,28 560,250 600,300" fill="#7B8E9C"/><polygon points="395,28 560,250 600,300 480,300" fill="#667A88"/>';
+  s+='<polygon points="298,95 395,28 445,95 425,105 400,92 370,108 340,94 315,104" fill="#FFFFFF"/>';
+  [[30,292],[58,286],[86,294],[520,288],[548,294],[576,286]].forEach(([x,y])=>s+='<polygon points="'+x+','+(y-26)+' '+(x-11)+','+y+' '+(x+11)+','+y+'" fill="#2F6B4A"/>');
+  s+='<polyline points="'+SKI_T.map(p=>p.join(',')).join(' ')+'" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="2 9" stroke-linecap="round" opacity=".9"/>';
+  s+='<line x1="395" y1="40" x2="395" y2="6" stroke="#3A2A1A" stroke-width="3"/><polygon points="395,6 420,13 395,20" fill="#D7263D"/>';
+  SKI_ST.forEach(([f,name])=>{const q=skiAt(f),done=fr>=f-1e-9,right=q[0]<395;s+='<circle cx="'+n1(q[0])+'" cy="'+n1(q[1])+'" r="7" fill="'+(done?'#1C7548':'#FFFFFF')+'" stroke="#14291F" stroke-width="2"/>';
+    if(f<1)s+='<text x="'+n1(q[0]+(right?-12:12))+'" y="'+n1(q[1]+5)+'" text-anchor="'+(right?'end':'start')+'" class="skilab">'+name+'</text>'});
+  s+='<text x="350" y="20" text-anchor="end" class="skilab">Gipfel</text>';
+  const x=P[0],y=P[1];
+  s+='<g class="skier"><line x1="'+n1(x-13)+'" y1="'+n1(y+2)+'" x2="'+n1(x+13)+'" y2="'+n1(y-2)+'" stroke="#14291F" stroke-width="3" stroke-linecap="round"/><line x1="'+n1(x)+'" y1="'+n1(y-4)+'" x2="'+n1(x)+'" y2="'+n1(y-20)+'" stroke="#D7263D" stroke-width="7" stroke-linecap="round"/><line x1="'+n1(x-1)+'" y1="'+n1(y-16)+'" x2="'+n1(x-10)+'" y2="'+n1(y+1)+'" stroke="#14291F" stroke-width="2"/><circle cx="'+n1(x)+'" cy="'+n1(y-27)+'" r="6" fill="#F2C9A0" stroke="#14291F" stroke-width="1.5"/><path d="M'+n1(x-6)+' '+n1(y-29)+' a6 6 0 0 1 12 0 z" fill="#2563C9"/></g>';
+  return s+'</svg>'}
+// Reiseziele für den Pass (Fakten geprüft)
+const PASS=[['Wien','Im Tiergarten Schönbrunn ist der älteste Zoo der Welt, es gibt ihn seit 1752.'],['London','Wimbledon ist das älteste Tennisturnier der Welt. Es wird seit 1877 gespielt.'],['Zermatt','Auf dem Gletscher beim Matterhorn kann man sogar im Sommer Ski fahren.'],['Rio de Janeiro','Im Maracanã-Stadion wurde Deutschland 2014 Fußball-Weltmeister.'],['Paris','Der Eiffelturm ist ungefähr 330 Meter hoch.'],['Kapstadt','Am Strand Boulders Beach leben Pinguine.'],['Rom','Das Kolosseum ist fast 2 000 Jahre alt.'],['Tokio','Die Schnellzüge in Japan heißen Shinkansen und fahren über 300 km/h.'],['Barcelona','An der Kirche Sagrada Família wird seit 1882 gebaut.'],['New York','Die Freiheitsstatue war ein Geschenk aus Frankreich.'],['Reykjavík','In Island gibt es Geysire. Sie spritzen heißes Wasser hoch in die Luft.'],['Sydney','Das Dach der Oper von Sydney sieht aus wie Segel.']];
+function stampCheck(){S.stamps=S.stamps||[];for(const p of PROBEN){if(!SETS[p.set])continue;const k=p.set+'@'+p.iso,st=skiStat(p.set);if(st.n&&st.d===st.n&&!S.stamps.some(x=>x.k===k)&&S.stamps.length<PASS.length){S.stamps.push({k,day:today()});S.newStamp=S.stamps.length-1;save()}}}
+function skiHTML(p){const k=p?p.set:S.set,st=skiStat(k),fr=st.fr,cur_=SKI_ST.filter(x=>fr>=x[0]-1e-9).pop(),nx=SKI_ST.find(x=>fr<x[0]-1e-9),need=nx?Math.ceil(nx[0]*st.n-1e-9)-st.d:0,sk=streak();
+  let h='<div class="ski">'+skiSVG(fr)+'<div class="skitxt"><h3>'+(nx?'Du bist '+(cur_[0]===0?'an der Talstation':cur_[0]===.25?'an der Mittelstation':cur_[0]===.5?'bei der Hütte':'am Gipfelgrat')+'.':'Gipfel erreicht!')+'</h3><p>'+(nx?'Noch '+(need===1?'1 Aufgabe':need+' Aufgaben')+' bis '+(nx[1]==='Mittelstation'||nx[1]==='Hütte'?'zur ':'zum ')+nx[1]+'.':'Du hast alle Aufgaben geschafft. Dafür gibt es einen Stempel in deinen Reisepass.')+'</p><p class="muted small">Jede Aufgabe, die du schaffst, bringt dich ein Stück höher. Aufgaben im Fehlerheft zählen, sobald du sie dort richtig löst.'+(p?' Der Gipfel ist die Probe am '+p.wd:'')+'</p>'+(sk>=3?'<p class="powder">❄ Pulverschnee! Du hast '+sk+' Tage hintereinander geübt.</p>':sk===2?'<p class="muted small">2 Tage hintereinander geübt. Morgen gibt es Pulverschnee!</p>':'')+'</div></div>';
+  return h}
+function passHTML(){const st=S.stamps||[];return '<section class="zone z4" aria-label="Reisepass"><div class="zone-head"><div class="zone-title"><span class="znum" aria-hidden="true">✈</span><div><h2 class="zh">Dein Reisepass</h2><p class="muted small">Für jeden Gipfel, also jede fertig geübte Probe, bekommst du einen Stempel.</p></div></div><span class="chip">'+st.length+' von '+PASS.length+' Stempeln</span></div><div class="pass">'+PASS.map((x,i)=>i<st.length?'<div class="stampw"><div class="stamp on s'+(i%4)+'"><b>'+x[0]+'</b></div><p>'+x[1]+'</p></div>':'<div class="stampw"><div class="stamp'+(i===st.length?' next':'')+'"><b>?</b></div><p>'+(i===st.length?'Dein nächster Stempel':'')+'</p></div>').join('')+'</div></section>'}
 function isoDay(x){const [y,m,d]=x.split('-').map(Number);return Math.round(new Date(y,m-1,d).getTime()/864e5)}
 function dTo(p){return isoDay(p.iso)-today()}
 function nextProbe(){const up=PROBEN.filter(p=>dTo(p)>=0).sort((a,b)=>dTo(a)-dTo(b));return up.find(p=>p.set===S.set)||up[0]||null}
@@ -1010,9 +1057,11 @@ function brow(b,k){const st=bStat(b);return '<li class="brow'+(st.fin?' fin':'')
 function vHeute(){
   const nb=BLOCKS.filter(b=>S.blocks.includes(b.id)).length,day=dayPlan(),mine=S.travel?BLOCKS.filter(b=>!S.blocks.includes(b.id)&&b.tasks.some(t=>avail(t)&&!S.done[t.id])).slice(0,3):day.ids.map(id=>BLOCKS.find(b=>b.id===id)).filter(Boolean),dayDone=!S.travel&&mine.length>0&&mine.every(b=>S.blocks.includes(b.id)),min=Math.floor(tm().sec/60),lim=LIMIT+tm().extra,due=dueIds();
   const up=PROBEN.filter(p=>dTo(p)>=0&&SETS[p.set]).sort((a,b)=>dTo(a)-dTo(b)),inProbe=up.map(p=>p.set),rest=Object.keys(SETS).filter(k=>!inProbe.includes(k));
+  stampCheck();const ns=S.newStamp!=null?PASS[S.newStamp]:null;
   const zh=(n,t,sub,right)=>'<div class="zone-head"><div class="zone-title"><span class="znum" aria-hidden="true">'+n+'</span><div><h2 class="zh">'+t+'</h2>'+(sub?'<p class="muted small">'+sub+'</p>':'')+'</div></div>'+(right||'')+'</div>';
-  let h='<div class="stack"><h1>Hallo!</h1></div>';
+  let h='<div class="stack"><h1>Hallo!</h1></div>'+(ns?'<section class="panel stack newstamp" role="status"><span class="label">Gipfel erreicht</span><h2>Neuer Stempel: '+ns[0]+'</h2><p>'+ns[1]+'</p></section>':'');
   h+='<section class="zone z1" aria-label="Nächste Probe">'+zh(1,up.length>1?'Deine nächsten Proben':'Deine nächste Probe',up.length?'Darauf übst du gerade hin.':'')+(up.length?up.map(p=>{const st=setStat(p.set),act=S.set===p.set;return '<article class="pcard'+(act?' act':'')+'"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2>'+p.name+'</h2><p class="pdate">'+p.wd+' · '+examLine(p).replace(p.name+' ','')+'</p></div>'+(act?'<span class="chip ok">Wird geübt</span>':'')+'</div>'+bar(st.d,st.n)+'<p class="small">'+st.fin+' von '+st.bn+' Blöcken fertig · '+st.d+' von '+st.n+' Aufgaben bearbeitet</p>'+(()=>{const rm=SETS[p.set].blocks.filter(b=>!S.blocks.includes(b.id)).reduce((x,b)=>x+b.min,0),dd=Math.max(dTo(p),1),per=Math.ceil(rm/dd);return rm?'<p class="small">Noch etwa '+rm+' Minuten Übung offen. Bis zur Probe sind das etwa '+per+' Minuten am Tag.</p>':''})()+'<div class="row">'+(act?'':'<button class="btn" data-act="set" data-s="'+p.set+'">Dafür üben</button>')+'<button class="btn ghost" data-act="nav" data-v="probe">Lernplan</button>'+(MERK[p.set]?'<button class="btn ghost" data-act="merk" data-s="'+p.set+'">Merkzettel</button>':'')+'</div></article>'}).join(''):'<p class="muted">Gerade steht keine Probe an.</p>');
+  {const ap=up.find(p=>p.set===S.set);h+=skiHTML(ap||null)}
   const mp=PROBEN.find(p=>MERK[p.set]&&(dTo(p)===1||dTo(p)===0));if(mp)h+='<section class="panel stack merkday"><span class="label">'+(dTo(mp)===1?mp.name+' ist morgen':mp.name+' ist heute')+'</span><h2>'+(dTo(mp)===1?'Heute ist Merkzettel-Tag':'Nur noch kurz anschauen')+'</h2><p>'+(dTo(mp)===1?'Heute keine neuen Aufgaben mehr. Lies den Merkzettel einmal in Ruhe durch. Danach höchstens noch das Fehlerheft.':'Schau dir vor der Schule nur die Karte „Vor dem Abgeben“ an. Du hast gut geübt!')+'</p><div class="row"><button class="btn" data-act="merk" data-s="'+mp.set+'">Merkzettel lesen</button></div></section>';
   if(rest.length)h+='<details class="panel"'+(rest.includes(S.set)?' open':'')+'><summary>Weitere Pakete ('+rest.length+')</summary><ul class="plist">'+rest.map(k=>{const st=setStat(k),act=S.set===k;return '<li><div class="bmain"><b>'+SETS[k].name+'</b>'+bar(st.d,st.n)+'<span class="muted small">'+st.fin+' von '+st.bn+' Blöcken fertig</span></div>'+(act?'<span class="chip ok">Wird geübt</span>':'<button class="btn ghost sm" data-act="set" data-s="'+k+'">Wählen</button>')+'</li>'}).join('')+'</ul></details>';
   h+='</section>';
@@ -1027,10 +1076,8 @@ function vHeute(){
   }
   h+='</section>';
   h+='<section class="zone z3" aria-label="Alle Blöcke">'+zh(3,'Alle Blöcke',SETS[S.set].name+' · zum freien Üben und Nachholen','<span class="chip">'+nb+' von '+BLOCKS.length+' fertig</span>')+bar(nb,BLOCKS.length)+'<ol class="blist">'+BLOCKS.map(brow).join('')+'</ol></section>';
-  const part=Math.round(nb/BLOCKS.length*100);
-  const tiles=[['Unterfranken',100],['Oberfranken',100],null,['Mittelfranken',part,1],['Oberpfalz',0],null,['Schwaben',0],['Oberbayern',0],['Niederbayern',0]];
-  h+='<section class="stack"><h2>Deine Bayern-Karte</h2><p class="muted small">Jeder fertige Block füllt Mittelfranken ein Stück. Die zwei vollen Bezirke sind ein Beispielstand.</p><div class="map">'+
-    tiles.map(t=>t?'<div class="tile'+(t[1]===100?' full':'')+(t[2]?' now':'')+'"><i style="height:'+t[1]+'%"></i><span>'+t[0]+'</span></div>':'<div class="tile blank"></div>').join('')+'</div></section>';
+  h+=passHTML();
+  if(S.newStamp!=null){S.newStamp=null;save()}
   return h;
 }
 
@@ -1161,6 +1208,7 @@ function record(t,solved,extra){
   if(cur.twin)return;
   if(cur.asked)extra=Object.assign({ask:cur.askMiss||0},extra||{});
   const ql=solved==='self'?(cur.tries===1&&cur.tips===0?2:1):0;
+  logDay();
   if(!cur.retry&&!cur.blk)S.done[t.id]=Object.assign({tries:cur.tries,tips:cur.tips,conf:cur.conf,solved},extra||{});
   if(ql===0)addHeft(t.id);else if(cur.retry||cur.blk)S.heft=S.heft.filter(x=>x!==t.id);
   if(sched(t.id)){S.rev=S.rev||{};const r=S.rev[t.id]||{box:0};if(ql===2){r.due=today()+INT[r.box];r.box=Math.min(r.box+1,INT.length-1)}else{r.box=0;r.due=today()+(ql?1:0)}S.rev[t.id]=r}

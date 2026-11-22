@@ -127,5 +127,20 @@ demo={set:'probe',b:0,inst:{}};demoSnap=JSON.stringify(S);useSet('probe');cur=Ob
 solve(BLOCKS[0].tasks[0]);A(saved===0,'saved during demo '+saved);S=JSON.parse(demoSnap);demoSnap=null;useSet(S.set);A(JSON.stringify(S)===before,'restored');
 // Proben-Tab
 view='probe';render();A(/Matheprobe am Mittwoch, 25.11./.test(els.main.innerHTML),'probe tab');view='heute';useSet('probe');render();{const H=els.main.innerHTML,i1=H.indexOf('zone z1'),i2=H.indexOf('zone z2'),i3=H.indexOf('zone z3');A(/Deine nächste Probe.*Matheprobe/.test(H)&&i1>=0&&i1<i2&&i2<i3&&H.indexOf('class="plan"')>i2&&H.indexOf('class="plan"')<i3&&H.indexOf('blist')>i3,'Startseite Bereiche '+H.slice(0,300))}for(const st of Object.keys(SETS)){useSet(st);view='heute';render();const H=els.main.innerHTML,cnt=r=>(H.match(r)||[]).length;A(cnt(/<section/g)===cnt(/<[/]section>/g)&&cnt(/<details/g)===cnt(/<[/]details>/g)&&cnt(/<article/g)===cnt(/<[/]article>/g),'Startseite Tags offen/zu '+st);const z1=H.slice(H.indexOf('zone z1'),H.indexOf('zone z2'));A(!/Weitere Pakete/.test(H)||z1.includes('Weitere Pakete'),'Weitere Pakete in Bereich 1 '+st)}useSet('probe');
+{const near=(a,b)=>Math.abs(a[0]-b[0])<1e-6&&Math.abs(a[1]-b[1])<1e-6;A(near(skiAt(0),SKI_T[0])&&near(skiAt(1),SKI_T[SKI_T.length-1]),'ski Enden');
+ const M=[[0,300],[60,260],[395,28],[560,250],[600,300]],inPoly=(pt,P)=>{let c=false;for(let i=0,j=P.length-1;i<P.length;j=i++){const [xi,yi]=P[i],[xj,yj]=P[j];if(((yi>pt[1])!==(yj>pt[1]))&&(pt[0]<(xj-xi)*(pt[1]-yi)/(yj-yi)+xi))c=!c}return c};
+ for(let f=0;f<=1.0001;f+=0.01)A(inPoly(skiAt(f),M),'Skifahrer auf dem Berg bei '+f.toFixed(2));
+ let prev=-1;for(let f=0;f<=1.0001;f+=0.05){const q=skiAt(f);A(q[1]<=SKI_T[0][1]+1e-6,'ski Höhe')}
+ SKI_ST.forEach(([f,name])=>{const q=skiAt(f),right=q[0]<395,w=name.length*10;if(f<1)A(right?q[0]-12-w>=0:q[0]+12+w<=600,'Label im Bild '+name)});
+ useSet('probe');const ts=SETS.probe.blocks.flatMap(b=>b.tasks),n=ts.length,save0=JSON.stringify(S);
+ const setD=k=>{S.done={};S.heft=[];ts.slice(0,k).forEach(t=>S.done[t.id]={solved:'self'})};
+ for(const [k,word,goal] of [[0,'zur Mittelstation',Math.ceil(n/4)],[Math.ceil(n/4),'zur Hütte',Math.ceil(n/2)],[Math.ceil(n/2),'zum Gipfelgrat',Math.ceil(n*3/4)],[Math.ceil(n*3/4),'zum Gipfel',n]]){setD(k);const h=skiHTML(PROBEN.find(p=>p.set==='probe'));A(h.includes('Noch '+(goal-k)+' Aufgaben '.replace('Aufgaben ',goal-k===1?'Aufgabe ':'Aufgaben ')+'bis '+word),'Skitext '+k+' '+h.slice(h.indexOf('<h3>'),h.indexOf('</p>')))}
+ setD(n);A(skiHTML(null).includes('Gipfel erreicht'),'Gipfel erreicht');
+ setD(n);S.heft=[ts[0].id];A(skiStat('probe').d===n-1,'Fehlerheft zählt nicht');
+ setD(n);S.stamps=[];S.newStamp=null;stampCheck();stampCheck();A(S.stamps.filter(x=>x.k==='probe@2026-11-25').length===1&&S.newStamp===S.stamps.length-1,'Stempel einmal');
+ const t0=today();S.log=[t0-2,t0-1,t0];A(streak()===3,'streak3');S.log=[t0-3,t0-2,t0-1];A(streak()===3,'streak gestern');S.log=[t0-5,t0];A(streak()===1,'streak1');S.log=[];A(streak()===0,'streak0');
+ A(PASS.length===12&&new Set(PASS.map(x=>x[0])).size===12,'Pass Ziele');
+ S=JSON.parse(save0);useSet('probe')}
+
 console.log('ALL OK 4');`;
 eval(src);
