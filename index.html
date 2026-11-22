@@ -258,27 +258,42 @@ details.panel>summary{cursor:pointer;font-weight:800}
 .gplist li.no{color:var(--warn)}
 .pausebox{border:2px solid var(--sky)}
 .paper{display:flex;flex-direction:column;gap:18px;align-items:center}
-.ppage{background:#fff;color:#111;width:min(100%,210mm);box-shadow:0 2px 10px rgba(0,0,0,.15);border-radius:4px;padding:12mm 13mm 8mm;display:flex;flex-direction:column;min-height:min(297mm,140vw);font-size:11.5pt;line-height:1.4;font-family:Inter,Arial,sans-serif}
-.ppage .pinner{flex:1;display:flex;flex-direction:column;gap:2.5mm}
-.ppage h1{font-size:18pt;margin:0}.ppage h3{font-size:12.5pt;margin:2mm 0 0}
-.ppage p{margin:0}.ptitle{display:flex;flex-direction:column;gap:2mm;border-bottom:1.5px solid #111;padding-bottom:3mm;margin-bottom:2mm}
-.phead{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid #999;padding-top:3mm;margin-top:3mm}
-.ppts{float:right;font-weight:700;font-size:10pt;white-space:nowrap;color:#111}
+.ppage{background:#fff;color:#111;width:min(100%,210mm);box-shadow:0 2px 10px rgba(0,0,0,.15);border-radius:4px;padding:12mm 14mm 8mm;display:flex;flex-direction:column;min-height:min(297mm,140vw);font-size:11.5pt;line-height:1.45;font-family:Inter,Arial,sans-serif}
+.ppage .pinner{flex:1;display:flex;flex-direction:column;gap:3mm}
+.ppage h1{font-size:19pt;margin:0;font-family:'Space Grotesk',Arial,sans-serif}.ppage h3{font-size:13pt;margin:0;font-family:'Space Grotesk',Arial,sans-serif}
+.ppage p{margin:0}
+.ptitle{display:flex;justify-content:space-between;gap:6mm;border-bottom:2px solid #111;padding-bottom:3mm}
+.pname{display:flex;flex-direction:column;gap:3mm;font-size:10.5pt;white-space:nowrap}.pnote{border:1.5px solid #111;padding:1.5mm 3mm;font-weight:700;text-align:center}
+.phead{display:flex;align-items:center;gap:3mm;margin-top:5mm;padding-bottom:1.5mm;border-bottom:1px solid #bbb}
+.phead h3{flex:1}.pnr{width:8mm;height:8mm;border-radius:50%;background:#111;color:#fff;display:grid;place-items:center;font-weight:700;font-size:11pt;flex:none}
+.pbox{border:1.5px solid #111;padding:1mm 3mm;font-weight:700;font-size:10pt;white-space:nowrap}
+.pts{float:right;font-weight:700;font-size:10pt;white-space:nowrap;color:#444}
+.pq{margin-top:3mm!important;font-weight:600}
 .psub{color:#444;font-size:10pt}
-.pgrid2{display:grid;grid-template-columns:1fr 1fr;gap:3mm 8mm}
-.pgrid2.tall .pcalc{min-height:30mm}
-.pcalc{font-size:13pt;font-variant-numeric:tabular-nums;padding:1.5mm 0}
-.pgrid2.sol>div{font-size:10.5pt;font-variant-numeric:tabular-nums}
-.psach{display:flex;flex-direction:column;gap:2mm;margin-top:2mm}
-.pline{border-bottom:1px solid #555;min-height:9mm}
-.ptab{border-collapse:collapse;font-size:10.5pt}.ptab th,.ptab td{border:1px solid #777;padding:1.2mm 2.5mm;text-align:left}.ptab td.box{width:12mm}
-.pnums{font-size:13pt;letter-spacing:.02em;line-height:2}
-.pcourt{display:grid;grid-template-columns:1.4fr 1fr;gap:6mm;align-items:center}.pcourt p{margin-bottom:3mm}
-.pfig{display:flex;flex-direction:column;align-items:center;gap:1.5mm}.pfig svg{width:100%;max-width:65mm;height:auto}
-.pfig .courtsvg{max-width:48mm}
+.pgrid2{display:grid;grid-template-columns:1fr 1fr;gap:5mm 8mm}
+.pgrid2.kopf{gap:4mm 10mm}
+.pcalc{font-size:13.5pt;font-variant-numeric:tabular-nums;display:flex;align-items:flex-end;gap:2mm;flex-wrap:wrap}
+.pbl{display:inline-block;min-width:26mm;border-bottom:1.5px solid #111;height:7mm;vertical-align:bottom}.pbl.short{min-width:16mm}.pbl.tiny{min-width:12mm}.pbl.long{min-width:40mm}
+.pwork{display:flex;flex-direction:column;gap:2mm}
+.karo{background-color:#fff;background-image:linear-gradient(#c9d3d8 .25mm,transparent .25mm),linear-gradient(90deg,#c9d3d8 .25mm,transparent .25mm);background-size:5mm 5mm;border:.3mm solid #c9d3d8;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.k25{height:25mm}.k30{height:30mm}.k45{height:45mm}.k55{height:55mm}
+.pprobe{display:flex;flex-direction:column;gap:2mm;margin-top:3mm;font-weight:600}
+.psach{display:flex;flex-direction:column;gap:2.5mm;margin-top:3mm;padding-bottom:3mm;border-bottom:1px dashed #ccc}
+.pra{display:grid;grid-template-columns:8mm 1fr;align-items:end;font-weight:700}
+.plines{display:flex;flex-direction:column}
+.pline{border-bottom:1px solid #555;min-height:10mm}
+.ptab{border-collapse:collapse;font-size:11pt;width:100%}.ptab th,.ptab td{border:1px solid #777;padding:2mm 3mm;text-align:left;height:8mm}.ptab th{background:#f1f3f4;-webkit-print-color-adjust:exact;print-color-adjust:exact}.ptab td.box{width:16mm}
+.ptab.tcenter th,.ptab.tcenter td{text-align:center}
+.pnums{display:flex;flex-wrap:wrap;gap:3mm 7mm;font-size:14pt;padding:2mm 0}.pnums span{min-width:9mm;text-align:center}
+.pfill{line-height:2.2}
+.pcourt{display:grid;grid-template-columns:1.3fr 1fr;gap:8mm;align-items:center}
+.pfills p{margin-bottom:1mm}.pfills .pair{font-size:14pt;margin-bottom:4mm}
+.pfig{display:flex;flex-direction:column;align-items:center;gap:2mm}.pfig svg{width:100%;max-width:75mm;height:auto}
+.pfig .courtsvg{max-width:60mm}
 .ppage .fg,.ppage .gl{stroke:#111}.ppage .crf{fill:#fff}.ppage .cl,.ppage .crl{stroke:#111}.ppage .cn,.ppage .gn{fill:#111}
-.mmsvg{display:block;max-width:100%;height:auto}
-.pbonus{margin-top:4mm}
+.mmsvg{display:block;max-width:100%;height:auto;margin:1mm 0 2mm}
+.phead.bonus{margin-top:6mm}
+.pgrid2.sol>div{font-size:10.5pt;font-variant-numeric:tabular-nums}
 .pfoot{text-align:center;font-size:9pt;color:#555;margin-top:4mm}
 @media print{
   .paper{display:block}
@@ -286,7 +301,8 @@ details.panel>summary{cursor:pointer;font-weight:800}
   .ppage:last-child{break-after:auto}
   .paper[data-print="probe"] .lpage{display:none}
   .paper[data-print="loes"] .ppage:not(.lpage){display:none}
-  .mmsvg{width:170mm;height:58mm;max-width:none}
+  .mmsvg{width:170mm;height:62mm;max-width:none}
+  .psach,.pwork,.ptab,.pcourt,.pfig{break-inside:avoid}
 }
 .warnline{color:var(--warn);font-weight:700}
 .bkconfirm{border:2px solid var(--warn)}
@@ -1270,36 +1286,36 @@ function paperMake(){const used=new Set(),u=x=>{used.add(x);return x};
   let a1=genAngles(),a2;do{a2=genAngles()}while(a2.segs.length===a1.segs.length&&a2.angs.length===a1.angs.length);
   const fib=inst('mp_f1');
   paperData={ks,dv,rs,sach,N,tN,t4,t7,p2,ang:[a1,a2],fib,made:new Date()};paperPrint='probe'}
-function pHead(nr,title,pts,sub){return '<div class="phead"><h3>Aufgabe '+nr+': '+title+'</h3><span class="ppts">___ / '+pts+' P</span></div>'+(sub?'<p class="psub">'+sub+'</p>':'')}
+function pHead(nr,title,pts,sub){return '<div class="phead"><span class="pnr">'+nr+'</span><h3>'+title+'</h3><span class="pbox">___ / '+pts+' P</span></div>'+(sub?'<p class="psub">'+sub+'</p>':'')}
+// Zeichenfläche in echten Millimetern: Gerade quer, Punkt auf oder neben der Geraden
+function geoArea(lab,mode){const W=170,H=62,x1=10,y1=44,x2=158,y2=26,dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy),nx=dy/L,ny=-dx/L,n1=x=>Math.round(x*10)/10;
+  let px=0,py=0,pl='';if(mode==='on'){px=74;py=y1+dy*(px-x1)/dx;pl='P'}else if(mode==='off'){const bx=92,by=y1+dy*(bx-x1)/dx;px=bx-nx*20;py=by-ny*20;if(py>by){px=bx+nx*20;py=by+ny*20}pl='Q'}
+  const ly=mode==='par'?{a:y1-6,b:y2+12}:{a:y1,b:y2},Y1=mode==='par'?36:y1,Y2=mode==='par'?24:y2;
+  const g={x1,y1:mode==='par'?Y1:y1,x2,y2:mode==='par'?Y2:y2};
+  let s='<svg class="mmsvg" width="'+W+'mm" height="'+H+'mm" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Gerade '+lab+(pl?' und Punkt '+pl:'')+'" data-g="'+[g.x1,g.y1,g.x2,g.y2].join(',')+'"'+(pl?' data-p="'+n1(px)+','+n1(py)+'"':'')+'><rect x=".3" y=".3" width="'+(W-.6)+'" height="'+(H-.6)+'" fill="none" stroke="#bbb" stroke-width=".3" rx="2"/><line x1="'+g.x1+'" y1="'+g.y1+'" x2="'+g.x2+'" y2="'+g.y2+'" stroke="#000" stroke-width=".5"/><text x="'+(g.x2+2.5)+'" y="'+(g.y2+1.5)+'" font-size="5" font-family="Arial">'+lab+'</text>';
+  if(pl)s+='<circle cx="'+n1(px)+'" cy="'+n1(py)+'" r="1" fill="#000"/><text x="'+n1(px+2)+'" y="'+n1(py-2)+'" font-size="5" font-family="Arial">'+pl+'</text>';
+  return s+'</svg>'}
 function paperHTML(){const D=paperData,P=PROBEN.find(p=>p.set==='probe');let pg=0,lg=0;const page=(cls,inner)=>{const L=cls==='lpage',n=L?++lg:++pg;return '<section class="ppage '+cls+'"><div class="pinner">'+inner+'</div><footer class="pfoot">'+(L?'Lösungen':'Übungsprobe Mathematik')+' · Seite '+n+'</footer></section>'};
-  const geoLine=(lab,pt,ptLab,onLine)=>{const y1=40,y2=22,x1=12,x2=158,px=pt,py=onLine?y1+(y2-y1)*(px-x1)/(x2-x1):30;return '<svg class="mmsvg" width="170mm" height="58mm" viewBox="0 0 170 58" role="img" aria-label="Gerade '+lab+(ptLab?' mit Punkt '+ptLab:'')+'"><line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#000" stroke-width=".5"/><text x="'+(x2+2)+'" y="'+(y2+1)+'" font-size="5">'+lab+'</text>'+(ptLab?'<circle cx="'+px+'" cy="'+n1(py)+'" r=".9" fill="#000"/><text x="'+(px+1.5)+'" y="'+n1(py-2)+'" font-size="5">'+ptLab+'</text>':'')+'</svg>'};
-  const n1=x=>Math.round(x*10)/10;
+  const lines=n=>'<div class="plines">'+'<div class="pline"></div>'.repeat(n)+'</div>';
   let h='';
-  // Seite 1
-  h+=page('ppage1','<div class="ptitle"><h1>Übungsprobe Mathematik</h1><p>Name: ______________________ &nbsp;&nbsp; Datum: ___________</p><p class="psub">Kopfrechnen · Dividieren · Rest · Sachaufgaben · Teiler und Primzahlen · Geodreieck'+(P?' · für die Probe am '+P.wd:'')+'</p></div>'+
-    pHead(1,'Kopfrechnen',8)+'<div class="pgrid2">'+D.ks.map(t=>'<div class="pcalc">'+kopfQ(t)+'</div>').join('')+'</div>'+
-    pHead(2,'Halbschriftlich dividieren',8,'Zerlege die Zahl in Teile, die du leicht teilen kannst.')+'<div class="pgrid2 tall">'+D.dv.map(t=>'<div class="pcalc">'+divOf(t)+' = </div>').join('')+'</div>');
-  // Seite 2
-  h+=page('','<div>'+pHead(3,'Dividieren mit Rest',8,'Rechne halbschriftlich. Mach bei einer Aufgabe die Probe.')+'<div class="pgrid2 tall">'+D.rs.map(t=>'<div class="pcalc">'+divOf(t)+' = &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; R</div>').join('')+'</div></div>'+
-    pHead(4,'Sachaufgaben. Lies genau!',6)+D.sach.map((t,i)=>'<div class="psach"><p>'+'abc'[i]+') '+String(t.q).replace(/ Schreibe R: und A: in dein Heft\./,'')+'</p><p class="pline">R:</p><p class="pline">A:</p></div>').join(''));
-  // Seite 3
-  h+=page('',pHead(5,'Teiler',10)+'<p>a) Schreibe alle Teiler von '+D.N+' auf. <span class="ppts">3 P</span></p><p class="pline"></p>'+
-    '<p>b) Richtig oder falsch? Kreuze an. <span class="ppts">5 P</span></p><table class="ptab"><thead><tr><th></th><th>richtig</th><th>falsch</th></tr></thead><tbody>'+D.t4.words.map(w=>'<tr><td>'+w+'</td><td class="box"></td><td class="box"></td></tr>').join('')+'</tbody></table>'+
-    '<p>c) Durch welche Zahlen kannst du ohne Rest teilen? Kreuze an. <span class="ppts">2 P</span></p><table class="ptab"><thead><tr><th></th>'+[2,3,4,5,6,9,10].map(d=>'<th>'+d+'</th>').join('')+'</tr></thead><tbody>'+D.t7.map(t=>'<tr><td>'+t.q.match(/du ([0-9]+) ohne/)[1]+'</td>'+[2,3,4,5,6,9,10].map(()=>'<td class="box"></td>').join('')+'</tr>').join('')+'</tbody></table>'+
-    pHead(6,'Primzahlen',8)+'<p>a) Was ist eine Primzahl? Erkläre in einem Satz. <span class="ppts">1 P</span></p><p class="pline"></p><p>b) Kreise alle Primzahlen ein. <span class="ppts">4 P</span></p><p class="pnums">'+D.p2.words.join('&nbsp;&nbsp;&nbsp; ')+'</p><p>c) Warum ist 1 keine Primzahl? <span class="ppts">1 P</span></p><p class="pline"></p><p>d) Schreibe alle Primzahlen zwischen 1 und 20 auf. <span class="ppts">2 P</span></p><p class="pline"></p>');
-  // Seite 4
-  h+=page('',pHead(7,'Senkrecht, parallel, rechter Winkel',12)+'<p>a) Ergänze. <span class="ppts">4 P</span></p><p>Zwei Geraden, die sich im rechten Winkel schneiden, sind zueinander ________________ .</p><p>Zwei Geraden, die überall gleich weit voneinander entfernt sind, sind zueinander ________________ .</p><p>Zeichen für „senkrecht“: _____ &nbsp;&nbsp;&nbsp; Zeichen für „parallel“: _____</p>'+
-    '<div class="pcourt"><div><p>b) Der Tennisplatz von oben. <span class="ppts">4 P</span></p><p>Zwei Linien, die parallel sind: &nbsp;_____ || _____</p><p>Zwei andere parallele Linien: &nbsp;_____ || _____</p><p>Zwei Linien, die senkrecht aufeinander stehen: &nbsp;_____ ⊥ _____</p><p>Zwei andere senkrechte Linien: &nbsp;_____ ⊥ _____</p></div><div class="pfig">'+courtSVG([],[])+'</div></div>'+
-    '<p>c) Wie viele rechte Winkel hat jede Figur? Prüfe mit dem Geodreieck und markiere sie. <span class="ppts">4 P</span></p><div class="pgrid2">'+D.ang.map(t=>'<div class="pfig">'+angSVG(t,[],'right')+'<p>rechte Winkel: ____</p></div>').join('')+'</div>');
-  // Seite 5
-  h+=page('',pHead(8,'Zeichnen mit dem Geodreieck',6,'Spitzer Bleistift! Markiere rechte Winkel mit Bogen und Punkt.')+'<p>a) Zeichne die Senkrechte zu g durch P.</p>'+geoLine('g',70,'P',true)+'<p>b) Zeichne die Parallele zu h durch Q.</p>'+geoLine('h',85,'Q',false)+'<p>c) Zeichne eine Parallele zu k im Abstand von 2 cm.</p>'+geoLine('k',0,'',false)+
-    '<div class="pbonus"><div class="phead"><h3>Bonus: Zahlenfolge</h3><span class="ppts">___ / 2 Zusatzpunkte</span></div><p>Setze fort: '+String(D.fib.q).replace(/^Setze fort: /,'').replace(/, …$/,'')+', _____ , _____ , _____</p></div>'+
-    '<p class="psub">Gesamt: ______ / 66 Punkte. Drucken in „Tatsächlicher Größe / 100 %“, damit die 2 cm stimmen.</p>');
-  // Lösungen
+  h+=page('ppage1','<div class="ptitle"><div><h1>Übungsprobe Mathematik</h1><p class="psub">'+(P?'Zur Vorbereitung auf die Probe am '+P.wd+' ':'')+'Lies jede Aufgabe genau. Schreib Rechnung und Antwort sauber hin.</p></div><div class="pname"><span>Name: ____________________</span><span>Datum: __________</span><span class="pnote">Punkte: ____ / 66</span></div></div>'+
+    pHead(1,'Kopfrechnen',8)+'<div class="pgrid2 kopf">'+D.ks.map(t=>'<div class="pcalc">'+kopfQ(t).replace(/____/g,'<span class="pbl"></span>')+'</div>').join('')+'</div>'+
+    pHead(2,'Halbschriftlich dividieren',8,'Zerlege die Zahl in Teile, die du leicht teilen kannst. Rechne in den Kästchen.')+'<div class="pgrid2">'+D.dv.map(t=>'<div class="pwork"><div class="pcalc">'+divOf(t)+' = <span class="pbl"></span></div><div class="karo k45"></div></div>').join('')+'</div>');
+  h+=page('',pHead(3,'Dividieren mit Rest',8,'Rechne halbschriftlich. Mach bei einer Aufgabe die Probe.')+'<div class="pgrid2">'+D.rs.map(t=>'<div class="pwork"><div class="pcalc">'+divOf(t)+' = <span class="pbl short"></span> R <span class="pbl tiny"></span></div><div class="karo k55"></div></div>').join('')+'</div>'+
+    '<div class="pprobe"><span>Probe:</span><div class="karo k25"></div></div>');
+  h+=page('',pHead(4,'Sachaufgaben. Lies genau!',6,'Unterstreiche die Frage und die wichtigen Wörter. Schreib die Rechnung (R:) und einen Antwortsatz (A:).')+D.sach.map((t,i)=>'<div class="psach"><p><b>'+'abc'[i]+')</b> '+String(t.q).replace(/ Schreibe R: und A: in dein Heft\./,'')+'</p><div class="karo k30"></div><div class="pra"><span>R:</span><div class="pline"></div></div><div class="pra"><span>A:</span><div class="pline"></div></div></div>').join(''));
+  h+=page('',pHead(5,'Teiler',10)+'<p class="pq">a) Schreibe alle Teiler von '+D.N+' auf. Suche in Paaren. <span class="pts">3 P</span></p><div class="karo k25"></div>'+lines(1)+
+    '<p class="pq">b) Richtig oder falsch? Kreuze an. <span class="pts">5 P</span></p><table class="ptab"><thead><tr><th>Aussage</th><th>richtig</th><th>falsch</th></tr></thead><tbody>'+D.t4.words.map(w=>'<tr><td>'+w+'</td><td class="box"></td><td class="box"></td></tr>').join('')+'</tbody></table>'+
+    '<p class="pq">c) Durch welche Zahlen kannst du ohne Rest teilen? Kreuze an. <span class="pts">2 P</span></p><table class="ptab tcenter"><thead><tr><th>Zahl</th>'+[2,3,4,5,6,9,10].map(d=>'<th>: '+d+'</th>').join('')+'</tr></thead><tbody>'+D.t7.map(t=>'<tr><td><b>'+t.q.match(/du ([0-9]+) ohne/)[1]+'</b></td>'+[2,3,4,5,6,9,10].map(()=>'<td class="box"></td>').join('')+'</tr>').join('')+'</tbody></table>'+'<div class="phead bonus"><span class="pnr">+</span><h3>Bonus: Zahlenfolge</h3><span class="pbox">___ / 2 Zusatzpunkte</span></div><p class="pcalc">Setze fort: '+String(D.fib.q).replace(/^Setze fort: /,'').replace(/, …$/,'')+', <span class="pbl short"></span>, <span class="pbl short"></span>, <span class="pbl short"></span></p>');
+  h+=page('',pHead(6,'Primzahlen',8)+'<p class="pq">a) Was ist eine Primzahl? Erkläre in einem Satz. <span class="pts">1 P</span></p>'+lines(2)+'<p class="pq">b) Kreise alle Primzahlen ein. <span class="pts">4 P</span></p><p class="pnums">'+D.p2.words.map(w=>'<span>'+w+'</span>').join('')+'</p><p class="pq">c) Warum ist 1 keine Primzahl? <span class="pts">1 P</span></p>'+lines(2)+'<p class="pq">d) Schreibe alle Primzahlen zwischen 1 und 20 auf. <span class="pts">2 P</span></p>'+lines(1)+
+    pHead(7,'Senkrecht, parallel, rechter Winkel',12)+'<p class="pq">a) Ergänze. <span class="pts">4 P</span></p><p class="pfill">Zwei Geraden, die sich im rechten Winkel schneiden, sind zueinander <span class="pbl long"></span>.</p><p class="pfill">Zwei Geraden, die überall gleich weit voneinander entfernt sind, sind zueinander <span class="pbl long"></span>.</p><p class="pfill">Zeichen für „senkrecht“: <span class="pbl tiny"></span> &nbsp;&nbsp; Zeichen für „parallel“: <span class="pbl tiny"></span></p>');
+  h+=page('','<p class="pq">b) Der Tennisplatz von oben. Schau dir die Linien genau an. <span class="pts">4 P</span></p><div class="pcourt"><div class="pfills"><p>Zwei Linien, die parallel sind:</p><p class="pair"><span class="pbl tiny"></span> || <span class="pbl tiny"></span></p><p>Zwei andere parallele Linien:</p><p class="pair"><span class="pbl tiny"></span> || <span class="pbl tiny"></span></p><p>Zwei Linien, die senkrecht aufeinander stehen:</p><p class="pair"><span class="pbl tiny"></span> ⊥ <span class="pbl tiny"></span></p><p>Zwei andere senkrechte Linien:</p><p class="pair"><span class="pbl tiny"></span> ⊥ <span class="pbl tiny"></span></p></div><div class="pfig">'+courtSVG([],[])+'</div></div>'+
+    '<p class="pq">c) Wie viele rechte Winkel hat jede Figur? Prüfe mit dem Geodreieck und markiere jeden rechten Winkel mit Bogen und Punkt. <span class="pts">4 P</span></p><div class="pgrid2">'+D.ang.map(t=>'<div class="pfig">'+angSVG(t,[],'right')+'<p>Rechte Winkel: <span class="pbl tiny"></span></p></div>').join('')+'</div>');
+  h+=page('',pHead(8,'Zeichnen mit dem Geodreieck',6,'Spitzer Bleistift! Markiere rechte Winkel mit Bogen und Punkt.')+'<p class="pq">a) Zeichne die Senkrechte zu g durch P.</p>'+geoArea('g','on')+'<p class="pq">b) Zeichne die Parallele zu h durch Q.</p>'+geoArea('h','off')+'<p class="pq">c) Zeichne eine Parallele zu k im Abstand von 2 cm.</p>'+geoArea('k','par')+'');
   const yes=t=>t.a.map(k=>t.words[k]);
-  h+=page('lpage','<div class="ptitle"><h1>Lösungen zur Übungsprobe</h1><p class="psub">Für Eltern. Erstellt am '+D.made.getDate()+'.'+(D.made.getMonth()+1)+'. Je richtiger Teilaufgabe gibt es die angegebenen Punkte.</p></div>'+
+  h+=page('lpage','<div class="ptitle"><div><h1>Lösungen zur Übungsprobe</h1><p class="psub">Für Eltern. Erstellt am '+D.made.getDate()+'.'+(D.made.getMonth()+1)+'. Andere sinnvolle Rechenwege sind auch richtig.</p></div></div>'+
     '<h3>1 Kopfrechnen</h3><div class="pgrid2 sol">'+D.ks.map(t=>'<div>'+kopfQ(t).replace('____','<b>'+f(t.a)+'</b>')+'</div>').join('')+'</div>'+
-    '<h3>2 Halbschriftlich dividieren</h3><p class="psub">Andere sinnvolle Zerlegungen sind auch richtig.</p><div class="pgrid2 sol">'+D.dv.map(t=>'<div><b>'+divOf(t)+'</b><br>'+rowsSol(t)+'</div>').join('')+'</div>'+
+    '<h3>2 Halbschriftlich dividieren</h3><div class="pgrid2 sol">'+D.dv.map(t=>'<div><b>'+divOf(t)+'</b><br>'+rowsSol(t)+'</div>').join('')+'</div>'+
     '<h3>3 Dividieren mit Rest</h3><div class="pgrid2 sol">'+D.rs.map(t=>{const m=divOf(t).split(' : '),s=t.rows.find(r=>r.sum)||t.rows[0];return '<div><b>'+divOf(t)+'</b><br>'+(t.rows.length>1?rowsSol(t)+'<br>':'= '+f(s.a)+' R '+s.rr+'<br>')+'Probe mit '+f(s.a)+' · '+m[1]+' + '+s.rr+' = '+m[0]+'</div>'}).join('')+'</div>'+
     '<h3>4 Sachaufgaben</h3>'+D.sach.map((t,i)=>'<p>'+'abc'[i]+') '+t.items.join('<br>')+'</p>').join(''));
   h+=page('lpage','<h3>5 Teiler</h3><p>a) '+D.tN.join(', ')+'</p><p>b) richtig: '+yes(D.t4).join(' · ')+'<br>falsch: '+D.t4.words.filter((_,k)=>!D.t4.a.includes(k)).join(' · ')+'</p><p>c) '+D.t7.map(t=>t.explain).join('<br>')+'</p>'+
@@ -1307,7 +1323,7 @@ function paperHTML(){const D=paperData,P=PROBEN.find(p=>p.set==='probe');let pg=
     '<h3>7 Senkrecht, parallel, rechter Winkel</h3><p>a) senkrecht · parallel · ⊥ · ||<br>b) Zum Beispiel a || b und c || d, a ⊥ c und e ⊥ d. Andere richtige Paare zählen auch.</p><div class="pgrid2">'+D.ang.map(t=>'<div class="pfig">'+angSVG(t,null,'sol')+'<p>'+t.right.length+' rechte Winkel</p></div>').join('')+'</div>'+
     '<h3>8 Zeichnen</h3><p>Mit dem Geodreieck nachprüfen: rechter Winkel bei a), gleicher Abstand bei b), an zwei Stellen genau 2 cm bei c).</p><h3>Bonus</h3><p>'+D.fib.rows.map(r=>f(r.a)).join(', ')+'</p>');
   return h}
-function vPaper(){if(!paperData)paperMake();return '<section class="stack noprint"><h1>Übungsprobe zum Ausdrucken</h1><p class="muted">Jedes Mal mit neuen Zahlen. Wie die echte Probe: alle Themen, ohne Tipps, auf Papier. Dazu ein Lösungsblatt für euch.</p><div class="row">'+(inFrame?'':'<button class="btn" data-act="pprint" data-m="probe">Probe drucken</button><button class="btn ghost" data-act="pprint" data-m="loes">Lösungen drucken</button>')+'<button class="btn ghost" data-act="pnew">Neue Zahlen</button><button class="btn ghost" data-act="nav" data-v="heute">Zurück</button></div>'+(inFrame?'<p class="muted small">Ausdrucken geht in der installierten App. Am Tablet kannst du im Druckdialog auch „Als PDF speichern“ wählen.</p>':'<p class="muted small">Am Tablet kannst du im Druckdialog auch „Als PDF speichern“ wählen.</p>')+'</section><div class="paper" data-print="'+paperPrint+'">'+paperHTML()+'</div>'}
+function vPaper(){if(!paperData)paperMake();return '<section class="stack noprint"><h1>Übungsprobe zum Ausdrucken</h1><p class="muted">Jedes Mal mit neuen Zahlen. Wie die echte Probe: alle Themen, ohne Tipps, auf Papier. Dazu ein Lösungsblatt für euch. Beim Drucken „Tatsächliche Größe“ bzw. 100 % wählen, damit die 2 cm in Aufgabe 8 stimmen.</p><div class="row">'+(inFrame?'':'<button class="btn" data-act="pprint" data-m="probe">Probe drucken</button><button class="btn ghost" data-act="pprint" data-m="loes">Lösungen drucken</button>')+'<button class="btn ghost" data-act="pnew">Neue Zahlen</button><button class="btn ghost" data-act="nav" data-v="heute">Zurück</button></div>'+(inFrame?'<p class="muted small">Ausdrucken geht in der installierten App. Am Tablet kannst du im Druckdialog auch „Als PDF speichern“ wählen.</p>':'<p class="muted small">Am Tablet kannst du im Druckdialog auch „Als PDF speichern“ wählen.</p>')+'</section><div class="paper" data-print="'+paperPrint+'">'+paperHTML()+'</div>'}
 function vHeft(){
   let h='<div class="stack"><h1>Fehlerheft</h1><p class="muted">Hier landet, was noch nicht sofort geklappt hat. Fehler sind Trainingsstoff. Was du hier löst, verschwindet.</p></div>';
   const hl=S.heft.filter(id=>T[id]&&!archived(T[id].set));

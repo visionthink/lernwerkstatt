@@ -151,9 +151,17 @@ view='probe';render();A(/Matheprobe am Mittwoch, 25.11./.test(els.main.innerHTML
  gp=null;clearInterval(gpTimer);view='heute';cur=null;S=JSON.parse(save1);useSet('probe')}
 {useSet('probe');for(let rnd=0;rnd<80;rnd++){paperMake();const H=paperHTML(),cnt=re=>(H.match(re)||[]).length;A(cnt(/<section/g)===cnt(/<[/]section>/g)&&cnt(/<div/g)===cnt(/<[/]div>/g)&&cnt(/<table/g)===cnt(/<[/]table>/g),'Papier Tags');
  const probe=H.slice(0,H.indexOf('lpage')),txt=probe.replace(/<svg[\s\S]*?<[/]svg>/g,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ');const big=(txt.match(/[0-9]{1,3}(?: [0-9]{3})+|[0-9]+/g)||[]).map(v=>+v.replace(/ /g,'')).filter(v=>v>1000);A(!big.length,'Papier Zahl über 1000 '+big);
- const pts=[...probe.matchAll(/___ [/] ([0-9]+) P</g)].map(m=>+m[1]);A(pts.reduce((a,b)=>a+b,0)===66&&probe.includes('/ 66 Punkte'),'Papier Punkte '+pts);
- A(new Set(paperData.ks.map(kopfQ)).size===8,'Papier Kopf doppelt');A(!/Tippe|Fülle|dein Heft/.test(txt),'Papier App-Anweisung');
- A(cnt(/class="ppage /g)===7&&cnt(/class="ppage lpage"/g)===2,'Papier Seiten');
+ const pts=[...probe.matchAll(/___ [/] ([0-9]+) P</g)].map(m=>+m[1]);A(pts.reduce((a,b)=>a+b,0)===66&&probe.includes('Punkte: ____ / 66'),'Papier Punkte '+pts);
+ A(new Set(paperData.ks.map(kopfQ)).size===8,'Papier Kopf doppelt');A(!/class="blank/.test(H)&&cnt(/class="pbl/g)>=20,'Papier Leerstellen unsichtbar');{const dd=txt.match(/.{25}(?:[0-9][.][.]|[.][.] ).{10}/);A(!dd,'Papier doppelter Punkt '+JSON.stringify(dd&&dd[0]))}A(!/Tippe|Fülle|dein Heft/.test(txt),'Papier App-Anweisung');
+ A(cnt(/class="ppage /g)===9&&cnt(/class="ppage lpage"/g)===2,'Papier Seiten');
+ {const sv=[...probe.matchAll(/data-g="([^"]+)"(?: data-p="([^"]+)")?/g)];A(sv.length===3,'Papier Geo Anzahl');const dist=(g,p)=>Math.abs((g[2]-g[0])*(g[1]-p[1])-(g[0]-p[0])*(g[3]-g[1]))/Math.hypot(g[2]-g[0],g[3]-g[1]);
+  const G=sv.map(m=>m[1].split(',').map(Number)),Pp=sv.map(m=>m[2]?m[2].split(',').map(Number):null);
+  A(Pp[0]&&dist(G[0],Pp[0])<0.2,'Papier P nicht auf g');A(Pp[1]&&dist(G[1],Pp[1])>=15,'Papier Q zu nah an h '+(Pp[1]&&dist(G[1],Pp[1])));
+  A(Pp[1]&&Pp[1][0]>15&&Pp[1][0]<155&&Pp[1][1]>6&&Pp[1][1]<56,'Papier Q außerhalb');
+  const k=G[2];
+  [0,1,2].forEach(i=>{const g=G[i];A(g.every(v=>v>=0)&&g[0]>=5&&g[2]<=165,'Papier Gerade Rand')});
+  /* Platz für 2-cm-Parallele zu k auf beiden Seiten: Abstand der Geraden zum oberen/unteren Rand an beiden Enden */
+  const lo=Math.min(k[1],k[3]),hi=Math.max(k[1],k[3]);A(lo>=21&&62-hi>=21,'Papier k kein Platz '+lo+' '+hi)}
  paperData.ks.forEach(t=>A(kopfQ(t).includes('____'),'Kopf Lücke '+t.q));
  paperData.rs.forEach(t=>{const s=t.rows.find(r=>r.sum)||t.rows[0],m=divOf(t).split(' : ').map(x=>+x.replace(/ /g,''));A(s.a*m[1]+s.rr===m[0]&&s.rr<m[1]&&s.rr>0,'Papier Rest')});
  paperData.dv.forEach(t=>{const s=t.rows.find(r=>r.sum),m=divOf(t).split(' : ').map(x=>+x.replace(/ /g,''));A(s.a*m[1]===m[0],'Papier Div')});
