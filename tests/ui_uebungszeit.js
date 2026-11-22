@@ -1,0 +1,11 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:820,height:1100}});const ok=(c,m)=>console.log((c?'OK   ':'FEHLER ')+m);const errs=[];p.on('pageerror',e=>errs.push(String(e)));
+await p.goto('file://'+require('path').resolve(process.argv[2]||'lernwerkstatt/index.html'));
+await p.evaluate(()=>{useSet('probe');delete S.limit;tm().sec=21*60;tm().extra=0;view='heute';cur=null;render()});
+let txt=await p.locator('#main').innerText();ok(txt.includes('Zeit für eine Pause'),'Pause nach 20 Minuten');
+if(false)await p.locator('.pausebox').screenshot({path:'l1.png'});
+await p.click('text=Nach der Pause weiter üben');txt=await p.locator('#main').innerText();ok(!txt.includes('Zeit für eine Pause')&&/21 von 30 Minuten/i.test(txt),'nach Klick weiter: 21 von 30 Minuten');
+await p.click('.plan button >> nth=0').catch(()=>{});ok(await p.evaluate(()=>view==='ueben'),'Block startet nach Verlängerung');
+await p.evaluate(()=>{pinOk=true;view='eltern';cur=null;render()});await p.click('[data-act="limit"][data-m="0"]');ok(await p.evaluate(()=>S.limit===0&&!over()),'Ohne Limit gewählt');
+await p.click('[data-act="limit"][data-m="45"]');ok(await p.evaluate(()=>S.limit===45),'45 Minuten gewählt');ok(await p.locator('[data-act="limit"][data-m="45"]').getAttribute('aria-pressed')==='true','Knopf markiert');
+if(false)await p.locator('text=Übungszeit am Tag').locator('..').screenshot({path:'l2.png'});
+console.log('errors',errs);await b.close()})();

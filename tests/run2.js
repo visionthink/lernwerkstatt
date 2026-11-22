@@ -36,7 +36,7 @@ const g=T.g20;cur=Object.assign({b:g.bi,i:g.ti},fresh());cur.tries=2;cur.status=
 cur.status='right';A(!nextTwin(),'no twin when right');
 const d=dayPlan();A(d.ids.length===3&&d.ids[0]==='k1','day '+d.ids);S.blocks.push('k1','k2','k3');view='heute';render();A(/Wie war es/.test(els.main.innerHTML),'feel prompt');
 S.days.hsu.d-=1;A(dayPlan().ids.join()==='k4,k5,k6','next day '+dayPlan().ids);
-A(!over(),'not over');tm().sec=20*60;A(over(),'over');view='heute';render();A(/Für heute ist Schluss/.test(els.main.innerHTML),'stop');tm().extra=10;A(!over(),'extra');
+A(!over(),'not over');tm().sec=20*60;A(over(),'over');view='heute';render();A(/Zeit für eine Pause/.test(els.main.innerHTML)&&/data-act="more"/.test(els.main.innerHTML),'Pause mit Weiterüben');tm().extra=10;A(!over(),'extra');tm().sec=29*60;A(!over(),'29 von 30');tm().sec=30*60;A(over(),'30 erreicht');S.limit=45;tm().extra=0;A(!over(),'Limit 45');tm().sec=45*60;A(over(),'45 erreicht');S.limit=0;tm().sec=500*60;A(!over(),'ohne Limit');view='heute';render();A(!/Zeit für eine Pause/.test(els.main.innerHTML)&&/heute geübt: 500 Minuten/.test(els.main.innerHTML),'ohne Limit Anzeige');delete S.limit;tm().sec=20*60;tm().extra=0;A(over(),'Standard 20');tm().extra=10;
 view='ueben';const a3=T.g3;cur=Object.assign({b:a3.bi,i:a3.ti},fresh());render();A(/Erst genau lesen/.test(els.main.innerHTML),'ask shown');cur.asked=true;cur.askMiss=1;render();A(!/Erst genau lesen/.test(els.main.innerHTML),'ask gone');cur.sel=a3.t.a;check('s');A(S.done.g3.ask===1,'ask recorded');
 view='eltern';pinOk=true;render();console.log(report());console.log('ALL OK 2');
 // --- math generators
